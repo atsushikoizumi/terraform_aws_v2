@@ -7,8 +7,9 @@
 
 # はじめにやっておくこと
 コマンド実行前に、以下のことが必要です。
-1. 下記URL より terraform.exe をダウンロード
+1. terraform.exe を取得
     ```
+    下記URL より terraform.exe をダウンロード
     https://www.terraform.io/downloads.html
     ※ Windows であれば、terraform.exe をダウンロードして PATH を通すだけです。
     ```
@@ -16,6 +17,7 @@
 2. terraform.exe を適当な場所へ配置してパスを通す
 
     ```
+    PATH の通し方がわからない場合は、以下のURL等を参考にしてください。
     https://qiita.com/miwato/items/b7e66cb087666c3f9583
     https://dev.classmethod.jp/articles/try-terraform-on-windows/
     https://proengineer.internous.co.jp/content/columnfeature/5205
