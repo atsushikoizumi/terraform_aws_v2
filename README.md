@@ -9,23 +9,24 @@ terraform apply とコマンド実行するだけで AWS の各リソース（vp
 コマンド実行前に、以下のことが必要です。
 1. terraform.exe を取得
 
-    下記URL より terraform.exe をダウンロード
-    https://www.terraform.io/downloads.html
+    下記URL より terraform.exe をダウンロード<br>
+    https://www.terraform.io/downloads.html<br>
     ※ Windows であれば、terraform.exe をダウンロードして PATH を通すだけです。
 
-2. terraform.exe を適当な場所へ配置してパスを通す
+2. terraform.exe へ PATH を通す。
 
-    PATH の通し方がわからない場合は、以下のURL等を参考にしてください。
-    https://qiita.com/miwato/items/b7e66cb087666c3f9583
-    https://dev.classmethod.jp/articles/try-terraform-on-windows/
+    PATH の通し方がわからない場合は、以下のURL等を参考にしてください。<br>
+    https://qiita.com/miwato/items/b7e66cb087666c3f9583<br>
+    https://dev.classmethod.jp/articles/try-terraform-on-windows/<br>
     https://proengineer.internous.co.jp/content/columnfeature/5205
 
-3. ~/.aws/credentials
+3. ~/.aws/credentials 作成
 
     空のファイル C:¥user¥.aws¥credentials を作成してください。
 
-4. AWS アクセスキー情報を ~/.aws/credentials に入力してください。
+4. AWS アクセスキー情報登録
 
+    ~/.aws/credentials に以下の内容を入力してください。<br>
     profile 名は自身のものに置き換えてください。
     ```
     [koizumi]
@@ -33,9 +34,10 @@ terraform apply とコマンド実行するだけで AWS の各リソース（vp
     aws_secret_access_key = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
     ```
 
-5. s3 に tfstate を保存するためのバケットを作成してください。
-    tfstate は resource の状態を保持するファイルです。<br>
-    セキュリティや運用の観点からローカルに保存するのではなく、s3 に置くことが推奨されています。
+5. s3 バケット作成
+    terraform は .tfstate というファイルで resource の状態を保持します。<br>
+    セキュリティや運用の観点からローカルに保存するのではなく、s3 に置くことが推奨されています。<br>
+    事前に s3 に置き場所を用意しておく必要があります。
     | key | value |
     | --------- | -------- |
     | region | eu-west-1 |
