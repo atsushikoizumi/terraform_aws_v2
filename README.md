@@ -1,9 +1,9 @@
 # terraform_aws_v2
 terraform apply とコマンド実行するだけで AWS の各リソース（vpc/subnet/s3/ec2/rds/...etc）を自動的に構築することが可能です。現在は以下のバージョンに対応しています。
-| provider  | verion   |
-| --------- | -------- |
-| terraform | 0.13.5 |
-| aws       | 3.12.0 |
+| key       | value                     |
+| --------- | ------------------------- |
+| terraform | 0.13.5                    |
+| aws       | 3.12.0                    |
 | region    | eu-north-1（ストックホルム） |
 
 # はじめにやっておくこと
@@ -40,16 +40,17 @@ terraform apply とコマンド実行するだけで AWS の各リソース（vp
     terraform は .tfstate というファイルで resource の状態を保持します。<br>
     セキュリティや運用の観点からローカルに保存するのではなく、s3 に置くことが推奨されています。<br>
     事前に s3 に置き場所を用意しておく必要があります。
-    | key | value |
-    | --------- | -------- |
-    | region | eu-west-1 |
+    | key         | value              |
+    | ----------- | ------------------ |
+    | region      | eu-west-1          |
     | backet name | aws-aqua-terraform |
-    | prefix | username |
+    | prefix      | username           |
 
 以下、module の説明を記載します。
 
 # module vpc
-vpc は社内で共有します。変更しないでください。<br>
+vpc を管理する module です。<br>
+社内で共有しているため、この module は変更しないでください。<br>
 サブネット側で cidr を効率よく使い、複数人で vpc を共有できるよう設計しています。
 
 # module iams3
