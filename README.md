@@ -1,5 +1,7 @@
 # terraform_aws_v2
-[ terraform apply ] とコマンド実行するだけで AWS の各リソース（vpc/subnet/s3/ec2/rds/...etc）を自動的に構築することが可能です。現在は以下のバージョンに対応しています。
+terraform apply とコマンド実行するだけで AWS の各リソース（vpc/subnet/s3/ec2/rds/...etc）を自動的に構築することが可能です。現在は以下のバージョンに対応しています。
+| provider  | verion   |
+| --------- | -------- |
 | terraform | 0.13.5 |
 | aws       | 3.12.0 |
 
@@ -23,17 +25,22 @@
     空のファイル C:¥user¥.aws¥credentials を作成してください。
 
 4. AWS アクセスキー情報を ~/.aws/credentials に入力してください。
+
+    profile 名は自身のものに置き換えてください。
     ```
-    [default]
+    [koizumi]
     aws_access_key_id = "xxxxxxxxxxxxxxxxxxxx"
     aws_secret_access_key = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
     ```
+
 5. s3 に tfstate を保存するためのバケットを作成してください。
     tfstate は resource の状態を保持するファイルです。<br>
     セキュリティや運用の観点からローカルに保存するのではなく、s3 に置くことが推奨されています。
+    | key | value |
+    | --------- | -------- |
     | region | eu-west-1 |
     | backet name | aws-aqua-terraform |
-    | prefix       | username |
+    | prefix | username |
 
 以下、module の説明を記載します。
 
