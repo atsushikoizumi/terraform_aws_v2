@@ -1,0 +1,122 @@
+# Security Group
+# https://www.terraform.io/docs/providers/aws/r/security_group.html
+resource "aws_security_group" "ec2" {
+  name        = "${var.tags_owner}-sg-ec2"
+  description = "koizumi work Security Group for EC2"
+  vpc_id      = var.vpc_id
+
+  ingress {
+    description = "SSH"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = var.allow_ip
+    self        = true
+  }
+
+  ingress {
+    description = "RDP"
+    from_port   = 3389
+    to_port     = 3389
+    protocol    = "tcp"
+    cidr_blocks = var.allow_ip
+    self        = true
+  }
+
+  ingress {
+    description = "http"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = var.allow_ip
+    self        = true
+  }
+
+  ingress {
+    description = "https"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = var.allow_ip
+    self        = true
+  }
+
+  ingress {
+    description = "efs for fargate"
+    from_port   = 2049
+    to_port     = 2049
+    protocol    = "tcp"
+    self        = true
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name  = "${var.tags_owner}-sg-ec2"
+    Owner = var.tags_owner
+  }
+}
+
+resource "aws_security_group" "rds" {
+  name        = "${var.tags_owner}-sg-rds"
+  description = "koizumi work Security Group for RDS"
+  vpc_id      = var.vpc_id
+  ingress {
+    description = "ALL Ports Allow from EC2"
+    from_port   = 1
+    to_port     = 65535
+    protocol    = "tcp"
+    self        = true
+    security_groups = [
+      aws_security_group.ec2.id
+    ]
+  }
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  tags = {
+    Name  = "${var.tags_owner}-sg-rds"
+    Owner = var.tags_owner
+  }
+}
+
+resource "aws_security_group" "redshift" {
+  name        = "${var.tags_owner}-sg-redshift"
+  description = "koizumi work Security Group for Redshift"
+  vpc_id      = var.vpc_id
+  ingress {
+    description = "ALL Ports Allow from EC2,RDS"
+    from_port   = 1
+    to_port     = 65535
+    protocol    = "tcp"
+    security_groups = [
+      aws_security_group.ec2.id,
+      aws_security_group.rds.id
+    ]
+  }
+  ingress {
+    description = "ec2 kageyama"
+    from_port   = 5439
+    to_port     = 5439
+    protocol    = "tcp"
+    cidr_blocks = ["10.0.11.6/32"]
+  }
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  tags = {
+    Name  = "${var.tags_owner}-sg-redshift"
+    Owner = var.tags_owner
+  }
+}
