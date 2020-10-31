@@ -9,8 +9,8 @@ variable tags_env {
 # アクセスを許可する ip アドレス
 variable allow_ip {
   default = ["114.156.135.182/32", "60.104.132.36/32"]
-  # aqua 114.156.135.182
-  # home 60.104.132.36
+  # aqua 114.156.135.182/32
+  # home 60.104.132.36/32
   # all ip address [0.0.0.0]
 }
 
