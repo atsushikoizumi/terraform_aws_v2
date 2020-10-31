@@ -1,7 +1,6 @@
-# Security Group
-# https://www.terraform.io/docs/providers/aws/r/security_group.html
+# ec2
 resource "aws_security_group" "ec2" {
-  name        = "${var.tags_owner}-sg-ec2"
+  name        = "${var.tags_owner}-${var.tags_env}-sg-ec2"
   description = "koizumi work Security Group for EC2"
   vpc_id      = var.vpc_id
 
@@ -42,7 +41,7 @@ resource "aws_security_group" "ec2" {
   }
 
   ingress {
-    description = "efs for fargate"
+    description = "efs"
     from_port   = 2049
     to_port     = 2049
     protocol    = "tcp"
@@ -57,13 +56,15 @@ resource "aws_security_group" "ec2" {
   }
 
   tags = {
-    Name  = "${var.tags_owner}-sg-ec2"
+    Name  = "${var.tags_owner}-${var.tags_env}-sg-ec2"
     Owner = var.tags_owner
+    Env   = var.tags_env
   }
 }
 
+# rds
 resource "aws_security_group" "rds" {
-  name        = "${var.tags_owner}-sg-rds"
+  name        = "${var.tags_owner}-${var.tags_env}-sg-rds"
   description = "koizumi work Security Group for RDS"
   vpc_id      = var.vpc_id
   ingress {
@@ -83,13 +84,15 @@ resource "aws_security_group" "rds" {
     cidr_blocks = ["0.0.0.0/0"]
   }
   tags = {
-    Name  = "${var.tags_owner}-sg-rds"
+    Name  = "${var.tags_owner}-${var.tags_env}-sg-rds"
     Owner = var.tags_owner
+    Env   = var.tags_env
   }
 }
 
+# redshift
 resource "aws_security_group" "redshift" {
-  name        = "${var.tags_owner}-sg-redshift"
+  name        = "${var.tags_owner}-${var.tags_env}-sg-redshift"
   description = "koizumi work Security Group for Redshift"
   vpc_id      = var.vpc_id
   ingress {
@@ -102,13 +105,6 @@ resource "aws_security_group" "redshift" {
       aws_security_group.rds.id
     ]
   }
-  ingress {
-    description = "ec2 kageyama"
-    from_port   = 5439
-    to_port     = 5439
-    protocol    = "tcp"
-    cidr_blocks = ["10.0.11.6/32"]
-  }
   egress {
     from_port   = 0
     to_port     = 0
@@ -116,7 +112,8 @@ resource "aws_security_group" "redshift" {
     cidr_blocks = ["0.0.0.0/0"]
   }
   tags = {
-    Name  = "${var.tags_owner}-sg-redshift"
+    Name  = "${var.tags_owner}-${var.tags_env}-sg-redshift"
     Owner = var.tags_owner
+    Env   = var.tags_env
   }
 }

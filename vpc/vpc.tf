@@ -6,12 +6,13 @@ resource "aws_vpc" "vpc" {
 
   tags = {
     Name  = "aqua-common-vpc"
-    Owner = "aqua-koizumi"
+    Owner = "koizumi"
+    Env   = "common"
   }
 }
 
 data "aws_vpc" "common_vpc" {
-
+  depends_on = [aws_vpc.vpc]
   filter {
     name   = "tag:Name"
     values = ["aqua-common-vpc"]
@@ -24,7 +25,8 @@ resource "aws_internet_gateway" "igw" {
 
   tags = {
     Name  = "aqua-common-igw"
-    Owner = "aqua-koizumi"
+    Owner = "koizumi"
+    Env   = "common"
   }
 }
 
@@ -34,8 +36,9 @@ resource "aws_vpc_endpoint" "s3" {
   service_name = "com.amazonaws.eu-north-1.s3"
 
   tags = {
-    Name = "aqua-common-vpc-endpoint"
-    Owner = "aqua-koizumi"
+    Name  = "aqua-common-vpc-endpoint"
+    Owner = "koizumi"
+    Env   = "common"
   }
 }
 
@@ -49,7 +52,8 @@ resource "aws_route_table" "public" {
   }
 
   tags = {
-    Name = "aqua-common-route-public"
-    Owner = "aqua-koizumi"
+    Name  = "aqua-common-route-public"
+    Owner = "koizumi"
+    Env   = "common"
   }
 }

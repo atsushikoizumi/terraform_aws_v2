@@ -1,7 +1,6 @@
-# aws_iam_role
-# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_r ole
+# AssumeRole
 resource "aws_iam_role" "ec2" {
-  name = "${var.tags_owner}-role-ec2"
+  name = "${var.tags_owner}-${var.tags_env}-role-ec2"
 
   assume_role_policy = <<EOF
 {
@@ -22,15 +21,15 @@ resource "aws_iam_role" "ec2" {
 EOF
 
   tags = {
-    Name  = "${var.tags_owner}-role-ec2"
+    Name  = "${var.tags_owner}-${var.tags_env}-role-ec2"
     Owner = var.tags_owner
+    Env   = var.tags_env
   }
 }
 
-# aws_iam_policy
-# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy
+# s3
 resource "aws_iam_policy" "ec2_1" {
-  name = "${var.tags_owner}-policy-ec2-1"
+  name = "${var.tags_owner}-${var.tags_env}-policy-ec2-1"
   path = "/"
 
   policy = <<EOF
@@ -39,30 +38,24 @@ resource "aws_iam_policy" "ec2_1" {
     "Statement": [
         {
             "Effect": "Allow",
-            "Action": "s3:ListAllMyBuckets",
-            "Resource": "*"
-        },
-        {
-            "Effect": "Allow",
             "Action": [
+                "s3:ListAllMyBuckets",
                 "s3:ListBucket",
                 "s3:PutObject",
                 "s3:GetObject",
                 "s3:DeleteObject",
                 "S3:GetBucketAcl"
             ],
-            "Resource": [
-                "arn:aws:s3:::aqua-koizumi-logs/*",
-                "arn:aws:s3:::aqua-koizumi-logs"
-            ]
+            "Resource": "*"
         }
     ]
 }
 EOF
 }
 
+# rds
 resource "aws_iam_policy" "ec2_2" {
-  name = "${var.tags_owner}-policy-ec2-2"
+  name = "${var.tags_owner}-${var.tags_env}-policy-ec2-2"
   path = "/"
 
   policy = <<EOF
@@ -105,8 +98,9 @@ resource "aws_iam_policy" "ec2_2" {
 EOF
 }
 
+# clodwatch logs
 resource "aws_iam_policy" "ec2_3" {
-  name = "${var.tags_owner}-policy-ec2-3"
+  name = "${var.tags_owner}-${var.tags_env}-policy-ec2-3"
   path = "/"
 
   policy = <<EOF
@@ -129,7 +123,7 @@ EOF
 }
 
 resource "aws_iam_policy" "ec2_4" {
-  name = "${var.tags_owner}-policy-ec2-4"
+  name = "${var.tags_owner}-${var.tags_env}-policy-ec2-4"
   path = "/"
 
   policy = <<EOF
@@ -148,8 +142,9 @@ resource "aws_iam_policy" "ec2_4" {
 EOF
 }
 
+# ecr
 resource "aws_iam_policy" "ec2_5" {
-  name = "${var.tags_owner}-policy-ec2-5"
+  name = "${var.tags_owner}-${var.tags_env}-policy-ec2-5"
   path = "/"
 
   policy = <<EOF
@@ -173,7 +168,7 @@ resource "aws_iam_policy" "ec2_5" {
                 "ecr:PutImage"
             ],
             "Resource": [
-              "arn:aws:ecr:ap-northeast-1:933432669293:repository/${var.tags_owner}"
+              "arn:aws:ecr:ap-northeast-1:933432669293:repository/*"
             ]
         } 
     ]
@@ -182,7 +177,6 @@ EOF
 }
 
 # aws_iam_policy_attachment
-# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy_attachment
 resource "aws_iam_policy_attachment" "ec2_1" {
   name       = "ec2_1"
   roles      = [aws_iam_role.ec2.name]

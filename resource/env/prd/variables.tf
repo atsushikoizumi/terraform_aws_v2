@@ -3,7 +3,7 @@ variable tags_owner {
   default = "koizumi"
 }
 variable tags_env {
-  default = "dev"
+  default = "prd"
 }
 
 # アクセスを許可する ip アドレス
