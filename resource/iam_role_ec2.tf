@@ -39,12 +39,13 @@ resource "aws_iam_policy" "ec2_1" {
         {
             "Effect": "Allow",
             "Action": [
+                "s3:DeleteObject",
+                "S3:GetBucketAcl",
+                "s3:GetObject",
                 "s3:ListAllMyBuckets",
                 "s3:ListBucket",
-                "s3:PutObject",
-                "s3:GetObject",
-                "s3:DeleteObject",
-                "S3:GetBucketAcl"
+                "s3:ListObjectsV2",
+                "s3:PutObject"
             ],
             "Resource": [
               "arn:aws:s3:::${var.tags_owner}-${var.tags_env}-logs",
