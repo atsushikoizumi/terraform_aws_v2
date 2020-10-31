@@ -8,10 +8,10 @@ variable tags_env {
 
 # アクセスを許可する ip アドレス
 variable allow_ip {
-  default = ["114.156.135.182/32", "60.104.132.36/32"]
+  default = ["0.0.0.0/0"]
   # aqua 114.156.135.182
   # home 60.104.132.36
-  # all ip address [0.0.0.0]
+  # all ip address [0.0.0.0/0]
 }
 
 # ssh キーペアーのパブリックキー
