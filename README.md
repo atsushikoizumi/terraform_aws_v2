@@ -1,5 +1,9 @@
 # terraform_aws_v2
-terraform apply とコマンド実行するだけで AWS の各リソース（vpc/subnet/s3/ec2/rds/...etc）を自動的に構築することが可能です。現在は以下のバージョンに対応しています。
+以下のコマンド実行するだけで AWS の各リソース（vpc/subnet/s3/ec2/rds/...etc）を自動的に構築することが可能です。
+```
+$ terraform apply
+```
+現在は以下のバージョンに対応しています。
 | key       | value                     |
 | --------- | ------------------------- |
 | terraform | 0.13.5                    |
