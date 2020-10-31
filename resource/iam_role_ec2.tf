@@ -46,7 +46,12 @@ resource "aws_iam_policy" "ec2_1" {
                 "s3:DeleteObject",
                 "S3:GetBucketAcl"
             ],
-            "Resource": "*"
+            "Resource": [
+              "arn:aws:s3:::${var.tags_owner}-${var.tags_env}-logs",
+              "arn:aws:s3:::${var.tags_owner}-${var.tags_env}-logs/*",
+              "arn:aws:s3:::${var.tags_owner}-${var.tags_env}-data",
+              "arn:aws:s3:::${var.tags_owner}-${var.tags_env}-data/*"
+            ]
         }
     ]
 }
@@ -91,7 +96,7 @@ resource "aws_iam_policy" "ec2_2" {
                 "rds:RebootDBInstance",
                 "rds:RestoreDBClusterFromSnapshot"
             ],
-            "Resource": "*"
+            "Resource": "arn:aws:rds:::${var.tags_owner}-${var.tags_env}-*"
         }
     ]
 }
@@ -115,13 +120,14 @@ resource "aws_iam_policy" "ec2_3" {
                 "logs:GetLogEvents",
                 "logs:PutLogEvents"
             ],
-            "Resource": "*"
+            "Resource": "arn:aws:logs:::${var.tags_owner}-${var.tags_env}-*"
         }
     ]
 }
 EOF
 }
 
+# ec2
 resource "aws_iam_policy" "ec2_4" {
   name = "${var.tags_owner}-${var.tags_env}-policy-ec2-4"
   path = "/"
@@ -135,7 +141,7 @@ resource "aws_iam_policy" "ec2_4" {
             "Action": [
                 "ec2:DescribeImages"
             ],
-            "Resource": "*"
+            "Resource": "arn:aws:ecr:::repository/${var.tags_owner}-${var.tags_env}-*"
         }
     ]
 }
@@ -167,9 +173,7 @@ resource "aws_iam_policy" "ec2_5" {
                 "ecr:BatchCheckLayerAvailability",
                 "ecr:PutImage"
             ],
-            "Resource": [
-              "arn:aws:ecr:ap-northeast-1:933432669293:repository/*"
-            ]
+            "Resource": "arn:aws:ecr:::repository/${var.tags_owner}-${var.tags_env}-*"
         } 
     ]
 }
