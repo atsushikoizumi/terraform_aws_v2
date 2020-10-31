@@ -1,6 +1,7 @@
 # terraform_aws_v2
 以下のコマンド実行するだけで AWS の各リソース（vpc/subnet/s3/ec2/rds/...etc）を自動的に構築することが可能です。
 ```
+$ cd /User/.../resource/env/dev
 $ terraform apply
 ```
 現在は以下のバージョンに対応しています。
@@ -18,7 +19,7 @@ $ terraform apply
 | 2  | koizumi  | stg | 20 - 29   |
 | 3  | koizumi  | prd | 30 - 39   |
 
-# はじめにやっておくこと
+# 前提
 コマンド実行前に、以下のことが必要です。
 1. terraform.exe を取得
 
@@ -61,5 +62,5 @@ vpc を管理する module です。この module は変更しないでくださ
 
 # module resource
 AWS の各リソースを管理する module です。<br>
-他環境のリソースを操作できないよう、タグ名（owner_tag,tags_env）を利用しています。<br>
-iam はタグ名（owner_tag,tags_env）から始まるリソースに対してのみ操作できるよう設定しています。
+タグ名（owner_tag,tags_env）を利用してリソースを管理しています。<br>
+terraform apply 実行前に、resource/env/dev 配下の環境設定ファイル（main.tf/variable.tf）を編集してください。
