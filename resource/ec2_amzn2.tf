@@ -8,18 +8,18 @@ data "aws_ssm_parameter" "amzn2_ami" {
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance
 resource "aws_instance" "amzn2_1" {
   ami           = data.aws_ssm_parameter.amzn2_ami.value
-  instance_type = "t2.micro"
+  instance_type = "t3.micro"  # eu-north-1 ではこれが最小サイズ
   key_name      = aws_key_pair.key_pair.key_name
   vpc_security_group_ids = [
     aws_security_group.ec2.id
   ]
-  subnet_id = aws_subnet.ec2.0.id
+  subnet_id = aws_subnet.ec2["eu-north-1a"].id
   root_block_device {
     volume_type = "gp2"
     volume_size = 30
   }
   associate_public_ip_address = true
-  iam_instance_profile        = var.iam_instance_profile_ec2_nm
+  iam_instance_profile        = aws_iam_instance_profile.ec2.name
   user_data                   = <<EOF
   #!/bin/bash
   yum update -y
@@ -80,7 +80,8 @@ resource "aws_instance" "amzn2_1" {
   EOF
 
   tags = {
-    Name  = "${var.tags_owner}-amzn2"
+    Name  = "${var.tags_owner}-${var.tags_env}-kamzn2"
     Owner = var.tags_owner
+    Env   = var.tags_env
   }
 }
