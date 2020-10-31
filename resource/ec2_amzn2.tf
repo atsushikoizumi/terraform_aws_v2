@@ -80,7 +80,7 @@ resource "aws_instance" "amzn2_1" {
   EOF
 
   tags = {
-    Name  = "${var.tags_owner}-${var.tags_env}-kamzn2"
+    Name  = "${var.tags_owner}-${var.tags_env}-amzn2"
     Owner = var.tags_owner
     Env   = var.tags_env
   }
