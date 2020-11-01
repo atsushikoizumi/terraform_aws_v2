@@ -34,7 +34,7 @@ data "aws_ami" "win2019_ami" {
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance
 resource "aws_instance" "ec2_win2019" {
   ami           = data.aws_ami.win2019_ami.id
-  instance_type = "t3.xlarge"
+  instance_type = "t3.2xlarge"
   key_name      = aws_key_pair.key_pair.key_name
   vpc_security_group_ids = [
     aws_security_group.ec2.id
@@ -46,12 +46,13 @@ resource "aws_instance" "ec2_win2019" {
   }
   associate_public_ip_address = true
   iam_instance_profile        = aws_iam_instance_profile.ec2.name
-  user_data =<<EOF
+  user_data                   = <<EOF
   <powershell>
   New-LocalUser -Name win2019 -Password (ConvertTo-SecureString "Admin123!" -AsPlainText -Force) -PasswordNeverExpires
   Add-LocalGroupMember -Group Administrators -Member win2019
-  New-Item "C:\Install_items" -ItemType "directory"
-  Read-S3Object -BucketName aws-aqua-terraform -Prefix koizumi/windows -Folder "C:\Install_items"
+  New-Item "C:\applications" -ItemType "directory"
+  Read-S3Object -BucketName aws-aqua-terraform -Prefix koizumi/windows -Folder "C:\applications"
+  Set-TimeZone -Id "Tokyo Standard Time"
   </powershell>
   EOF
   tags = {

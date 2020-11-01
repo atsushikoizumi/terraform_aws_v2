@@ -8,7 +8,7 @@ data "aws_ssm_parameter" "amzn2_ami" {
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance
 resource "aws_instance" "ec2_amzn2" {
   ami           = data.aws_ssm_parameter.amzn2_ami.value
-  instance_type = "t3.micro"  # eu-north-1 ではこれが最小サイズ
+  instance_type = "t3.micro" # eu-north-1 ではこれが最小サイズ
   key_name      = aws_key_pair.key_pair.key_name
   vpc_security_group_ids = [
     aws_security_group.ec2.id

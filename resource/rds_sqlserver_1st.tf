@@ -1,14 +1,15 @@
 # aws_db_instance
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/db_instance
 resource "aws_db_instance" "sqlserver_1st" {
-  identifier     = "${var.tags_owner}-${var.tags_env}-sqlserver-1st"
-  instance_class = "db.r5.large"
-  engine         = "sqlserver-se"
-  engine_version = "14.00.3281.6.v1"
-  license_model  = "license-included"
-  multi_az       = false # default false
-  username       = "aquadba"
-  password       = "Admin123!"
+  identifier        = "${var.tags_owner}-${var.tags_env}-sqlserver-1st"
+  instance_class    = "db.r5.large"
+  engine            = "sqlserver-se"
+  engine_version    = "14.00.3281.6.v1"
+  license_model     = "license-included"
+  multi_az          = false # default false
+  apply_immediately = false # Specifies whether any database modifications are applied immediately
+  username          = "aquadba"
+  password          = "Admin123!"
 
   # storage
   storage_type          = "gp2" # The default is "io1", "gp2", "standard" (magnetic)
@@ -29,16 +30,16 @@ resource "aws_db_instance" "sqlserver_1st" {
   enabled_cloudwatch_logs_exports = ["agent", "error"]
 
   # backup snapshot
-  backup_retention_period   = 1                             # default 7 (days). 0 = disabled.
-  copy_tags_to_snapshot     = true                          # default false
-  delete_automated_backups  = true                          # default true
-  deletion_protection       = false                         # default false
-  skip_final_snapshot       = true                          # default false
+  backup_retention_period   = 1                                                 # default 7 (days). 0 = disabled.
+  copy_tags_to_snapshot     = true                                              # default false
+  delete_automated_backups  = true                                              # default true
+  deletion_protection       = false                                             # default false
+  skip_final_snapshot       = true                                              # default false
   final_snapshot_identifier = "${var.tags_owner}-${var.tags_env}-sqlserver-1st" # must be provided if skip_final_snapshot is set to false.
 
   # window time
-  backup_window      = "17:00-17:30"  # UTC, must not overlap with maintenance_window.
-  maintenance_window = "Sun:18:00-Sun:19:00"  # UTC
+  backup_window      = "17:00-17:30"         # UTC, must not overlap with maintenance_window.
+  maintenance_window = "Sun:18:00-Sun:19:00" # UTC
 
   # options
   parameter_group_name       = aws_db_parameter_group.sqlserver_1st.name

@@ -30,20 +30,20 @@ resource "aws_db_instance" "oracle_1st" {
   enabled_cloudwatch_logs_exports = ["alert", "audit", "listener", "trace"]
 
   # backup snapshot
-  backup_retention_period   = 1                             # default 7 (days). 0 = disabled.
-  backup_window             = "17:00-17:30"                 # UTC, must not overlap with maintenance_window.
-  copy_tags_to_snapshot     = true                          # default false
-  delete_automated_backups  = true                          # default true
-  deletion_protection       = false                         # default false
-  skip_final_snapshot       = true                          # default false
+  backup_retention_period   = 1                                                 # default 7 (days). 0 = disabled.
+  backup_window             = "17:00-17:30"                                     # UTC, must not overlap with maintenance_window.
+  copy_tags_to_snapshot     = true                                              # default false
+  delete_automated_backups  = true                                              # default true
+  deletion_protection       = false                                             # default false
+  skip_final_snapshot       = true                                              # default false
   final_snapshot_identifier = "${var.tags_owner}-${var.tags_env}-db-oracle-1st" # must be provided if skip_final_snapshot is set to false.
 
   # options
   parameter_group_name       = aws_db_parameter_group.oracle_1st.name
   option_group_name          = aws_db_option_group.oracle_1st.name
-  character_set_name         = "UTF8" # Oracle and Microsoft SQL
-  auto_minor_version_upgrade = false  # default true
-  maintenance_window         = "Sun:18:00-Sun:19:00"  # UTC
+  character_set_name         = "UTF8"                # Oracle and Microsoft SQL
+  auto_minor_version_upgrade = false                 # default true
+  maintenance_window         = "Sun:18:00-Sun:19:00" # UTC
 
   # tags
   tags = {

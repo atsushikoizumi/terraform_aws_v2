@@ -30,17 +30,17 @@ resource "aws_db_option_group" "oracle_1st" {
   major_engine_version = 19
 
   option {
-    option_name = "S3_INTEGRATION"
-    db_security_group_memberships = []
-    port = 0
-    version = "1.0"
+    option_name                    = "S3_INTEGRATION"
+    db_security_group_memberships  = []
+    port                           = 0
+    version                        = "1.0"
     vpc_security_group_memberships = []
   }
 
   option {
-    option_name = "Timezone"
-    db_security_group_memberships = []
-    port = 0
+    option_name                    = "Timezone"
+    db_security_group_memberships  = []
+    port                           = 0
     vpc_security_group_memberships = []
 
     option_settings {

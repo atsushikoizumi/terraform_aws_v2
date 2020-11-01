@@ -22,11 +22,11 @@ resource "aws_rds_cluster" "aurora_mysql_1st" {
   iam_roles = [aws_iam_role.rds.arn]
 
   # backup snapshot
-  backtrack_window          = 0                                        # default 0
-  backup_retention_period   = 3                                        # must be between 1 and 35. default 1 (days)
-  copy_tags_to_snapshot     = true                                     # default false
-  deletion_protection       = false                                    # default false
-  skip_final_snapshot       = true                                     # default false
+  backtrack_window          = 0                                                        # default 0
+  backup_retention_period   = 3                                                        # must be between 1 and 35. default 1 (days)
+  copy_tags_to_snapshot     = true                                                     # default false
+  deletion_protection       = false                                                    # default false
+  skip_final_snapshot       = true                                                     # default false
   final_snapshot_identifier = "${var.tags_owner}-${var.tags_env}-cls-aurora-mysql-1st" # must be provided if skip_final_snapshot is set to false.
 
   # monitoring
@@ -36,8 +36,8 @@ resource "aws_rds_cluster" "aurora_mysql_1st" {
   db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.aurora_mysql_1st.name
 
   # window time
-  preferred_backup_window      = "17:00-17:30"  # UTC
-  preferred_maintenance_window = "Sun:18:00-Sun:19:00"  # UTC
+  preferred_backup_window      = "17:00-17:30"         # UTC
+  preferred_maintenance_window = "Sun:18:00-Sun:19:00" # UTC
 
   # tags
   tags = {
@@ -60,9 +60,9 @@ resource "aws_rds_cluster_instance" "aurora_mysql_1st" {
   # availability_zone = ""   # eu-west-1a,eu-west-1b,eu-west-1c
 
   # monitoring
-  performance_insights_enabled = false                            # default false
-  monitoring_interval          = 60                               # 0, 1, 5, 10, 15, 30, 60 (seconds). default 0 (off)
-  monitoring_role_arn          = aws_iam_role.rds_monitoring.arn  # https://github.com/terraform-providers/terraform-provider-aws/issues/315
+  performance_insights_enabled = false                           # default false
+  monitoring_interval          = 60                              # 0, 1, 5, 10, 15, 30, 60 (seconds). default 0 (off)
+  monitoring_role_arn          = aws_iam_role.rds_monitoring.arn # https://github.com/terraform-providers/terraform-provider-aws/issues/315
 
   # options
   db_parameter_group_name    = aws_db_parameter_group.aurora_mysql_1st.name
