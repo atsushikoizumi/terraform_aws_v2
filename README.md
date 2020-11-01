@@ -62,6 +62,9 @@ vpc を管理する module です。この module は変更しないでくださ
 全環境で vpc は共有しています。
 
 # module resource
-AWS の各リソースを管理する module です。<br>
-タグ名（owner_tag,tags_env）を利用してリソースを管理しています。<br>
+AWS の各リソースを作成するための module です。<br>
+各リソースの細かいパラメーターを変更する際は、この module 配下の .tf ファイルを編集してください。
+
+# module resource/env/dev
+環境情報をこの module で管理しています。<br>
 terraform apply 実行前に、resource/env/dev 配下の環境設定ファイル（main.tf/variable.tf）を編集してください。
