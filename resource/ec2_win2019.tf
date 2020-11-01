@@ -46,6 +46,14 @@ resource "aws_instance" "win2019_1" {
   }
   associate_public_ip_address = true
   iam_instance_profile        = aws_iam_instance_profile.ec2.name
+  user_data =<<EOF
+  <powershell>
+  New-LocalUser -Name win2019 -Password (ConvertTo-SecureString "Admin123!" -AsPlainText -Force) -PasswordNeverExpires
+  Add-LocalGroupMember -Group Administrators -Member win2019
+  New-Item "C:\Install_items" -ItemType "directory"
+  Read-S3Object -BucketName aws-aqua-terraform -Prefix koizumi/windows -Folder "C:\Install_items"
+  </powershell>
+  EOF
   tags = {
     Name  = "${var.tags_owner}-${var.tags_env}-win2019"
     Owner = var.tags_owner
