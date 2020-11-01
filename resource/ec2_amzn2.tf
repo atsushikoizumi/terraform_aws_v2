@@ -6,7 +6,7 @@ data "aws_ssm_parameter" "amzn2_ami" {
 
 # EC2
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance
-resource "aws_instance" "amzn2_1" {
+resource "aws_instance" "ec2_amzn2" {
   ami           = data.aws_ssm_parameter.amzn2_ami.value
   instance_type = "t3.micro"  # eu-north-1 ではこれが最小サイズ
   key_name      = aws_key_pair.key_pair.key_name
@@ -49,7 +49,14 @@ resource "aws_instance" "amzn2_1" {
   curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "/root/awscliv2.zip"
   unzip /root/awscliv2.zip
   /root/aws/install
-  
+  mkdir /root/.aws
+  touch /root/.aws/config
+  echo "[default]"         >> /root/.aws/config
+  echo "region=eu-north-1" >> /root/.aws/config
+  echo "output=json"       >> /root/.aws/config
+  cp -r /root/.aws /home/ec2-user/
+  chown -R ec2-user.ec2-user /home/ec2-user/.aws
+
   ### mysql
   yum install -y https://dev.mysql.com/get/mysql80-community-release-el7-3.noarch.rpm
   yum install -y yum-utils
