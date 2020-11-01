@@ -40,6 +40,7 @@ data "terraform_remote_state" "vpc" {
 module "resource" {
   source = "../../../resource/"
 
+  # send variable.value to resource
   tags_owner      = var.tags_owner
   tags_env        = var.tags_env
   ec2_subnet      = var.ec2_subnet
@@ -48,9 +49,10 @@ module "resource" {
   allow_ip        = var.allow_ip
   public_key_path = var.public_key_path
 
-  # vpc
+  # get output.value from vpc
   vpc_id         = data.terraform_remote_state.vpc.outputs.vpc_id
   vpc_cidr_block = data.terraform_remote_state.vpc.outputs.vpc_cidr
   rt_id_public   = data.terraform_remote_state.vpc.outputs.route_table_public
   rt_id_private  = data.terraform_remote_state.vpc.outputs.route_table_private
+
 }
