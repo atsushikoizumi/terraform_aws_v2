@@ -51,6 +51,6 @@ AWS の環境情報を管理する module です。<br>
     redshift_subnet : 割り当てられたサブネット番号を指定ください。
     ```
 
-9. 備考
-他環境のリソースを操作できないよう、タグ名（owner_tag,tags_env）を利用しています。<br>
-iam はタグ名（owner_tag,tags_env）から始まるリソースに対してのみ操作できるよう設定しています。<br>
+9. 備考<br>
+タグ名（owner_tag,tags_env）によってリソースを管理しています。<br>
+owner_tag と tags_env が同一のリソースを複数作成することはできません。
