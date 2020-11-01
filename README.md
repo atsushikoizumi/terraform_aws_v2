@@ -2,8 +2,9 @@
 以下のコマンド実行するだけで AWS の各リソース（vpc/subnet/s3/ec2/rds/...etc）を自動的に構築することが可能です。
 ```
 $ cd /User/.../resource/env/dev
-$ terraform init
-$ terraform apply
+$ terraform init       # .tfstate 準備
+$ terraform apply      # 環境構築
+$ terraform output     # 接続情報取得
 ```
 現在は以下のバージョンに対応しています。
 | key       | value                     |
