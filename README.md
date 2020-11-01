@@ -1,5 +1,6 @@
 # terraform_aws_v2
-以下のコマンド実行するだけで AWS の各リソース（vpc/subnet/s3/ec2/rds/...etc）を自動的に構築することが可能です。
+以下のコマンド実行するだけで AWS の各リソース（vpc/subnet/s3/ec2/rds/...etc）を自動的に構築することが可能です。<br>
+さらに、output を活用することでコンソール画面を見ずに、リソースへのアクセスも可能です。
 ```
 $ cd /User/.../resource/env/dev
 $ terraform init       # .tfstate 準備
