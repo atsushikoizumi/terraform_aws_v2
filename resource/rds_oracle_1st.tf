@@ -31,7 +31,7 @@ resource "aws_db_instance" "oracle_1st" {
 
   # backup snapshot
   backup_retention_period   = 1                             # default 7 (days). 0 = disabled.
-  backup_window             = "01:00-01:30"                 # must not overlap with maintenance_window.
+  backup_window             = "17:00-17:30"                 # UTC, must not overlap with maintenance_window.
   copy_tags_to_snapshot     = true                          # default false
   delete_automated_backups  = true                          # default true
   deletion_protection       = false                         # default false
@@ -43,7 +43,7 @@ resource "aws_db_instance" "oracle_1st" {
   option_group_name          = aws_db_option_group.oracle_1st.name
   character_set_name         = "UTF8" # Oracle and Microsoft SQL
   auto_minor_version_upgrade = false  # default true
-  maintenance_window         = "Mon:02:00-Mon:03:00"
+  maintenance_window         = "Sun:18:00-Sun:19:00"  # UTC
 
   # tags
   tags = {

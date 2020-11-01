@@ -33,8 +33,8 @@ resource "aws_rds_cluster" "aurora_postgre_1st" {
   enabled_cloudwatch_logs_exports = ["postgresql"]
 
   # window time
-  preferred_backup_window      = "00:40-01:40"
-  preferred_maintenance_window = "Mon:03:00-Mon:04:00"
+  preferred_backup_window      = "17:00-17:30"  # UTC
+  preferred_maintenance_window = "Sun:18:00-Sun:19:00"  # UTC
 
   # options
   db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.aurora_postgre_1st.name
