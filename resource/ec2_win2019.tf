@@ -32,7 +32,7 @@ data "aws_ami" "win2019_ami" {
 
 # EC2
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance
-resource "aws_instance" "win2019_1" {
+resource "aws_instance" "ec2_win2019" {
   ami           = data.aws_ami.win2019_ami.id
   instance_type = "t3.xlarge"
   key_name      = aws_key_pair.key_pair.key_name
