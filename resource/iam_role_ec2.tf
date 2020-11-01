@@ -48,6 +48,8 @@ resource "aws_iam_policy" "ec2_1" {
                 "s3:PutObject"
             ],
             "Resource": [
+              "arn:aws:s3:::aws-aqua-terraform",
+              "arn:aws:s3:::aws-aqua-terraform/koizumi/windows/*",
               "arn:aws:s3:::${var.tags_owner}-${var.tags_env}-logs",
               "arn:aws:s3:::${var.tags_owner}-${var.tags_env}-logs/*",
               "arn:aws:s3:::${var.tags_owner}-${var.tags_env}-data",
@@ -97,7 +99,7 @@ resource "aws_iam_policy" "ec2_2" {
                 "rds:RebootDBInstance",
                 "rds:RestoreDBClusterFromSnapshot"
             ],
-            "Resource": "arn:aws:rds:::${var.tags_owner}-${var.tags_env}-*"
+            "Resource": "*"
         }
     ]
 }
