@@ -7,7 +7,7 @@ resource "aws_db_instance" "sqlserver_1st" {
   engine_version    = "14.00.3281.6.v1"
   license_model     = "license-included"
   multi_az          = false # default false
-  apply_immediately = false # Specifies whether any database modifications are applied immediately
+  apply_immediately = true  # Specifies whether any database modifications are applied immediately
   username          = "aquadba"
   password          = "Admin123!"
 
