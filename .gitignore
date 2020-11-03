@@ -1,3 +1,4 @@
 .terraform
 .pub
 *.tfstate
+.DS_Store
