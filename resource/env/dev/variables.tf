@@ -22,6 +22,14 @@ variable public_key_path {
   # (mac) /Users/atsushi/.ssh/aws_work.pub
 }
 
+# github
+variable git_account {
+  default = "atsushi.koizumi@aqua-systems.co.jp"
+}
+variable git_pass {
+  default = "Aqua_go_112!"
+}
+
 # サブネットの割当（管理番号により値を変更）
 # 管理番号 1 = (10,11,12,13....18)  # 管理番号 2 = (20,21,22,23....28)
 variable "ec2_subnet" {

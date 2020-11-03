@@ -36,7 +36,27 @@ resource "aws_instance" "ec2_amzn2" {
 
   ### git
   yum install -y git
- 
+  touch /root/.gitconfig
+  echo "[user]" >> /root/.gitconfig
+  echo "name = ${var.tags_owner}-${var.tags_env}" >> /root/.gitconfig
+  echo "email = ${var.git_account}" >> /root/.gitconfig
+  touch /root/.netrc
+  echo "machine github.com" >> /root/.netrc
+  echo "login ${var.git_account}" >> /root/.netrc
+  echo "password ${var.git_pass}" >> /root/.netrc
+  chmod 600 /root/.netrc
+  mkdir /home/ec2-user/github/
+  git clone https://github.com/aqua-labo/mysql_logical_backup_shellscript  /home/ec2-user/github/mysql_logical_backup_shellscript
+  git clone https://github.com/aqua-labo/oracle_audit_shellscript  /home/ec2-user/github/oracle_audit_shellscript
+  git clone https://github.com/aqua-labo/postgresql_audit_shellscript  /home/ec2-user/github/postgresql_audit_shellscript
+  git clone https://github.com/aqua-labo/postgresql_logical_backup_shellscript  /home/ec2-user/github/postgresql_logical_backup_shellscript
+  git clone https://github.com/aqua-labo/isid_env_dev  /home/ec2-user/github/isid_env_dev
+  mv /root/.gitconfig /home/ec2-user/
+  mv /root/.netrc /home/ec2-user/
+  chown -R ec2-user.ec2-user /home/ec2-user/github
+  chown ec2-user.ec2-user /home/ec2-user/.gitconfig
+  chown ec2-user.ec2-user /home/ec2-user/.netrc
+
   ### docker
   amazon-linux-extras install docker
   yum install -y docker

@@ -11,6 +11,10 @@ variable allow_ip {}
 # key pair
 variable public_key_path {}
 
+# github
+variable git_account {}
+variable git_pass {}
+
 # vpc
 variable vpc_id {}
 variable vpc_cidr_block {}
