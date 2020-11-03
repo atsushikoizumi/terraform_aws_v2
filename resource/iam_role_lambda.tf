@@ -68,7 +68,7 @@ POLICY
 # aws_iam_policy_attachment
 resource "aws_iam_policy_attachment" "lambda_1" {
   name       = "lambda_1"
-  roles      = [aws_iam_role.ec2.name]
+  roles      = [aws_iam_role.lambda.name]
   policy_arn = aws_iam_policy.lambda_1.arn
 }
 
