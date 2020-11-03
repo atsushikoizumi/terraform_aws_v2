@@ -21,7 +21,7 @@ POLICY
 
 # Policy
 resource "aws_iam_policy" "lambda_1" {
-  name   = "${var.tags_owner}-${var.tags_env}-lambda-1"
+  name   = "${var.tags_owner}-${var.tags_env}-policy-lambda-1"
   path   = "/"
   policy = <<POLICY
 {
