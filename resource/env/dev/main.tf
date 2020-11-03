@@ -50,6 +50,7 @@ module "resource" {
   public_key_path = var.public_key_path
   git_account     = var.git_account
   git_pass        = var.git_pass
+  rds_stop_flag   = var.rds_stop_flag
 
   # get output.value from vpc
   vpc_id         = data.terraform_remote_state.vpc.outputs.vpc_id

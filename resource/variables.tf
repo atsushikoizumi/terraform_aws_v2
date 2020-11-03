@@ -20,3 +20,6 @@ variable vpc_id {}
 variable vpc_cidr_block {}
 variable rt_id_public {}
 variable rt_id_private {}
+
+# lambda
+variable rds_stop_flag {}

@@ -15,6 +15,12 @@ variable allow_ip {
   # all ip address [0.0.0.0]
 }
 
+# 1時間毎に RDS/Redshift を停止する lambda が動きます。
+# RDS/Redshift を使用するときは、本設定を false に変更してください。
+variable rds_stop_flag {
+  default = true
+}
+
 # ssh キーペアーのパブリックキー
 variable public_key_path {
   default = "/Users/atsushi/.ssh/aws_work.pub" # 相対パス、フルパスの指定も可能
