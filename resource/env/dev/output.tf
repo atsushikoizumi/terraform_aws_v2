@@ -1,3 +1,7 @@
+output "___rds_stop_flag___" {
+  value = var.rds_stop_flag
+}
+
 output "ec2_amzn2" {
   value = module.resource.ec2_amzn2
 }
