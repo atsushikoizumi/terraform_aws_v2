@@ -2,3 +2,4 @@
 .pub
 *.tfstate
 .DS_Store
+python/
