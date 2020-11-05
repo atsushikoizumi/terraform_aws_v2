@@ -51,6 +51,8 @@ module "resource" {
   git_account     = var.git_account
   git_pass        = var.git_pass
   rds_stop_flag   = var.rds_stop_flag
+  layer_zip       = var.layer_zip
+  function_zip    = var.function_zip
 
   # get output.value from vpc
   vpc_id         = data.terraform_remote_state.vpc.outputs.vpc_id

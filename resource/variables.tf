@@ -23,3 +23,5 @@ variable rt_id_private {}
 
 # lambda
 variable rds_stop_flag {}
+variable layer_zip {}
+variable function_zip {}

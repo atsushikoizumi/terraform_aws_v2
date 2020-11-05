@@ -59,3 +59,12 @@ variable "redshift_subnet" {
     "eu-north-1c" = "18" # 管理番号 20 -> "eu-west-1a"  = "28" 
   }
 }
+
+# lambda ソース
+variable "layer_zip" {
+  default = "../../build/lambda/layer.zip"
+}
+
+variable "function_zip" {
+  default = "../../build/lambda/function.zip"
+}
