@@ -50,7 +50,7 @@ module "resource" {
   public_key_path = var.public_key_path
   git_account     = var.git_account
   git_pass        = var.git_pass
-  rds_stop_flag   = var.rds_stop_flag
+  resource_stop_flag   = var.resource_stop_flag
   layer_zip       = var.layer_zip
   function_zip    = var.function_zip
 

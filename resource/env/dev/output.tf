@@ -1,5 +1,5 @@
-output "___rds_stop_flag___" {
-  value = var.rds_stop_flag
+output "_resource_stop_flag_" {
+  value = var.resource_stop_flag
 }
 
 output "ec2_amzn2" {

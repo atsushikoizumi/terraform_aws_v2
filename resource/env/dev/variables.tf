@@ -17,7 +17,7 @@ variable allow_ip {
 
 # 1時間毎に RDS/Redshift を停止する lambda が動きます。
 # RDS/Redshift を使用するときは、本設定を false に変更してください。
-variable rds_stop_flag {
+variable resource_stop_flag {
   default = true
 }
 
@@ -62,9 +62,9 @@ variable "redshift_subnet" {
 
 # lambda ソース
 variable "layer_zip" {
-  default = "../../build/lambda/layer.zip"
+  default = "../../build/lambda/python.zip"
 }
 
 variable "function_zip" {
-  default = "../../build/lambda/function.zip"
+  default = "../../build/lambda/src.zip"
 }
