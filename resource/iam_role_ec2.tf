@@ -142,9 +142,9 @@ resource "aws_iam_policy" "ec2_4" {
         {
             "Effect": "Allow",
             "Action": [
-                "ec2:DescribeImages"
+                "ec2:*"
             ],
-            "Resource": "arn:aws:ecr:::repository/${var.tags_owner}-${var.tags_env}-*"
+            "Resource": "*"
         }
     ]
 }
