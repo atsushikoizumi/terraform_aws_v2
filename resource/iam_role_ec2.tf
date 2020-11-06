@@ -183,6 +183,28 @@ resource "aws_iam_policy" "ec2_5" {
 EOF
 }
 
+# ecr
+resource "aws_iam_policy" "ec2_6" {
+  name = "${var.tags_owner}-${var.tags_env}-policy-ec2-6"
+  path = "/"
+
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "redshift:*"
+            ],
+            "Resource": "*"
+        } 
+    ]
+}
+EOF
+}
+
+
 # aws_iam_policy_attachment
 resource "aws_iam_policy_attachment" "ec2_1" {
   name       = "ec2_1"
@@ -212,4 +234,10 @@ resource "aws_iam_policy_attachment" "ec2_5" {
   name       = "ec2_5"
   roles      = [aws_iam_role.ec2.name]
   policy_arn = aws_iam_policy.ec2_5.arn
+}
+
+resource "aws_iam_policy_attachment" "ec2_6" {
+  name       = "ec2_6"
+  roles      = [aws_iam_role.ec2.name]
+  policy_arn = aws_iam_policy.ec2_6.arn
 }

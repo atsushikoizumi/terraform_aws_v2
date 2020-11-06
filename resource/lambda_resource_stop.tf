@@ -42,6 +42,12 @@ resource "aws_lambda_function" "resource_stop" {
       ec2_win_name = aws_instance.ec2_win2019.tags.Name
     }
   }
+
+  tags = {
+    Owner = var.tags_owner
+    Env   = var.tags_env
+  }
+  
 }
 
 # event schedule
@@ -50,16 +56,20 @@ resource "aws_cloudwatch_event_rule" "resource_stop" {
   description         = "resource stop schedule"
   schedule_expression = "cron(0 * * * ? *)"
   is_enabled          = var.resource_stop_flag
+    tags = {
+    Owner = var.tags_owner
+    Env   = var.tags_env
+  }
 }
 
 resource "aws_cloudwatch_event_target" "resource_stop" {
   rule      = aws_cloudwatch_event_rule.resource_stop.name
-  target_id = "resource_stop"
+  target_id = "${var.tags_owner}-${var.tags_env}-resource-stop"
   arn       = aws_lambda_function.resource_stop.arn
 }
 
 resource "aws_lambda_permission" "resource_stop" {
-  statement_id  = "AllowExecutionFromCloudWatch"
+  statement_id  = "${var.tags_owner}-${var.tags_env}-resource-stop"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.resource_stop.function_name
   principal     = "events.amazonaws.com"

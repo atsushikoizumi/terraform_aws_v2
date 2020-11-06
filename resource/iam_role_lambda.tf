@@ -85,6 +85,27 @@ resource "aws_iam_policy" "lambda_3" {
 POLICY
 }
 
+# redshift
+resource "aws_iam_policy" "lambda_4" {
+  name   = "${var.tags_owner}-${var.tags_env}-policy-lambda-4"
+  path   = "/"
+  policy = <<POLICY
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "redshift:DescribeClusters",
+                "redshift:PauseCluster"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+POLICY
+}
+
 # aws_iam_policy_attachment
 resource "aws_iam_policy_attachment" "lambda_1" {
   name       = "lambda_1"
@@ -102,4 +123,10 @@ resource "aws_iam_policy_attachment" "lambda_3" {
   name       = "lambda_3"
   roles      = [aws_iam_role.lambda.name]
   policy_arn = aws_iam_policy.lambda_3.arn
+}
+
+resource "aws_iam_policy_attachment" "lambda_4" {
+  name       = "lambda_4"
+  roles      = [aws_iam_role.lambda.name]
+  policy_arn = aws_iam_policy.lambda_4.arn
 }

@@ -94,7 +94,7 @@ def lambda_handler(event, context):
                     f += 1
             if str(res['Reservations'][i]['Instances'][0]['Tags'][j]['Key']) == 'Name':
                 # ec2 instance の状態出力
-                print(res['Reservations'][i]['Instances'][0]['Tags'][j]['Value'] + '  ' + res['Reservations'][i]['Instances'][0]['State']['Name'])
+                print(str(datetime.datetime.now()) + ' : ' + res['Reservations'][i]['Instances'][0]['Tags'][j]['Value'] + '  ' + res['Reservations'][i]['Instances'][0]['State']['Name'])
                 if  str(res['Reservations'][i]['Instances'][0]['Tags'][j]['Value']) == os.environ['ec2_win_name']:
                     f += 1
         if f != 3:
@@ -109,3 +109,36 @@ def lambda_handler(event, context):
             InstanceIds = [res['Reservations'][i]['Instances'][0]['InstanceId']]
         )
 
+
+    #
+    # redshift describe_clusters/pause_cluster
+    #
+    redshift = boto3.client('redshift')
+    res = redshift.describe_clusters()
+
+    # DBClusterIdentifier と Status を一覧で取得
+    for i in range(len(res['Clusters'])):
+
+        # タグ名でフィルター Env=dev, Owner=koizumi なら f=2 で処理継続
+        f = 0
+        for j in range(len(res['Clusters'][i]['Tags'])):
+            if str(res['Clusters'][i]['Tags'][j]['Key']) == 'Env':
+                if  str(res['Clusters'][i]['Tags'][j]['Value']) == os.environ['tags_env']:
+                    f += 1
+            if str(res['Clusters'][i]['Tags'][j]['Key']) == 'Owner':
+                if  str(res['Clusters'][i]['Tags'][j]['Value']) == os.environ['tags_owner']:
+                    f += 1
+        if f != 2:
+            continue
+
+        # redshift Clusters の状態出力
+        print(str(datetime.datetime.now()) + ' : ' + res['Clusters'][i]['ClusterIdentifier'] + '  ' + res['Clusters'][i]['ClusterStatus'])
+
+        # ClusterStatus = available は処理
+        if str(res['Clusters'][i]['ClusterStatus']) != 'available':
+            continue
+
+        # db cluster を停止
+        redshift.pause_cluster(
+            ClusterIdentifier = res['Clusters'][i]['ClusterIdentifier']
+        )
