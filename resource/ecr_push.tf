@@ -3,6 +3,18 @@ resource "null_resource" "push_image_1" {
   triggers = {
     endpoint   = aws_instance.ec2_amzn2.public_dns
     repository = aws_ecr_repository.repository_1.repository_url
+    source_code_hash = filebase64sha256("../../build/docker/logical_backup.tar.gz")
+  }
+
+  provisioner "file" {
+    connection {
+      type        = "ssh"
+      host        = aws_instance.ec2_amzn2.public_dns
+      user        = "ec2-user"
+      private_key = file(var.private_key_path)
+    }
+    source      = "../../build/docker/logical_backup.tar.gz"
+    destination = "/tmp/logical_backup.tar.gz"
   }
 
   provisioner "remote-exec" {
@@ -12,10 +24,12 @@ resource "null_resource" "push_image_1" {
       user        = "ec2-user"
       private_key = file(var.private_key_path)
     }
-
     inline = [
-      "touch ~/test.txt",
-      "date >> ~/test.txt"
+      "date >> ~/docker.log",
+      "cp /tmp/logical_backup.tar.gz ./",
+      "tar -zxvf logical_backup.tar.gz",
+      "docker build -t logical_backup:latest ./logical_backup",
+      "docker image ls >> ~/docker.log"
     ]
   }
 }
