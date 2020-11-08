@@ -41,18 +41,18 @@ module "resource" {
   source = "../../../resource/"
 
   # send variable.value to resource
-  tags_owner      = var.tags_owner
-  tags_env        = var.tags_env
-  ec2_subnet      = var.ec2_subnet
-  rds_subnet      = var.rds_subnet
-  redshift_subnet = var.redshift_subnet
-  allow_ip        = var.allow_ip
-  public_key_path = var.public_key_path
-  git_account     = var.git_account
-  git_pass        = var.git_pass
-  resource_stop_flag   = var.resource_stop_flag
-  layer_zip       = var.layer_zip
-  function_zip    = var.function_zip
+  tags_owner         = var.tags_owner
+  tags_env           = var.tags_env
+  ec2_subnet         = var.ec2_subnet
+  rds_subnet         = var.rds_subnet
+  redshift_subnet    = var.redshift_subnet
+  allow_ip           = var.allow_ip
+  public_key_path    = var.public_key_path
+  git_account        = var.git_account
+  git_pass           = var.git_pass
+  resource_stop_flag = var.resource_stop_flag
+  layer_zip          = var.layer_zip
+  function_zip       = var.function_zip
 
   # get output.value from vpc
   vpc_id         = data.terraform_remote_state.vpc.outputs.vpc_id
