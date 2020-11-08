@@ -20,6 +20,18 @@ resource "aws_instance" "ec2_amzn2" {
   }
   associate_public_ip_address = true
   iam_instance_profile        = aws_iam_instance_profile.ec2.name
+
+  # 下記の項目が変更されると強制的にリソースの再作成が行われてしまうのでそれを防ぐ。
+  # ・ami は一定期間で最新版にアップデートされる。
+  # ・associate_public_ip_address はインスタンスがシャットダウンすると false に変更される。
+  lifecycle {
+    ignore_changes = [
+      ami,
+      associate_public_ip_address
+    ]
+  }
+
+  # 初期設定
   user_data                   = <<EOF
   #!/bin/bash
   yum update -y
