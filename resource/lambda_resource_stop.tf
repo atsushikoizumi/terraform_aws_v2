@@ -40,6 +40,7 @@ resource "aws_lambda_function" "resource_stop" {
       tags_owner = var.tags_owner
       tags_env   = var.tags_env
       ec2_win_name = aws_instance.ec2_win2019.tags.Name
+      ec2_amzn_nam = aws_instance.ec2_amzn2.tags.Name
     }
   }
 
