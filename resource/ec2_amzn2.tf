@@ -69,7 +69,7 @@ resource "aws_instance" "ec2_amzn2" {
   git clone https://github.com/aqua-labo/postgresql_audit_shellscript  /home/${var.tags_owner}/github/postgresql_audit_shellscript
   git clone https://github.com/aqua-labo/postgresql_logical_backup_shellscript  /home/${var.tags_owner}/github/postgresql_logical_backup_shellscript
   git clone https://github.com/aqua-labo/isid_env_dev  /home/${var.tags_owner}/github/isid_env_dev
-  git clone 
+  git clone https://github.com/aqua-labo/docker_logikal_backup  /home/${var.tags_owner}/github/docker_logikal_backup
   mv /root/.gitconfig /home/${var.tags_owner}/
   mv /root/.netrc /home/${var.tags_owner}/
   chown -R ${var.tags_owner}.${var.tags_owner} /home/${var.tags_owner}/github
