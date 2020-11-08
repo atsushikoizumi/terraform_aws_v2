@@ -2,7 +2,7 @@
 # ver 1.0
 #
 
-# Terraform version
+# Terraform
 terraform {
   backend "s3" {
     region                  = "eu-west-1"
@@ -22,7 +22,7 @@ provider "aws" {
   version                 = "3.12.0"
 }
 
-# terraform_remote_state
+# get vpc remote state
 data "terraform_remote_state" "vpc" {
   backend = "s3"
 
@@ -53,6 +53,7 @@ module "resource" {
   resource_stop_flag = var.resource_stop_flag
   layer_zip          = var.layer_zip
   function_zip       = var.function_zip
+  private_key_path   = var.private_key_path
 
   # get output.value from vpc
   vpc_id         = data.terraform_remote_state.vpc.outputs.vpc_id
