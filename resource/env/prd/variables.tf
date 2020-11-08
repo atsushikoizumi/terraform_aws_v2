@@ -1,62 +1,27 @@
-# タグ名
-variable tags_owner {
-  default = "koizumi"
-}
-variable tags_env {
-  default = "prd"
-}
-
-# アクセスを許可する ip アドレス
-variable allow_ip {
-  default = ["114.156.135.182/32", "60.104.132.36/32", "126.247.81.226/32"]
-  # aqua 114.156.135.182/32
-  # home 60.104.132.36/32
-  # iphone 126.247.81.226
-  # all ip address [0.0.0.0]
-}
-
-# 1時間毎に RDS/Redshift を停止する lambda が動きます。
-# RDS/Redshift を使用するときは、本設定を false に変更してください。
-variable resource_stop_flag {
-  default = true
-}
-
-# ssh キーペアーのパブリックキー
-variable public_key_path {
-  default = "/Users/atsushi/.ssh/aws_work.pub" # 相対パス、フルパスの指定も可能
-  # (windows) c:\\Users\\atsus\\.ssh\\aws_work.pub
-  # (mac) /Users/atsushi/.ssh/aws_work.pub
-}
-
-# github
-variable git_account {
-  default = "atsushi.koizumi@aqua-systems.co.jp"
-}
-variable git_pass {
-  default = "Aqua_go_112!"
-}
+#
+# サブネットの割当　以外は変更不要
+#
 
 # サブネットの割当（管理番号により値を変更）
-# 管理番号 1 = (10,11,12,13....18)  # 管理番号 2 = (20,21,22,23....28)
 variable "ec2_subnet" {
   default = {
-    "eu-north-1a" = "30" # 管理番号 20 -> "eu-west-1a"  = "20" 
-    "eu-north-1b" = "31" # 管理番号 20 -> "eu-west-1b"  = "21"
-    "eu-north-1c" = "32" # 管理番号 20 -> "eu-west-1c"  = "22"
+    "eu-north-1a" = "30" # subnet id に応じて変更
+    "eu-north-1b" = "31" # subnet id に応じて変更
+    "eu-north-1c" = "32" # subnet id に応じて変更
   }
 }
 variable "rds_subnet" {
   default = {
-    "eu-north-1a" = "33" # 管理番号 20 -> "eu-west-1a"  = "23" 
-    "eu-north-1b" = "34" # 管理番号 20 -> "eu-west-1a"  = "24" 
-    "eu-north-1c" = "35" # 管理番号 20 -> "eu-west-1a"  = "25" 
+    "eu-north-1a" = "33" # subnet id に応じて変更
+    "eu-north-1b" = "34" # subnet id に応じて変更
+    "eu-north-1c" = "35" # subnet id に応じて変更
   }
 }
 variable "redshift_subnet" {
   default = {
-    "eu-north-1a" = "36" # 管理番号 20 -> "eu-west-1a"  = "26" 
-    "eu-north-1b" = "37" # 管理番号 20 -> "eu-west-1a"  = "27" 
-    "eu-north-1c" = "38" # 管理番号 20 -> "eu-west-1a"  = "28" 
+    "eu-north-1a" = "36" # subnet id に応じて変更
+    "eu-north-1b" = "37" # subnet id に応じて変更
+    "eu-north-1c" = "38" # subnet id に応じて変更
   }
 }
 
@@ -64,7 +29,17 @@ variable "redshift_subnet" {
 variable "layer_zip" {
   default = "../../build/lambda/python.zip"
 }
-
 variable "function_zip" {
   default = "../../build/lambda/src.zip"
 }
+
+# 個人設定用
+variable allow_ip {}
+variable resource_stop_flag {}
+variable tags_owner {}
+variable tags_env {}
+variable public_key_path {}
+variable private_key_path {}
+variable git_account {}
+variable git_pass {}
+
