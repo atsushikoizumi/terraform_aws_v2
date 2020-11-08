@@ -10,6 +10,7 @@ variable allow_ip {}
 
 # key pair
 variable public_key_path {}
+variable private_key_path {}
 
 # github
 variable git_account {}
