@@ -44,9 +44,9 @@ $ terraform output     # 接続情報取得
 4. AWS アクセスキー情報登録
 
     credentials に以下の内容を入力してください。<br>
-    profile 名は自身のものに置き換えてください。
+    profile 名 [sample] は自身のものに置き換えてください。
     ```
-    [koizumi]
+    [sample]
     aws_access_key_id = "xxxxxxxxxxxxxxxxxxxx"
     aws_secret_access_key = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
     ```
