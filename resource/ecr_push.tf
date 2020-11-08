@@ -29,7 +29,10 @@ resource "null_resource" "push_image_1" {
       "cp /tmp/logical_backup.tar.gz ./",
       "tar -zxvf logical_backup.tar.gz",
       "docker build -t logical_backup:latest ./logical_backup",
-      "docker image ls >> ~/docker.log"
+      "docker image ls >> ~/docker.log",
+      "aws ecr get-login-password --region ap-northeast-1 | docker login --username AWS --password-stdin 933432669293.dkr.ecr.ap-northeast-1.amazonaws.com",
+      "docker tag sefrom30com/amzn2:20201026 933432669293.dkr.ecr.ap-northeast-1.amazonaws.com/aqua-koizumi-sshd:20201026",
+      "docker push 933432669293.dkr.ecr.ap-northeast-1.amazonaws.com/aqua-koizumi-sshd:20201026"
     ]
   }
 }
