@@ -1,5 +1,6 @@
 .terraform
-.pub
+terraform.tfvars
 *.tfstate
 .DS_Store
+.pub
 python
