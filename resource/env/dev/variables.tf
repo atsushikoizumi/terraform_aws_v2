@@ -34,6 +34,7 @@ variable "function_zip" {
 }
 
 # 個人設定用
+variable aws_account_id {}
 variable allow_ip {}
 variable resource_stop_flag {}
 variable tags_owner {}

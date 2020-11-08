@@ -7,6 +7,7 @@ data "aws_ssm_parameter" "amzn2_ami" {
 # EC2
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance
 resource "aws_instance" "ec2_amzn2" {
+  depends_on    = [aws_ecr_repository.repository_1]
   ami           = data.aws_ssm_parameter.amzn2_ami.value
   instance_type = "t3.micro" # eu-north-1 ではこれが最小サイズ
   key_name      = aws_key_pair.key_pair.key_name
@@ -46,6 +47,11 @@ resource "aws_instance" "ec2_amzn2" {
   ### locale
   sed -ie 's/en_US\.UTF-8/ja_JP\.UTF-8/g' /etc/sysconfig/i18n
 
+  ### useradd
+  useradd ${var.tags_owner}
+  usermod -aG wheel ${var.tags_owner}
+  echo "${var.tags_owner} ALL=NOPASSWD: ALL" >> /etc/sudoers
+
   ### git
   yum install -y git
   touch /root/.gitconfig
@@ -57,22 +63,23 @@ resource "aws_instance" "ec2_amzn2" {
   echo "login ${var.git_account}" >> /root/.netrc
   echo "password ${var.git_pass}" >> /root/.netrc
   chmod 600 /root/.netrc
-  mkdir /home/ec2-user/github/
-  git clone https://github.com/aqua-labo/mysql_logical_backup_shellscript  /home/ec2-user/github/mysql_logical_backup_shellscript
-  git clone https://github.com/aqua-labo/oracle_audit_shellscript  /home/ec2-user/github/oracle_audit_shellscript
-  git clone https://github.com/aqua-labo/postgresql_audit_shellscript  /home/ec2-user/github/postgresql_audit_shellscript
-  git clone https://github.com/aqua-labo/postgresql_logical_backup_shellscript  /home/ec2-user/github/postgresql_logical_backup_shellscript
-  git clone https://github.com/aqua-labo/isid_env_dev  /home/ec2-user/github/isid_env_dev
-  mv /root/.gitconfig /home/ec2-user/
-  mv /root/.netrc /home/ec2-user/
-  chown -R ec2-user.ec2-user /home/ec2-user/github
-  chown ec2-user.ec2-user /home/ec2-user/.gitconfig
-  chown ec2-user.ec2-user /home/ec2-user/.netrc
+  mkdir /home/${var.tags_owner}/github/
+  git clone https://github.com/aqua-labo/mysql_logical_backup_shellscript  /home/${var.tags_owner}/github/mysql_logical_backup_shellscript
+  git clone https://github.com/aqua-labo/oracle_audit_shellscript  /home/${var.tags_owner}/github/oracle_audit_shellscript
+  git clone https://github.com/aqua-labo/postgresql_audit_shellscript  /home/${var.tags_owner}/github/postgresql_audit_shellscript
+  git clone https://github.com/aqua-labo/postgresql_logical_backup_shellscript  /home/${var.tags_owner}/github/postgresql_logical_backup_shellscript
+  git clone https://github.com/aqua-labo/isid_env_dev  /home/${var.tags_owner}/github/isid_env_dev
+  git clone 
+  mv /root/.gitconfig /home/${var.tags_owner}/
+  mv /root/.netrc /home/${var.tags_owner}/
+  chown -R ${var.tags_owner}.${var.tags_owner} /home/${var.tags_owner}/github
+  chown ${var.tags_owner}.${var.tags_owner} /home/${var.tags_owner}/.gitconfig
+  chown ${var.tags_owner}.${var.tags_owner} /home/${var.tags_owner}/.netrc
 
   ### docker
   amazon-linux-extras install docker
   yum install -y docker
-  usermod -a -G docker ec2-user
+  usermod -a -G docker ${var.tags_owner}
   systemctl enable docker
   curl -L https://github.com/docker/compose/releases/download/1.26.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
   chmod +x /usr/local/bin/docker-compose
@@ -97,8 +104,10 @@ resource "aws_instance" "ec2_amzn2" {
   echo "[default]"         >> /root/.aws/config
   echo "region=eu-north-1" >> /root/.aws/config
   echo "output=json"       >> /root/.aws/config
-  cp -r /root/.aws /home/ec2-user/
-  chown -R ec2-user.ec2-user /home/ec2-user/.aws
+  echo "role_arn=arn:aws:iam::${var.aws_account_id}:role/${var.tags_owner}-${var.tags_env}-role-ec2" >> /root/.aws/config
+  echo "credential_source=Ec2InstanceMetadata" >> /root/.aws/config
+  cp -r /root/.aws /home/${var.tags_owner}/
+  chown -R ${var.tags_owner}.${var.tags_owner} /home/${var.tags_owner}/.aws
 
   ### mysql
   yum install -y https://dev.mysql.com/get/mysql80-community-release-el7-3.noarch.rpm
@@ -117,13 +126,19 @@ resource "aws_instance" "ec2_amzn2" {
   curl https://download.oracle.com/otn_software/linux/instantclient/oracle-instantclient-sqlplus-linuxx64.rpm -o oracle-instantclient-sqlplus-linuxx64.rpm
   yum install -y oracle-instantclient-basic-linuxx64.rpm
   yum install -y oracle-instantclient-sqlplus-linuxx64.rpm
-  echo 'export NLS_LANG=Japanese_Japan.AL32UTF8' >> /home/ec2-user/.bash_profile
+  echo 'export NLS_LANG=Japanese_Japan.AL32UTF8' >> /home/${var.tags_owner}/.bash_profile
   
   ### sqlcmd
   curl https://packages.microsoft.com/config/rhel/8/prod.repo > /etc/yum.repos.d/msprod.repo
-  echo 'export PATH=$PATH:/opt/mssql-tools/bin' >> /home/ec2-user/.bash_profile
+  echo 'export PATH=$PATH:/opt/mssql-tools/bin' >> /home/${var.tags_owner}/.bash_profile
   # yum install -y mssql-tools unixODBC-devel   # require "YES" for MS licence
   
+  # push ecr
+  docker build -t logical_backup:latest ./home/${var.tags_owner}/github/docker_logical_backup
+  aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin ${var.aws_account_id}.dkr.ecr.eu-north-1.amazonaws.com
+  docker tag logical_backup:latest ${var.aws_account_id}.dkr.ecr.eu-north-1.amazonaws.com/${var.tags_owner}-${var.tags_env}-repository-1:latest
+  docker push ${var.aws_account_id}.dkr.ecr.eu-north-1.amazonaws.com/${var.tags_owner}-${var.tags_env}-repository-1:latest
+
   # reboot
   reboot
 
