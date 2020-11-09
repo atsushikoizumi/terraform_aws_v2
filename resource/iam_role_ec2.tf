@@ -159,26 +159,24 @@ resource "aws_iam_policy" "ec2_5" {
   policy = <<EOF
 {
     "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "ecr:GetAuthorizationToken"
-            ],
-            "Resource": "*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "ecr:InitiateLayerUpload",
-                "ecr:UploadLayerPart",
-                "ecr:CompleteLayerUpload",
-                "ecr:BatchCheckLayerAvailability",
-                "ecr:PutImage"
-            ],
-            "Resource": "arn:aws:ecr:::repository/${var.tags_owner}-${var.tags_env}-*"
-        } 
-    ]
+    "Statement": [{
+        "Effect": "Allow",
+        "Action": [
+            "ecr:GetAuthorizationToken",
+            "ecr:BatchCheckLayerAvailability",
+            "ecr:GetDownloadUrlForLayer",
+            "ecr:GetRepositoryPolicy",
+            "ecr:DescribeRepositories",
+            "ecr:ListImages",
+            "ecr:DescribeImages",
+            "ecr:BatchGetImage",
+            "ecr:InitiateLayerUpload",
+            "ecr:UploadLayerPart",
+            "ecr:CompleteLayerUpload",
+            "ecr:PutImage"
+        ],
+        "Resource": "*"
+    }]
 }
 EOF
 }
