@@ -51,6 +51,9 @@ resource "aws_instance" "ec2_amzn2" {
   useradd ${var.tags_owner}
   usermod -aG wheel ${var.tags_owner}
   echo "${var.tags_owner} ALL=NOPASSWD: ALL" >> /etc/sudoers
+  mkdir /home/${var.tags_owner}/.ssh/
+  cp /home/ec2-user/.ssh/authorized_keys /home/${var.tags_owner}/.ssh/
+  chown -R ${var.tags_owner}.${var.tags_owner} /home/${var.tags_owner}/.ssh/
 
   ### git
   yum install -y git
@@ -69,7 +72,7 @@ resource "aws_instance" "ec2_amzn2" {
   git clone https://github.com/aqua-labo/postgresql_audit_shellscript  /home/${var.tags_owner}/github/postgresql_audit_shellscript
   git clone https://github.com/aqua-labo/postgresql_logical_backup_shellscript  /home/${var.tags_owner}/github/postgresql_logical_backup_shellscript
   git clone https://github.com/aqua-labo/isid_env_dev  /home/${var.tags_owner}/github/isid_env_dev
-  git clone https://github.com/aqua-labo/docker_logikal_backup  /home/${var.tags_owner}/github/docker_logikal_backup
+  git clone https://github.com/aqua-labo/docker_logikal_backup  /home/${var.tags_owner}/github/docker_logical_backup
   mv /root/.gitconfig /home/${var.tags_owner}/
   mv /root/.netrc /home/${var.tags_owner}/
   chown -R ${var.tags_owner}.${var.tags_owner} /home/${var.tags_owner}/github
@@ -81,6 +84,7 @@ resource "aws_instance" "ec2_amzn2" {
   yum install -y docker
   usermod -a -G docker ${var.tags_owner}
   systemctl enable docker
+  systemctl start docker
   curl -L https://github.com/docker/compose/releases/download/1.26.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
   chmod +x /usr/local/bin/docker-compose
 
@@ -104,8 +108,6 @@ resource "aws_instance" "ec2_amzn2" {
   echo "[default]"         >> /root/.aws/config
   echo "region=eu-north-1" >> /root/.aws/config
   echo "output=json"       >> /root/.aws/config
-  echo "role_arn=arn:aws:iam::${var.aws_account_id}:role/${var.tags_owner}-${var.tags_env}-role-ec2" >> /root/.aws/config
-  echo "credential_source=Ec2InstanceMetadata" >> /root/.aws/config
   cp -r /root/.aws /home/${var.tags_owner}/
   chown -R ${var.tags_owner}.${var.tags_owner} /home/${var.tags_owner}/.aws
 
@@ -134,13 +136,20 @@ resource "aws_instance" "ec2_amzn2" {
   # yum install -y mssql-tools unixODBC-devel   # require "YES" for MS licence
   
   # push ecr
-  docker build -t logical_backup:latest ./home/${var.tags_owner}/github/docker_logical_backup
-  aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin ${var.aws_account_id}.dkr.ecr.eu-north-1.amazonaws.com
-  docker tag logical_backup:latest ${var.aws_account_id}.dkr.ecr.eu-north-1.amazonaws.com/${var.tags_owner}-${var.tags_env}-repository-1:latest
-  docker push ${var.aws_account_id}.dkr.ecr.eu-north-1.amazonaws.com/${var.tags_owner}-${var.tags_env}-repository-1:latest
+  docker build -t logical_backup:ver1.0 /home/${var.tags_owner}/github/docker_logical_backup
+  aws ecr get-login-password | docker login --username AWS --password-stdin ${var.aws_account_id}.dkr.ecr.eu-north-1.amazonaws.com
+  docker tag logical_backup:ver1.0 ${var.aws_account_id}.dkr.ecr.eu-north-1.amazonaws.com/${var.tags_owner}-${var.tags_env}-repository-1:ver1.0
+  docker push ${var.aws_account_id}.dkr.ecr.eu-north-1.amazonaws.com/${var.tags_owner}-${var.tags_env}-repository-1:ver1.0
 
-  # reboot
-  reboot
+  # export env
+  echo 'export TAGS_OWNER=${var.tags_owner}' >> /home/${var.tags_owner}/.bash_profile
+  echo 'export TAGS_ENV=${var.tags_env}' >> /home/${var.tags_owner}/.bash_profile
+  echo 'export AWS_ACCOUNT_ID=${var.aws_account_id}' >> /home/${var.tags_owner}/.bash_profile
+
+  # userdel
+  userdel ec2-user
+
+  # 実行結果の確認  cat /var/log/cloud-init-output.log
 
   EOF
 
