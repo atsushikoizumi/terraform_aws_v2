@@ -8,8 +8,9 @@ resource "aws_db_instance" "sqlserver_1st" {
   license_model     = "license-included"
   multi_az          = false # default false
   apply_immediately = true  # Specifies whether any database modifications are applied immediately
-  username          = "aquadba"
-  password          = "Admin123!"
+  name              = ""    # msut be null
+  username          = "masteruser"
+  password          = var.db_master_password.sqlserver
 
   # storage
   storage_type          = "gp2" # The default is "io1", "gp2", "standard" (magnetic)

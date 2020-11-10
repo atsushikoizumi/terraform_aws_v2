@@ -5,9 +5,9 @@ resource "aws_rds_cluster" "aurora_mysql_1st" {
   engine             = "aurora-mysql"
   engine_version     = "5.7.mysql_aurora.2.08.1"
   engine_mode        = "provisioned" # global,multimaster,parallelquery,serverless, default provisioned
-  master_username    = "aurora"
-  master_password    = "Admin123!"
-  database_name      = "aurora"
+  database_name      = "masterdb"
+  master_username    = "masteruser"
+  master_password    = var.db_master_password.mysql
 
   # storage
   storage_encrypted = false # declare KMS key ARN if true, default false

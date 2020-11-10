@@ -1,3 +1,4 @@
+# fargate task
 resource "aws_ecs_task_definition" "logicalbackup" {
   family                   = "${aws_rds_cluster.aurora_postgre_1st.cluster_identifier}-xx00"
   cpu                      = 256

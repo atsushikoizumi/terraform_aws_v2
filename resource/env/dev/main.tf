@@ -54,6 +54,7 @@ module "resource" {
   layer_zip          = var.layer_zip
   function_zip       = var.function_zip
   private_key_path   = var.private_key_path
+  db_master_password = var.db_master_password
 
   # get output.value from vpc
   vpc_id         = data.terraform_remote_state.vpc.outputs.vpc_id

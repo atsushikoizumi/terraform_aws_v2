@@ -7,9 +7,9 @@ resource "aws_db_instance" "oracle_1st" {
   engine_version = "19.0.0.0.ru-2020-07.rur-2020-07.r1"
   license_model  = "license-included"
   multi_az       = false  # default false
-  name           = "XX00" # must be upper, default ORCL
-  username       = "ADMIN"
-  password       = "Admin123!"
+  name           = "MASTERDB" # must be upper, default ORCL
+  username       = "MASTERUSER"
+  password       = var.db_master_password.oracle
 
   # storage
   storage_type          = "gp2" # The default is "io1", "gp2", "standard" (magnetic)

@@ -2,9 +2,9 @@
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/redshift_cluster
 resource "aws_redshift_cluster" "redshift_1st" {
   cluster_identifier = "${var.tags_owner}-${var.tags_env}-redshift-cls-1st"
-  database_name      = "aqualabo"
-  master_username    = "aquadba"
-  master_password    = "Admin123!"
+  database_name      = "masterdb"
+  master_username    = "masteruser"
+  master_password    = var.db_master_password.redshift
   node_type          = "dc2.large"
   cluster_version    = "1.0"
 

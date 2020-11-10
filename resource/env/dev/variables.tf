@@ -42,4 +42,6 @@ variable public_key_path {}
 variable private_key_path {}
 variable git_account {}
 variable git_pass {}
-
+variable db_master_password {
+  type = map(string)
+}

@@ -5,6 +5,7 @@
 # 1. タグ名
 #    タグ名はサブネット名、セキュリティグループ名、リソース名などにも利用されます。
 #    そのため、途中で変更するとリソースの再作成が実施されますので、途中変更はお勧めしません。
+#
 tags_owner = "sample"
 tags_env   = "test"
 
@@ -14,7 +15,8 @@ tags_env   = "test"
 #    リソースを使用するときは、本設定を false に変更し terraform apply を実行してください。
 #    リソースを使用しないときは、本設定を true に変更し terraform apply を実行してください。
 #    true or false
-resource_stop_flag = true
+#
+resource_stop_flag = false
 
 
 # 3. アクセス許可 ip アドレス
@@ -24,6 +26,7 @@ resource_stop_flag = true
 #    その場合は、都度、接続元の ip address を記述し、terraform apply を実行してください。
 #    以下のように全ての ip address からの接続を許可することもできますが、推奨しません。
 #    allow_ip = [0.0.0.0/0]
+#
 allow_ip = ["111.111.111.111/32", "222.222.222.222/32"]
 
 
@@ -44,7 +47,20 @@ private_key_path = "/Users/user/.ssh/private_key"
 
 # 5. github
 #    自身の github アカウントを指定してください。
-#    ec2_amzn2 のリソース作成時に、アクアラボの各種 repository を自動で ec2-user に clone します。
+#    ec2_amzn2 のリソース作成時に、アクアラボの各種 repository を自動で clone します。
 #    本設定は行わなくてもリソースの作成は問題なく行われます。（git clone コマンドが失敗しますが無視されます。）
+#
 git_account = "xxxxxx"
 git_pass    = "xxxxxx"
+
+
+# 6. rds/redshift password
+#    マスターユーザーのパスワードは以下に設定してください。
+#
+db_master_password = {
+    "postgresql" = "PassW0rd!"
+    "mysql"      = "PassW0rd!"
+    "oracle"     = "PassW0rd!"
+    "sqlserver"  = "PassW0rd!"
+    "redshift"   = "PassW0rd!"
+}

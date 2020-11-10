@@ -5,9 +5,9 @@ resource "aws_rds_cluster" "aurora_postgre_1st" {
   engine             = "aurora-postgresql"
   engine_version     = "11.8"
   engine_mode        = "provisioned" # global,multimaster,parallelquery,serverless, default provisioned
-  database_name      = "aurora"
-  master_username    = "aurora"
-  master_password    = "Admin123!"
+  database_name      = "masterdb"
+  master_username    = "masteruser"
+  master_password    = var.db_master_password.postgresql
 
   # storage
   storage_encrypted = true # declare KMS key ARN if true, default false

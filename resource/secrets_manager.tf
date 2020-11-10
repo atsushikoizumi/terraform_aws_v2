@@ -13,18 +13,6 @@ resource "aws_secretsmanager_secret" "aurora_pass" {
   }
 }
 
-variable "db_master_password" {
-  default = {
-    "postgresql" = "Admin123!"
-    "mysql"      = "Admin123!"
-    "oracle"     = "Admin123!"
-    "sqlserver"  = "Admin123!"
-    "redshift"   = "Admin123!"
-  }
-
-  type = map(string)
-}
-
 resource "aws_secretsmanager_secret_version" "aurora_pass" {
   secret_id     = aws_secretsmanager_secret.aurora_pass.id
   secret_string = jsonencode(var.db_master_password)

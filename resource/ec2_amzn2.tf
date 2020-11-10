@@ -29,8 +29,7 @@ resource "aws_instance" "ec2_amzn2" {
   lifecycle {
     ignore_changes = [
       ami,
-      associate_public_ip_address,
-      user_data
+      associate_public_ip_address
     ]
   }
 
@@ -147,16 +146,9 @@ resource "aws_instance" "ec2_amzn2" {
   # yum install -y mssql-tools unixODBC-devel   # require "YES" for MS licence
   
   # push ecr
-  docker build -t logicalbackup:ver1.0 /home/${var.tags_owner}/github/docker_logical_backup
+  docker build -t ${aws_ecr_repository.logicalbackup.repository_url}:ver1.0 /home/${var.tags_owner}/github/docker_logical_backup
   aws ecr get-login-password | docker login --username AWS --password-stdin ${aws_ecr_repository.logicalbackup.registry_id}.dkr.ecr.eu-north-1.amazonaws.com
-  docker tag logicalbackup:ver1.0 ${aws_ecr_repository.logicalbackup.repository_url}:ver1.0
   docker push ${aws_ecr_repository.logicalbackup.repository_url}:ver1.0
-
-  # export env
-  echo 'export TAGS_OWNER=${var.tags_owner}' >> /home/${var.tags_owner}/.bash_profile
-  echo 'export TAGS_ENV=${var.tags_env}' >> /home/${var.tags_owner}/.bash_profile
-  echo 'export ECR_URI=${aws_ecr_repository.logicalbackup.registry_id}.dkr.ecr.eu-north-1.amazonaws.com' >> /home/${var.tags_owner}/.bash_profile
-  echo 'export ECR_REPOSITORY=${aws_ecr_repository.logicalbackup.name} >> /home/${var.tags_owner}/.bash_profile
 
   # userdel
   userdel ec2-user

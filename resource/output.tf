@@ -14,6 +14,14 @@ output "aurora_mysql_1st_pt" {
   value = aws_rds_cluster.aurora_mysql_1st.port
 }
 
+output "aurora_mysql_1st_db" {
+  value = aws_rds_cluster.aurora_mysql_1st.database_name
+}
+
+output "aurora_mysql_1st_mu" {
+  value = aws_rds_cluster.aurora_mysql_1st.master_username
+}
+
 output "aurora_postgre_1st_ep" {
   value = aws_rds_cluster.aurora_postgre_1st.endpoint
 }
@@ -22,15 +30,42 @@ output "aurora_postgre_1st_pt" {
   value = aws_rds_cluster.aurora_postgre_1st.port
 }
 
-output "oracle_1st" {
+output "aurora_postgre_1st_db" {
+  value = aws_rds_cluster.aurora_postgre_1st.database_name
+}
+
+output "aurora_postgre_1st_mu" {
+  value = aws_rds_cluster.aurora_postgre_1st.master_username
+}
+
+output "oracle_1st_ep" {
   value = aws_db_instance.oracle_1st.endpoint
 }
 
-output "sqlserver_1st" {
+output "oracle_1st_db" {
+  value = aws_db_instance.oracle_1st.name
+}
+
+output "oracle_1st_mu" {
+  value = aws_db_instance.oracle_1st.username
+}
+
+output "sqlserver_1st_ep" {
   value = aws_db_instance.sqlserver_1st.endpoint
 }
 
-output "redshift_1st" {
+output "sqlserver_1st_mu" {
+  value = aws_db_instance.sqlserver_1st.username
+}
+
+output "redshift_1st_ep" {
   value = aws_redshift_cluster.redshift_1st.endpoint
 }
 
+output "redshift_1st_db" {
+  value = aws_redshift_cluster.redshift_1st.database_name
+}
+
+output "redshift_1st_mu" {
+  value = aws_redshift_cluster.redshift_1st.master_username
+}
