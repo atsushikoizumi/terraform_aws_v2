@@ -11,14 +11,15 @@ resource "aws_ecs_task_definition" "logicalbackup" {
 [
     {
         "name": "${aws_rds_cluster.aurora_postgre_1st.cluster_identifier}",
-        "image": "${aws_ecr_repository.logicalbackup.repository_url}:ver1.1",
+        "image": "${aws_ecr_repository.logicalbackup.repository_url}:ver1.2",
         "cpu": 0,
         "memoryReservation": 128,
-        "command": ["${aws_rds_cluster.aurora_postgre_1st.cluster_identifier}"],
+        "command": [],
         "entryPoint": [],
         "portMappings": [],
         "volumesFrom": [],
         "environment": [
+            {"name": "DB_CLUSTER_IDENTIFIER", "value": "${aws_rds_cluster.aurora_postgre_1st.cluster_identifier}"},
             {"name": "DB_NAME", "value": "xx00"},
             {"name": "DB_OWNER", "value": "xx_adm"},
             {"name": "DB_INSTANCE_CLASS", "value": "db.t3.medium"},
@@ -28,7 +29,12 @@ resource "aws_ecs_task_definition" "logicalbackup" {
             {"name": "S3_BUCKET", "value": "${aws_s3_bucket.data.bucket}"},
             {"name": "S3_PREFIX", "value": "backup/rds/postgresql"}
         ],
-        
+        "secrets": [
+          {
+            "name": "${aws_secretsmanager_secret.aurora_pass.name}",
+            "valueFrom": "${aws_secretsmanager_secret.aurora_pass.arn}"
+          }
+        ],
         "essential": true,
         "logConfiguration": {
             "logDriver": "awslogs",
@@ -48,8 +54,6 @@ resource "aws_ecs_task_definition" "logicalbackup" {
     }
 ]
 TASK_DEFINITION
-
-# \"secrets\":[{\"name\":\"DB_PASSWORD\",\"valueFrom\":\"arn:aws:secretsmanager:ap-northeast-1:933432669293:secret:aqua-koizumi/aqua-koizumi-cls-au-pg-dptl-bAukne\"}]
 
   volume {
     name = "${var.tags_owner}-${var.tags_env}-logicalbackup"
