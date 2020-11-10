@@ -1,5 +1,5 @@
 resource "aws_ecs_task_definition" "logicalbackup" {
-  family                   = aws_rds_cluster.aurora_postgre_1st.cluster_identifier
+  family                   = "${aws_rds_cluster.aurora_postgre_1st.cluster_identifier}-xx00"
   cpu                      = 256
   memory                   = 512
   network_mode             = "awsvpc"
@@ -10,8 +10,8 @@ resource "aws_ecs_task_definition" "logicalbackup" {
   container_definitions = <<TASK_DEFINITION
 [
     {
-        "name": "${aws_rds_cluster.aurora_postgre_1st.cluster_identifier}",
-        "image": "${aws_ecr_repository.logicalbackup.repository_url}:ver1.2",
+        "name": "${aws_rds_cluster.aurora_postgre_1st.cluster_identifier}-xx00",
+        "image": "${aws_ecr_repository.logicalbackup.repository_url}:ver1.3",
         "cpu": 0,
         "memoryReservation": 128,
         "command": [],
@@ -21,7 +21,7 @@ resource "aws_ecs_task_definition" "logicalbackup" {
         "environment": [
             {"name": "DB_CLUSTER_IDENTIFIER", "value": "${aws_rds_cluster.aurora_postgre_1st.cluster_identifier}"},
             {"name": "DB_NAME", "value": "xx00"},
-            {"name": "DB_OWNER", "value": "xx_adm"},
+            {"name": "DB_OWNER", "value": "${aws_rds_cluster.aurora_postgre_1st.master_username}"},
             {"name": "DB_INSTANCE_CLASS", "value": "db.t3.medium"},
             {"name": "DB_SUBNET_GROUP", "value": "${aws_db_subnet_group.rds.name}"},
             {"name": "DB_PORT", "value": "${aws_rds_cluster.aurora_postgre_1st.port}"},
@@ -55,6 +55,7 @@ resource "aws_ecs_task_definition" "logicalbackup" {
 ]
 TASK_DEFINITION
 
+  # fargate で efs を利用するときは、タスク実行時の Platform version を1.4以上に指定しなければいけない。
   volume {
     name = "${var.tags_owner}-${var.tags_env}-logicalbackup"
 
