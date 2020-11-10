@@ -7,7 +7,8 @@ data "aws_ssm_parameter" "amzn2_ami" {
 # EC2
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance
 resource "aws_instance" "ec2_amzn2" {
-  depends_on    = [aws_ecr_repository.logicalbackup,aws_efs_mount_target.logicalbackup]
+  
+  # 基本設定
   ami           = data.aws_ssm_parameter.amzn2_ami.value
   instance_type = "t3.micro" # eu-north-1 ではこれが最小サイズ
   key_name      = aws_key_pair.key_pair.key_name
@@ -33,8 +34,11 @@ resource "aws_instance" "ec2_amzn2" {
     ]
   }
 
-  # 初期設定
-  user_data = <<EOF
+  # user_data 内の処理における他リソースとの依存関係は terraform では自動解決できない。
+  depends_on    = [aws_ecr_repository.logicalbackup,aws_efs_mount_target.logicalbackup]
+
+  # 初回起動時に以下のコマンドを root で自動実行
+  user_data     = <<EOF
   #!/bin/bash
   yum update -y
   yum install -y curl
