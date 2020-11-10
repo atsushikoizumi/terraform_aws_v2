@@ -12,7 +12,7 @@ resource "aws_ecs_task_definition" "logicalbackup" {
 [
     {
         "name": "${aws_rds_cluster.aurora_postgre_1st.cluster_identifier}-xx00",
-        "image": "${aws_ecr_repository.logicalbackup.repository_url}:ver1.3",
+        "image": "${aws_ecr_repository.logicalbackup.repository_url}:ver1.4",
         "cpu": 0,
         "memoryReservation": 128,
         "command": [],
