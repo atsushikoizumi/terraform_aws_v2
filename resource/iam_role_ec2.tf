@@ -118,12 +118,14 @@ resource "aws_iam_policy" "ec2_3" {
         {
             "Effect": "Allow",
             "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
                 "logs:DescribeLogGroups",
                 "logs:DescribeLogStreams",
                 "logs:GetLogEvents",
                 "logs:PutLogEvents"
             ],
-            "Resource": "arn:aws:logs:::${var.tags_owner}-${var.tags_env}-*"
+            "Resource": "*"
         }
     ]
 }

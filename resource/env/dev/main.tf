@@ -41,7 +41,6 @@ module "resource" {
   source = "../../../resource/"
 
   # send variable.value to resource
-  aws_account_id     = var.aws_account_id
   tags_owner         = var.tags_owner
   tags_env           = var.tags_env
   ec2_subnet         = var.ec2_subnet

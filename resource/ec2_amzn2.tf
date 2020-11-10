@@ -7,7 +7,7 @@ data "aws_ssm_parameter" "amzn2_ami" {
 # EC2
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance
 resource "aws_instance" "ec2_amzn2" {
-  depends_on    = [aws_ecr_repository.repository_1]
+  depends_on    = [aws_ecr_repository.logicalbackup,aws_efs_mount_target.logicalbackup]
   ami           = data.aws_ssm_parameter.amzn2_ami.value
   instance_type = "t3.micro" # eu-north-1 ではこれが最小サイズ
   key_name      = aws_key_pair.key_pair.key_name
@@ -28,12 +28,13 @@ resource "aws_instance" "ec2_amzn2" {
   lifecycle {
     ignore_changes = [
       ami,
-      associate_public_ip_address
+      associate_public_ip_address,
+      user_data
     ]
   }
 
   # 初期設定
-  user_data                   = <<EOF
+  user_data = <<EOF
   #!/bin/bash
   yum update -y
   yum install -y curl
@@ -73,6 +74,7 @@ resource "aws_instance" "ec2_amzn2" {
   git clone https://github.com/aqua-labo/postgresql_logical_backup_shellscript  /home/${var.tags_owner}/github/postgresql_logical_backup_shellscript
   git clone https://github.com/aqua-labo/isid_env_dev  /home/${var.tags_owner}/github/isid_env_dev
   git clone https://github.com/aqua-labo/docker_logikal_backup  /home/${var.tags_owner}/github/docker_logical_backup
+  git clone https://github.com/atsushikoizumi/sql_syntax /home/${var.tags_owner}/github/sql_syntax
   mv /root/.gitconfig /home/${var.tags_owner}/
   mv /root/.netrc /home/${var.tags_owner}/
   chown -R ${var.tags_owner}.${var.tags_owner} /home/${var.tags_owner}/github
@@ -111,6 +113,12 @@ resource "aws_instance" "ec2_amzn2" {
   cp -r /root/.aws /home/${var.tags_owner}/
   chown -R ${var.tags_owner}.${var.tags_owner} /home/${var.tags_owner}/.aws
 
+  ### amazon-efs-utils
+  yum install -y amazon-efs-utils
+  mkdir /home/koizumi/efs
+  chown ${var.tags_owner}.${var.tags_owner} /home/koizumi/efs
+  mount -t nfs -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport fs-26d86ab7.efs.eu-north-1.amazonaws.com:/ /home/koizumi/efs
+
   ### mysql
   yum install -y https://dev.mysql.com/get/mysql80-community-release-el7-3.noarch.rpm
   yum install -y yum-utils
@@ -136,15 +144,16 @@ resource "aws_instance" "ec2_amzn2" {
   # yum install -y mssql-tools unixODBC-devel   # require "YES" for MS licence
   
   # push ecr
-  docker build -t logical_backup:ver1.0 /home/${var.tags_owner}/github/docker_logical_backup
-  aws ecr get-login-password | docker login --username AWS --password-stdin ${var.aws_account_id}.dkr.ecr.eu-north-1.amazonaws.com
-  docker tag logical_backup:ver1.0 ${var.aws_account_id}.dkr.ecr.eu-north-1.amazonaws.com/${var.tags_owner}-${var.tags_env}-repository-1:ver1.0
-  docker push ${var.aws_account_id}.dkr.ecr.eu-north-1.amazonaws.com/${var.tags_owner}-${var.tags_env}-repository-1:ver1.0
+  docker build -t logicalbackup:ver1.0 /home/${var.tags_owner}/github/docker_logical_backup
+  aws ecr get-login-password | docker login --username AWS --password-stdin ${aws_ecr_repository.logicalbackup.registry_id}.dkr.ecr.eu-north-1.amazonaws.com
+  docker tag logicalbackup:ver1.0 ${aws_ecr_repository.logicalbackup.repository_url}:ver1.0
+  docker push ${aws_ecr_repository.logicalbackup.repository_url}:ver1.0
 
   # export env
   echo 'export TAGS_OWNER=${var.tags_owner}' >> /home/${var.tags_owner}/.bash_profile
   echo 'export TAGS_ENV=${var.tags_env}' >> /home/${var.tags_owner}/.bash_profile
-  echo 'export AWS_ACCOUNT_ID=${var.aws_account_id}' >> /home/${var.tags_owner}/.bash_profile
+  echo 'export ECR_URI=${aws_ecr_repository.logicalbackup.registry_id}.dkr.ecr.eu-north-1.amazonaws.com' >> /home/${var.tags_owner}/.bash_profile
+  echo 'export ECR_REPOSITORY=${aws_ecr_repository.logicalbackup.name} >> /home/${var.tags_owner}/.bash_profile
 
   # userdel
   userdel ec2-user

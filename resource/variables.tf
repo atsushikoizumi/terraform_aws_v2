@@ -7,7 +7,6 @@ variable ec2_subnet {}
 variable rds_subnet {}
 variable redshift_subnet {}
 variable allow_ip {}
-variable aws_account_id {}
 
 # key pair
 variable public_key_path {}
