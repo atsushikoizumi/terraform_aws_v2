@@ -1,3 +1,7 @@
+#
+# null_resource は便利だが非推奨と公式にも書かれている。
+#
+
 # push repository
 resource "null_resource" "push_image_1" {
   triggers = {
