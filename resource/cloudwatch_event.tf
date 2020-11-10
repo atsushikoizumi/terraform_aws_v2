@@ -4,7 +4,7 @@ resource "aws_cloudwatch_event_rule" "resource_stop" {
   description         = "resource stop schedule"
   schedule_expression = "cron(0 * * * ? *)"
   is_enabled          = var.resource_stop_flag
-    tags = {
+  tags = {
     Owner = var.tags_owner
     Env   = var.tags_env
   }

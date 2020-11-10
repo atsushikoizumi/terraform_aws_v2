@@ -37,8 +37,8 @@ resource "aws_lambda_function" "resource_stop" {
 
   environment {
     variables = {
-      tags_owner = var.tags_owner
-      tags_env   = var.tags_env
+      tags_owner   = var.tags_owner
+      tags_env     = var.tags_env
       ec2_win_name = aws_instance.ec2_win2019.tags.Name
       ec2_amzn_nam = aws_instance.ec2_amzn2.tags.Name
     }
@@ -48,7 +48,7 @@ resource "aws_lambda_function" "resource_stop" {
     Owner = var.tags_owner
     Env   = var.tags_env
   }
-  
+
 }
 
 resource "aws_lambda_permission" "resource_stop" {

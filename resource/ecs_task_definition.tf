@@ -1,11 +1,11 @@
 resource "aws_ecs_task_definition" "logicalbackup" {
-  family                = aws_rds_cluster.aurora_postgre_1st.cluster_identifier
-  cpu                   = 256
-  memory                = 512
-  network_mode          = "awsvpc"
+  family                   = aws_rds_cluster.aurora_postgre_1st.cluster_identifier
+  cpu                      = 256
+  memory                   = 512
+  network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  execution_role_arn    = aws_iam_role.ec2.arn
-  task_role_arn         = aws_iam_role.ec2.arn
+  execution_role_arn       = aws_iam_role.ec2.arn
+  task_role_arn            = aws_iam_role.ec2.arn
 
   container_definitions = <<TASK_DEFINITION
 [
@@ -59,9 +59,9 @@ TASK_DEFINITION
     name = "${var.tags_owner}-${var.tags_env}-logicalbackup"
 
     efs_volume_configuration {
-      file_system_id          = aws_efs_file_system.logicalbackup.id
-      root_directory          = "/"
-      transit_encryption      = "DISABLED"
+      file_system_id     = aws_efs_file_system.logicalbackup.id
+      root_directory     = "/"
+      transit_encryption = "DISABLED"
       #transit_encryption_port = 0
       authorization_config {
         access_point_id = ""

@@ -58,7 +58,7 @@ resource "aws_instance" "ec2_win2019" {
   }
 
   # 初期設定
-  user_data                   = <<EOF
+  user_data = <<EOF
   <powershell>
   New-LocalUser -Name win2019 -Password (ConvertTo-SecureString "Admin123!" -AsPlainText -Force) -PasswordNeverExpires
   Add-LocalGroupMember -Group Administrators -Member win2019
@@ -67,7 +67,7 @@ resource "aws_instance" "ec2_win2019" {
   Set-TimeZone -Id "Tokyo Standard Time"
   </powershell>
   EOF
-  
+
   tags = {
     Name  = "${var.tags_owner}-${var.tags_env}-win2019"
     Owner = var.tags_owner

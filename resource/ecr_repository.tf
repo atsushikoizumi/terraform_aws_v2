@@ -9,7 +9,7 @@ resource "aws_ecr_repository" "logicalbackup" {
   image_scanning_configuration {
     scan_on_push = true
   }
-    tags = {
+  tags = {
     Owner = var.tags_owner
     Env   = var.tags_env
   }
