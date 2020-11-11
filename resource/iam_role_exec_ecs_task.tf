@@ -2,7 +2,7 @@
 # https://github.com/turnerlabs/terraform-ecs-fargate-scheduled-task/blob/master/env/dev/ecs.tf
 #
 # ecsTaskExecutionRole:   AssumeRole = ecs-tasks.amazonaws.com
-#                         policy     = AmazonECSTaskExecutionRolePolicy
+#                         policy     = ecr,logs,secretsmanager,kms
 # cloudwatch_events_role: AssumeRole = events.amazonaws.com
 #                         policy     = ecs:RunTask to ecs-task
 #                         passrole   = ec2_role,ecsTaskExecutionRole
