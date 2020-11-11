@@ -22,7 +22,7 @@ resource "aws_cloudwatch_event_target" "resource_stop" {
 resource "aws_cloudwatch_event_rule" "logicalbackup" {
   name                = "${var.tags_owner}-${var.tags_env}-logicalbackup"
   description         = "rds logicalbackup schedule"
-  schedule_expression = "cron(0 2 * * ? *)"
+  schedule_expression = "cron(*/10 * * * ? *)"
   is_enabled          = true
   tags = {
     Owner = var.tags_owner
