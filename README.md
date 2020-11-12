@@ -8,7 +8,7 @@ $ terraform apply      # 環境構築
 $ terraform output     # 接続情報取得
 ```
 現在は以下のバージョンに対応しています。
-| key       | value                     |
+| provider  | version                   |
 | --------- | ------------------------- |
 | terraform | 0.13.5                    |
 | aws       | 3.12.0                    |
