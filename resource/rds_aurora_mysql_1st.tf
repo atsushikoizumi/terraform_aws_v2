@@ -36,7 +36,7 @@ resource "aws_rds_cluster" "aurora_mysql_1st" {
   db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.aurora_mysql_1st.name
 
   # window time
-  preferred_backup_window      = "17:30-18:00"         # UTC
+  preferred_backup_window      = "07:00-07:30"         # UTC
   preferred_maintenance_window = "Sun:18:00-Sun:19:00" # UTC
 
   # tags
