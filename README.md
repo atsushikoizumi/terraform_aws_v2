@@ -12,7 +12,7 @@ $ terraform output     # 接続情報取得
 | --------- | ------------------------- |
 | terraform | 0.13.5                    |
 | aws       | 3.12.0                    |
-| region    | eu-north-1（ストックホルム） |
+| python    | 3.8.6                     |
 
 # 利用タグ一覧
 利用タグ（Owner/Env）の組み合わせ毎にサブネットを割り当てています。<br>
@@ -37,11 +37,15 @@ $ terraform output     # 接続情報取得
     https://dev.classmethod.jp/articles/try-terraform-on-windows/<br>
     https://proengineer.internous.co.jp/content/columnfeature/5205
 
-3. credentials 作成
+3. python3系(3.8)のインストール
+
+    インストール手順に関する情報はネットに溢れているため割愛します。
+
+4. credentials 作成
 
     空のファイル C:¥user¥.aws¥credentials を作成してください。
 
-4. AWS アクセスキー情報登録
+5. AWS アクセスキー情報登録
 
     credentials に以下の内容を入力してください。<br>
     profile 名 [sample] は自身のものに置き換えてください。
@@ -51,7 +55,7 @@ $ terraform output     # 接続情報取得
     aws_secret_access_key = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
     ```
 
-5. s3 バケット作成
+6. s3 バケット作成
 
     terraform は .tfstate というファイルでリソースの状態を保持します。<br>
     セキュリティや運用の観点からローカルに保存するのではなく、s3 に置くことが推奨されています。<br>
@@ -65,8 +69,13 @@ vpc を管理する module です。この module は変更しないでくださ
 
 # module resource
 AWS の各リソースを作成するための module です。<br>
-各リソースの細かいパラメーターを変更する際は、この module 配下の .tf ファイルを編集してください。
+各リソースの細かいパラメーターを変更する際は、この module 配下の .tf ファイルを編集してください。<br>
+また、lambda で使用するソースのレイヤーを作成するため、python のライブラリをインストールします。<br>
+python のライブラリインストール手順の詳細は resource 階層の README を参照ください。
 
 # module resource/env/dev
 環境情報をこの module で管理しています。<br>
-terraform apply 実行前に、resource/env/dev 配下の環境設定ファイル（main.tf/variable.tf）を編集してください。
+terraform apply 実行前に、resource/env/dev 配下の環境設定ファイル（main.tf/variable.tf）を編集します。<br>
+詳細は、resource/env/dev 階層にある README を参照ください。<br>
+
+以上です。
