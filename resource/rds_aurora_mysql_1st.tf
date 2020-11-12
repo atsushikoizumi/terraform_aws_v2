@@ -23,7 +23,7 @@ resource "aws_rds_cluster" "aurora_mysql_1st" {
 
   # backup snapshot
   backtrack_window          = 0                                                        # default 0
-  backup_retention_period   = 3                                                        # must be between 1 and 35. default 1 (days)
+  backup_retention_period   = 8                                                        # must be between 1 and 35. default 1 (days)
   copy_tags_to_snapshot     = true                                                     # default false
   deletion_protection       = false                                                    # default false
   skip_final_snapshot       = true                                                     # default false
@@ -36,7 +36,7 @@ resource "aws_rds_cluster" "aurora_mysql_1st" {
   db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.aurora_mysql_1st.name
 
   # window time
-  preferred_backup_window      = "17:00-17:30"         # UTC
+  preferred_backup_window      = "17:30-18:00"         # UTC
   preferred_maintenance_window = "Sun:18:00-Sun:19:00" # UTC
 
   # tags

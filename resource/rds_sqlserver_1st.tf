@@ -31,7 +31,7 @@ resource "aws_db_instance" "sqlserver_1st" {
   enabled_cloudwatch_logs_exports = ["agent", "error"]
 
   # backup snapshot
-  backup_retention_period   = 1                                                 # default 7 (days). 0 = disabled.
+  backup_retention_period   = 8                                                 # default 7 (days). 0 = disabled.
   copy_tags_to_snapshot     = true                                              # default false
   delete_automated_backups  = true                                              # default true
   deletion_protection       = false                                             # default false
@@ -39,7 +39,7 @@ resource "aws_db_instance" "sqlserver_1st" {
   final_snapshot_identifier = "${var.tags_owner}-${var.tags_env}-sqlserver-1st" # must be provided if skip_final_snapshot is set to false.
 
   # window time
-  backup_window      = "17:00-17:30"         # UTC, must not overlap with maintenance_window.
+  backup_window      = "17:30-18:00"         # UTC, must not overlap with maintenance_window.
   maintenance_window = "Sun:18:00-Sun:19:00" # UTC
 
   # options

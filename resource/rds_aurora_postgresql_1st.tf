@@ -23,7 +23,7 @@ resource "aws_rds_cluster" "aurora_postgre_1st" {
   # https://github.com/terraform-providers/terraform-provider-aws/issues/9552
 
   # backup snapshot
-  backup_retention_period   = 3                                                           # must be between 1 and 35. default 1 (days)
+  backup_retention_period   = 8                                                           # must be between 1 and 35. default 1 (days)
   copy_tags_to_snapshot     = true                                                        # default false
   deletion_protection       = false                                                       # default false
   skip_final_snapshot       = true                                                        # default false
@@ -33,7 +33,7 @@ resource "aws_rds_cluster" "aurora_postgre_1st" {
   enabled_cloudwatch_logs_exports = ["postgresql"]
 
   # window time
-  preferred_backup_window      = "17:00-17:30"         # UTC
+  preferred_backup_window      = "17:30-18:00"         # UTC
   preferred_maintenance_window = "Sun:18:00-Sun:19:00" # UTC
 
   # options

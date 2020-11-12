@@ -30,8 +30,8 @@ resource "aws_db_instance" "oracle_1st" {
   enabled_cloudwatch_logs_exports = ["alert", "audit", "listener", "trace"]
 
   # backup snapshot
-  backup_retention_period   = 1                                                 # default 7 (days). 0 = disabled.
-  backup_window             = "17:00-17:30"                                     # UTC, must not overlap with maintenance_window.
+  backup_retention_period   = 8                                                 # default 7 (days). 0 = disabled.
+  backup_window             = "17:30-18:00"                                     # UTC, must not overlap with maintenance_window.
   copy_tags_to_snapshot     = true                                              # default false
   delete_automated_backups  = true                                              # default true
   deletion_protection       = false                                             # default false
