@@ -54,6 +54,8 @@ resource "aws_iam_policy" "lambda_2" {
             "Action": [
                 "rds:DescribeDBClusters",
                 "rds:DescribeDBInstances",
+                "rds:StartDBCluster",
+                "rds:StartDBInstance",
                 "rds:StopDBCluster",
                 "rds:StopDBInstance"
             ],
