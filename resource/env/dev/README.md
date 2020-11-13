@@ -83,6 +83,7 @@ AWS の環境情報を管理する module です。<br>
 
     上記で取得した接続情報をもとに、リソースへアクセスが可能です。<br>
     接続のユーザー名とパスワードは以下です。
+
     | ec2         | 初期ユーザー     | パスワード                                    |
     | ----------- | -------------- | ------------------------------------------- |
     | ec2_amzn2   | ${tags_owner}  | なし                                         |
@@ -90,6 +91,29 @@ AWS の環境情報を管理する module です。<br>
 
     ※デフォルトの ec2-user は削除しています。<br>
     ※初期ユーザーに sudo権限、Adminidtrator権限を付与していますので問題なく操作できます。
+
+6. ec2 の設定情報
+
+    事前に以下の設定を行なっています。<br>
+
+    ```
+    [ec2_amzn2]
+    日本時間設定
+    日本語設定
+    パッケージのインストール
+      - curl,unzip,jq,psql,sqlplus,git,docker,python3.8,amazon-efs-utils 
+      - sqlcmd は以下のコマンドでインストールしてください。
+        sudo yum install -y mssql-tools unixODBC-devel
+    Aqua-Lab.の各種repositpryを~/github配下にclone済みです。
+    efsが~/efsにマウント済みです。
+
+    [ec2_win2019]
+    "C:\applications" によく使用するアプリケーション（exe）を配置しています。
+    ```
+
+7. rds/redshift の設定情報
+
+    コンソールからご確認ください。
 
 9. 備考<br>
 タグ名（owner_tag,tags_env）によってリソースを管理しています。<br>

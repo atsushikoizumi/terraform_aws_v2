@@ -23,7 +23,7 @@ resource "aws_cloudwatch_event_rule" "resource_start" {
   name                = "${var.tags_owner}-${var.tags_env}-resource-start"
   description         = "resource start schedule"
   schedule_expression = "cron(30 6 * * ? *)"  # UTC
-  is_enabled          = true
+  is_enabled          = var.logical_backup_flag
   tags = {
     Owner = var.tags_owner
     Env   = var.tags_env
@@ -43,7 +43,7 @@ resource "aws_cloudwatch_event_rule" "logicalbackup" {
   name                = "${var.tags_owner}-${var.tags_env}-logicalbackup"
   description         = "rds logicalbackup schedule"
   schedule_expression = "cron(30 7 * * ? *)"  # UTC
-  is_enabled          = true
+  is_enabled          = var.logical_backup_flag
   tags = {
     Owner = var.tags_owner
     Env   = var.tags_env

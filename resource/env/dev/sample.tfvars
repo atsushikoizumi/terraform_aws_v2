@@ -58,26 +58,27 @@ git_pass    = "xxxxxx"
 #    各リソースのAdministrator/masteruserのパスワードは以下に設定してください。
 #
 db_master_password = {
-    "windows2019" = "PassW0rd!"
-    "postgresql"  = "PassW0rd!"
-    "postgresql2" = "PassW0rd!"
-    "mysql"       = "PassW0rd!"
-    "mysql2"      = "PassW0rd!"
-    "oracle"      = "PassW0rd!"
-    "oracle2"     = "PassW0rd!"
-    "sqlserver"   = "PassW0rd!"
-    "sqlserver2"  = "PassW0rd!"
-    "redshift2"   = "PassW0rd!"
+  "windows2019" = "PassW0rd!"
+  "postgresql"  = "PassW0rd!"
+  "postgresql2" = "PassW0rd!"
+  "mysql"       = "PassW0rd!"
+  "mysql2"      = "PassW0rd!"
+  "oracle"      = "PassW0rd!"
+  "oracle2"     = "PassW0rd!"
+  "sqlserver"   = "PassW0rd!"
+  "sqlserver2"  = "PassW0rd!"
+  "redshift2"   = "PassW0rd!"
 }
 
 
 # 7. RDS 論理バックアップ実行フラグ
-#    毎日深夜の3時から、RDSインスタンス（****_1st）のみを起動させ、DBの論理バックアップを取得します。
-#    実行条件として、fargate task で指定した DB_NAME が対象DBに存在しない場合、処理が失敗します。
-#    そのため、defalut では false としています。 
+#    毎日深夜の3時30分からDBの論理バックアップを取得します。
+#    最新の自動バックアップから、インスタンスをリストアして論理バックアップを取得します。
+#    準備として、fargate task で対象DB（DB_NAME）を指定します。
+#    本設定は、defalut では false としています。 
 #
 #    [使用方法]
-#    対象RDSインスタンス（****_1st）に、fargate task で指定した DB_NAME を作成してください。
+#    fargate task で 対象RDSインスタンス（****_1st）の DB_NAME を指定してください。
 #    次に、本設定を true に変更し terraform apply を実行してください。
 #    論理バックアップを使用しないときは、本設定を false に変更し terraform apply を実行してください。
 #    true or false

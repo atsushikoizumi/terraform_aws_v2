@@ -45,3 +45,4 @@ variable git_pass {}
 variable db_master_password {
   type = map(string)
 }
+variable logical_backup_flag {}
