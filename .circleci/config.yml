@@ -1,8 +1,11 @@
+verion: 2
 jobs:
-  build:
+  test:
+    working_directory: ~/terraform_aws_v2
     docker:
       - image: hashicorp/terraform:latest
     steps:
       - checkout
-      - run: terraform plan
-      
+      - run:
+        name: Init terraform
+        command: terraform init ~/terraform_aws_v2
