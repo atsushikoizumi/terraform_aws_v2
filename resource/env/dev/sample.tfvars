@@ -7,7 +7,7 @@
 #    そのため、途中で変更するとリソースの再作成が実施されますので、途中変更はお勧めしません。
 #
 tags_owner = "sample"
-tags_env   = "test"
+tags_env   = "dev"
 
 
 # 2. 有料リソース停止フラグ
@@ -22,7 +22,7 @@ resource_stop_flag = false
 # 3. アクセス許可 ip アドレス
 #    ec2/ecs にアクセスを許可する ip address を指定することができます。
 #    基本的には、会社と自宅の ip address のみを指定することを推奨します。
-#    ポケットwifiを使用している場合、アクセスの都度 ip address が変動する場合があります。
+#    ポケットWiFiを使用している場合、アクセスの都度 ip address が変動する場合があります。
 #    その場合は、都度、接続元の ip address を記述し、terraform apply を実行してください。
 #    以下のように全ての ip address からの接続を許可することもできますが、推奨しません。
 #    allow_ip = [0.0.0.0/0]
@@ -31,11 +31,11 @@ allow_ip = ["111.111.111.111/32", "222.222.222.222/32"]
 
 
 # 4. ssh key
-#    SSHキーを自分で作成し保管してください。
+#    キーを自分で作成し保管してください。
 #    パスの指定方法は絶対パス、相対パスどちらも設定可能です。
 #
 #    4-1. 絶対パス
-#      (windows) c:\\Users\\user\\.ssh\\public_key
+#      (windows) C:\\Users\\user\\.ssh\\public_key
 #      (mac)     /Users/user/.ssh/public_key
 #      (linux)   /home/user/.ssh/public_key
 #    4-2. 相対パス（terraform apply を実行するパスから見て）
@@ -50,7 +50,7 @@ private_key_path = "/Users/user/.ssh/private_key"
 #    ec2_amzn2 のリソース作成時に、アクアラボの各種 repository を自動で clone します。
 #    本設定は行わなくてもリソースの作成は問題なく行われます。（git clone コマンドが失敗しますが無視されます。）
 #
-git_account = "xxxxxx"
+git_account = "xxxxxx@aaaaa.com"
 git_pass    = "xxxxxx"
 
 
@@ -58,9 +58,27 @@ git_pass    = "xxxxxx"
 #    マスターユーザーのパスワードは以下に設定してください。
 #
 db_master_password = {
-    "postgresql" = "PassW0rd!"
-    "mysql"      = "PassW0rd!"
-    "oracle"     = "PassW0rd!"
-    "sqlserver"  = "PassW0rd!"
-    "redshift"   = "PassW0rd!"
+    "postgresql"  = "PassW0rd!"
+    "postgresql2" = "PassW0rd!"
+    "mysql"       = "PassW0rd!"
+    "mysql2"      = "PassW0rd!"
+    "oracle"      = "PassW0rd!"
+    "oracle2"     = "PassW0rd!"
+    "sqlserver"   = "PassW0rd!"
+    "sqlserver2"  = "PassW0rd!"
+    "redshift2"   = "PassW0rd!"
 }
+
+
+# 7. RDS 論理バックアップ実行フラグ
+#    毎日深夜の3時から、RDSインスタンス（****_1st）のみを起動させ、DBの論理バックアップを取得します。
+#    実行条件として、fargate task で指定した DB_NAME が対象DBに存在しない場合、処理が失敗します。
+#    そのため、defalut では false としています。 
+#
+#    [使用方法]
+#    対象RDSインスタンス（****_1st）に、fargate task で指定した DB_NAME を作成してください。
+#    次に、本設定を true に変更し terraform apply を実行してください。
+#    論理バックアップを使用しないときは、本設定を false に変更し terraform apply を実行してください。
+#    true or false
+#
+logical_backup_flag = false
