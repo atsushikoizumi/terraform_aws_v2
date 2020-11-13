@@ -4,3 +4,4 @@ terraform.tfvars
 .DS_Store
 .pub
 python
+get_tfstate_koizumi.sh
