@@ -51,7 +51,7 @@ resource "aws_ecs_task_definition" "logicalbackup_mypg_1" {
         },
         "mountPoints": [
             {
-                "containerPath": "/root/logs",
+                "containerPath": "/root/efs",
                 "sourceVolume": "${var.tags_owner}-${var.tags_env}-logicalbackup"
             } 
         ]
@@ -135,7 +135,7 @@ resource "aws_ecs_task_definition" "logicalbackup_mypg_2" {
         },
         "mountPoints": [
             {
-                "containerPath": "/root/logs",
+                "containerPath": "/root/efs",
                 "sourceVolume": "${var.tags_owner}-${var.tags_env}-logicalbackup"
             } 
         ]
