@@ -23,43 +23,35 @@ $ terraform output     # 接続情報取得
 | 3  | koizumi  | prd | 30 - 39   |
 
 # 前提
-コマンド実行前に、以下のことが必要です。
-1. terraform.exe を取得
+事前に以下の設定を実施する必要があります。
+```
+  1. terraform.exe をダウンロード、PATH を通す。
 
-    下記URL より terraform.exe をダウンロード<br>
-    https://www.terraform.io/downloads.html<br>
-    ※ Windows であれば、terraform.exe をダウンロードして PATH を通すだけです。
+    https://www.terraform.io/downloads.html
 
-2. terraform.exe へ PATH を通す。
 
-    PATH の通し方がわからない場合は、以下のURL等を参考にしてください。<br>
-    https://qiita.com/miwato/items/b7e66cb087666c3f9583<br>
-    https://dev.classmethod.jp/articles/try-terraform-on-windows/<br>
-    https://proengineer.internous.co.jp/content/columnfeature/5205
+  2. python3系(3.8)のインストール
 
-3. python3系(3.8)のインストール
+    インストール手順はネットで調べてください。
 
-    インストール手順に関する情報はネットに溢れているため割愛します。
-
-4. credentials 作成
+  3. credentials 作成
 
     空のファイル C:¥user¥.aws¥credentials を作成してください。
+    credentials に以下の内容を入力してください。
 
-5. AWS アクセスキー情報登録
-
-    credentials に以下の内容を入力してください。<br>
-    profile 名 [sample] は自身のものに置き換えてください。
-    ```
     [sample]
     aws_access_key_id = "xxxxxxxxxxxxxxxxxxxx"
     aws_secret_access_key = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-    ```
 
-6. s3 バケット作成
+    >>[sample] は自身のものに置き換えてください。
 
-    terraform は .tfstate というファイルでリソースの状態を保持します。<br>
-    セキュリティや運用の観点からローカルに保存するのではなく、s3 に置くことが推奨されています。<br>
+  4. s3 バケット作成
+
+    terraform は .tfstate というファイルでリソースの状態を保持します。
+    セキュリティや運用の観点からローカルに保存するのではなく、s3 に置くことが推奨されています。
     事前に保管用の s3 を用意してください。
+
+```
 
 以下、module の説明を記載します。
 
@@ -76,6 +68,12 @@ python のライブラリインストール手順の詳細は resource 階層の
 # module resource/env/dev
 環境情報をこの module で管理しています。<br>
 terraform apply 実行前に、resource/env/dev 配下の環境設定ファイル（main.tf/variable.tf）を編集します。<br>
-詳細は、resource/env/dev 階層にある README を参照ください。<br>
+詳細は、resource/env/dev 階層にある README を参照ください。
 
+# module resource/env/stg
+ステージング環境用で使用するモジュールです。
+
+# module resource/env/prd
+本番環境用で使用するモジュールです。<br>
+<br>
 以上です。
