@@ -74,12 +74,13 @@ db_master_password = {
 # 7. RDS 論理バックアップ実行フラグ
 #    毎日深夜の3時30分からDBの論理バックアップを取得します。
 #    最新の自動バックアップから、インスタンスをリストアして論理バックアップを取得します。
-#    準備として、fargate task で対象DB（DB_NAME）を指定します。
+#    準備として、ecr への push と fargate task で対象DB（DB_NAME）を指定します。
 #    本設定は、defalut では false としています。 
 #
 #    [使用方法]
-#    fargate task で 対象RDSインスタンス（****_1st）の DB_NAME を指定してください。
-#    次に、本設定を true に変更し terraform apply を実行してください。
+#    1. ecr にバックアップ用コンテナイメージを push してください。（github: docker_logical_backup）
+#    2. fargate task で 対象RDSインスタンス（****_1st）の DB_NAME を指定してください。
+#    3. 本設定を true に変更し terraform apply を実行してください。
 #    論理バックアップを使用しないときは、本設定を false に変更し terraform apply を実行してください。
 #    true or false
 #
