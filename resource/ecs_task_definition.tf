@@ -35,8 +35,8 @@ resource "aws_ecs_task_definition" "logicalbackup_mypg_1" {
         ],
         "secrets": [
           {
-            "name": "${aws_secretsmanager_secret.aurora_pass.name}",
-            "valueFrom": "${aws_secretsmanager_secret.aurora_pass.arn}"
+            "name": "${aws_secretsmanager_secret.dbpassword.name}",
+            "valueFrom": "${aws_secretsmanager_secret.dbpassword.arn}"
           }
         ],
         "essential": true,
@@ -119,8 +119,8 @@ resource "aws_ecs_task_definition" "logicalbackup_mypg_2" {
         ],
         "secrets": [
           {
-            "name": "${aws_secretsmanager_secret.aurora_pass.name}",
-            "valueFrom": "${aws_secretsmanager_secret.aurora_pass.arn}"
+            "name": "${aws_secretsmanager_secret.dbpassword.name}",
+            "valueFrom": "${aws_secretsmanager_secret.dbpassword.arn}"
           }
         ],
         "essential": true,
