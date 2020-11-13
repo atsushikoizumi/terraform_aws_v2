@@ -6,7 +6,7 @@ resource "aws_db_instance" "oracle_1st" {
   engine         = "oracle-se2"
   engine_version = "19.0.0.0.ru-2020-07.rur-2020-07.r1"
   license_model  = "license-included"
-  multi_az       = false  # default false
+  multi_az       = false      # default false
   name           = "MASTERDB" # must be upper, default ORCL
   username       = "MASTERUSER"
   password       = var.db_master_password.oracle
@@ -31,7 +31,7 @@ resource "aws_db_instance" "oracle_1st" {
 
   # backup snapshot
   backup_retention_period   = 8                                                 # default 7 (days). 0 = disabled.
-  backup_window             = "17:30-18:00"                                     # UTC, must not overlap with maintenance_window.
+  backup_window             = "18:00-18:30"                                     # UTC, must not overlap with maintenance_window.
   copy_tags_to_snapshot     = true                                              # default false
   delete_automated_backups  = true                                              # default true
   deletion_protection       = false                                             # default false

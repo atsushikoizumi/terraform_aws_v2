@@ -58,6 +58,13 @@ resource "aws_rds_cluster_parameter_group" "aurora_postgre_1st" {
     name  = "lc_time"
     value = "C"
   }
+
+  # lifecycle
+  lifecycle {
+    ignore_changes = [
+      parameter
+    ]
+  }
 }
 
 # aws_db_parameter_group

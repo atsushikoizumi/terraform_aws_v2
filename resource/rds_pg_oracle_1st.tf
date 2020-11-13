@@ -16,6 +16,13 @@ resource "aws_db_parameter_group" "oracle_1st" {
     apply_method = "pending-reboot"
   }
 
+  # lifecycle
+  lifecycle {
+    ignore_changes = [
+      parameter
+    ]
+  }
+
   tags = {
     Owner = var.tags_owner
     Env   = var.tags_env

@@ -63,10 +63,12 @@ resource "aws_rds_cluster_parameter_group" "aurora_mysql_1st" {
     name  = "slow_query_log"
     value = 1
   }
+
+  # lifecycle
   lifecycle {
-  ignore_changes = [
-    parameter
-  ]
+    ignore_changes = [
+      parameter
+    ]
   }
 }
 

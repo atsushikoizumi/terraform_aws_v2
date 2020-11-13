@@ -11,7 +11,7 @@
 
 # ecsTaskExecutionRole
 resource "aws_iam_role" "ecsTaskExecutionRole" {
-  name = "${var.tags_owner}-${var.tags_env}-role-ecs"
+  name               = "${var.tags_owner}-${var.tags_env}-role-ecs"
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -32,8 +32,8 @@ EOF
 
 # allow task execution role to worl with secret manager
 resource "aws_iam_policy" "exec_task_1" {
-  name = "${var.tags_owner}-${var.tags_env}-policy-exec-task-1"
-  path = "/"
+  name   = "${var.tags_owner}-${var.tags_env}-policy-exec-task-1"
+  path   = "/"
   policy = <<EOF
 {
     "Version": "2012-10-17",
@@ -58,14 +58,14 @@ resource "aws_iam_policy" "exec_task_1" {
 EOF
 }
 resource "aws_iam_policy_attachment" "exec_task_1" {
-  name = "${var.tags_owner}-${var.tags_env}-exec-task-1"
-  roles = [aws_iam_role.ecsTaskExecutionRole.name]
+  name       = "${var.tags_owner}-${var.tags_env}-exec-task-1"
+  roles      = [aws_iam_role.ecsTaskExecutionRole.name]
   policy_arn = aws_iam_policy.exec_task_1.arn
 }
 
 # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/CWE_IAM_role.html
 resource "aws_iam_role" "cloudwatch_events_role" {
-  name = "${var.tags_owner}-${var.tags_env}-role-events"
+  name               = "${var.tags_owner}-${var.tags_env}-role-events"
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -86,8 +86,8 @@ EOF
 
 # allow events role to run ecs tasks
 resource "aws_iam_policy" "exec_task_2" {
-  name = "${var.tags_owner}-${var.tags_env}-policy-exec-task-2"
-  path = "/"
+  name   = "${var.tags_owner}-${var.tags_env}-policy-exec-task-2"
+  path   = "/"
   policy = <<EOF
 {
     "Version": "2012-10-17",
@@ -107,15 +107,15 @@ EOF
 }
 
 resource "aws_iam_policy_attachment" "exec_task_2" {
-  name = "${var.tags_owner}-${var.tags_env}-exec-task-2"
-  roles = [aws_iam_role.cloudwatch_events_role.name]
+  name       = "${var.tags_owner}-${var.tags_env}-exec-task-2"
+  roles      = [aws_iam_role.cloudwatch_events_role.name]
   policy_arn = aws_iam_policy.exec_task_2.arn
 }
 
 # allow events role to pass role to task execution role and app role
 resource "aws_iam_policy" "exec_task_3" {
-  name = "${var.tags_owner}-${var.tags_env}-policy-exec-task-3"
-  path = "/"
+  name   = "${var.tags_owner}-${var.tags_env}-policy-exec-task-3"
+  path   = "/"
   policy = <<EOF
 {
     "Version": "2012-10-17",
@@ -141,7 +141,7 @@ EOF
 }
 
 resource "aws_iam_policy_attachment" "exec_task_3" {
-  name = "${var.tags_owner}-${var.tags_env}-exec-task-3"
-  roles = [aws_iam_role.cloudwatch_events_role.name]
+  name       = "${var.tags_owner}-${var.tags_env}-exec-task-3"
+  roles      = [aws_iam_role.cloudwatch_events_role.name]
   policy_arn = aws_iam_policy.exec_task_3.arn
 }
