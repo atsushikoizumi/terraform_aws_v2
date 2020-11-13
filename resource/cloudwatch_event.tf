@@ -72,3 +72,26 @@ resource "aws_cloudwatch_event_target" "logicalbackup_mypg_1" {
   }
 
 }
+
+# logicalbackup for mysql
+resource "aws_cloudwatch_event_target" "logicalbackup_mypg_2" {
+  rule      = aws_cloudwatch_event_rule.logicalbackup.name
+  target_id = "${var.tags_owner}-${var.tags_env}-logicalbackup-mypg-2"
+  arn       = aws_ecs_cluster.logicalbackup.arn
+  role_arn  = aws_iam_role.cloudwatch_events_role.arn
+  input     = "{}"
+
+  ecs_target {
+    task_count          = 1
+    task_definition_arn = aws_ecs_task_definition.logicalbackup_mypg_2.arn
+    launch_type         = "FARGATE"
+    platform_version    = "1.4.0" # 1.4 ではなく、 1.4.0 と指定しないと動かない
+
+    network_configuration {
+      assign_public_ip = true
+      security_groups  = [aws_security_group.ec2.id]
+      subnets          = [aws_subnet.ec2["eu-north-1a"].id]
+    }
+  }
+
+}
