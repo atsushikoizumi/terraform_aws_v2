@@ -16,13 +16,13 @@ terraform {
 
 # Provider
 provider "aws" {
-  region                  = "eu-north-1"
-  shared_credentials_file = "~/.aws/credentials"
-  profile                 = "koizumi"
-  version                 = "3.12.0"
+  region                    = "eu-north-1"
+  shared_credentials_file   = "~/.aws/credentials"
+  profile                   = "koizumi"
+  version                   = "3.12.0"
 }
 
-# get vpc remote state
+# Remote state vpc
 data "terraform_remote_state" "vpc" {
   backend = "s3"
 

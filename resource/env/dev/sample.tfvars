@@ -54,10 +54,11 @@ git_account = "xxxxxx@aaaaa.com"
 git_pass    = "xxxxxx"
 
 
-# 6. rds/redshift password
-#    マスターユーザーのパスワードは以下に設定してください。
+# 6. windows/rds/redshift password
+#    各リソースのAdministrator/masteruserのパスワードは以下に設定してください。
 #
 db_master_password = {
+    "windows2019" = "PassW0rd!"
     "postgresql"  = "PassW0rd!"
     "postgresql2" = "PassW0rd!"
     "mysql"       = "PassW0rd!"

@@ -29,7 +29,8 @@ resource "aws_instance" "ec2_amzn2" {
   lifecycle {
     ignore_changes = [
       ami,
-      associate_public_ip_address
+      associate_public_ip_address,
+      user_data
     ]
   }
 
@@ -144,11 +145,6 @@ resource "aws_instance" "ec2_amzn2" {
   curl https://packages.microsoft.com/config/rhel/8/prod.repo > /etc/yum.repos.d/msprod.repo
   echo 'export PATH=$PATH:/opt/mssql-tools/bin' >> /home/${var.tags_owner}/.bash_profile
   # yum install -y mssql-tools unixODBC-devel   # require "YES" for MS licence
-  
-  # push ecr
-  docker build -t ${aws_ecr_repository.logicalbackup.repository_url}:ver1.0 /home/${var.tags_owner}/github/docker_logical_backup
-  aws ecr get-login-password | docker login --username AWS --password-stdin ${aws_ecr_repository.logicalbackup.registry_id}.dkr.ecr.eu-north-1.amazonaws.com
-  docker push ${aws_ecr_repository.logicalbackup.repository_url}:ver1.0
 
   # userdel
   userdel ec2-user

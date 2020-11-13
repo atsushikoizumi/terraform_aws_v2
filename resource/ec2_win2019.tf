@@ -53,14 +53,15 @@ resource "aws_instance" "ec2_win2019" {
   lifecycle {
     ignore_changes = [
       ami,
-      associate_public_ip_address
+      associate_public_ip_address,
+      user_data
     ]
   }
 
   # 初期設定
   user_data = <<EOF
   <powershell>
-  New-LocalUser -Name win2019 -Password (ConvertTo-SecureString "Admin123!" -AsPlainText -Force) -PasswordNeverExpires
+  New-LocalUser -Name ${tags_owner} -Password (ConvertTo-SecureString "${var.db_master_password.windows2019}" -AsPlainText -Force) -PasswordNeverExpires
   Add-LocalGroupMember -Group Administrators -Member win2019
   New-Item "C:\applications" -ItemType "directory"
   Read-S3Object -BucketName aws-aqua-terraform -Prefix koizumi/windows -Folder "C:\applications"
