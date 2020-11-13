@@ -35,7 +35,7 @@ resource "aws_instance" "ec2_amzn2" {
   }
 
   # user_data 内の処理における他リソースとの依存関係は terraform では自動解決できない。
-  depends_on = [aws_ecr_repository.logicalbackup, aws_efs_mount_target.logicalbackup]
+  depends_on = [aws_efs_mount_target.logicalbackup]
 
   # 初回起動時に以下のコマンドを root で自動実行
   user_data = <<EOF

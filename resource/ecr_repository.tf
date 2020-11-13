@@ -1,5 +1,10 @@
-resource "aws_ecr_repository" "logicalbackup" {
-  name                 = "${var.tags_owner}-${var.tags_env}-logicalbackup"
+#
+# 論理バックアップ用イメージ
+#  logicalbackup_mypg: aurora mysql,aurora postgresql
+#  logicalbackup_orss: rds oracle,rds sqlserver
+#
+resource "aws_ecr_repository" "logicalbackup_mypg" {
+  name                 = "${var.tags_owner}-${var.tags_env}-logicalbackup-mypg"
   image_tag_mutability = "MUTABLE"
 
   encryption_configuration {

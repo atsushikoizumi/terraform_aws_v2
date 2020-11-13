@@ -98,7 +98,7 @@ resource "aws_iam_policy" "exec_task_2" {
                 "ecs:RunTask"
             ],
             "Resource": [
-                "${aws_ecs_task_definition.logicalbackup.arn}"
+                "${aws_ecs_task_definition.logicalbackup_mypg_1.arn}"
             ]
         } 
     ]

@@ -50,16 +50,17 @@ resource "aws_cloudwatch_event_rule" "logicalbackup" {
   }
 }
 
-resource "aws_cloudwatch_event_target" "logicalbackup" {
+# logicalbackup for postgresql
+resource "aws_cloudwatch_event_target" "logicalbackup_mypg_1" {
   rule      = aws_cloudwatch_event_rule.logicalbackup.name
-  target_id = "${var.tags_owner}-${var.tags_env}-logicalbackup-task"
+  target_id = "${var.tags_owner}-${var.tags_env}-logicalbackup-mypg-1"
   arn       = aws_ecs_cluster.logicalbackup.arn
   role_arn  = aws_iam_role.cloudwatch_events_role.arn
   input     = "{}"
 
   ecs_target {
     task_count          = 1
-    task_definition_arn = aws_ecs_task_definition.logicalbackup.arn
+    task_definition_arn = aws_ecs_task_definition.logicalbackup_mypg_1.arn
     launch_type         = "FARGATE"
     platform_version    = "1.4.0" # 1.4 ではなく、 1.4.0 と指定しないと動かない
 
