@@ -31,7 +31,7 @@ resource "aws_db_instance" "oracle_1st" {
 
   # backup snapshot
   backup_retention_period   = 8                                                 # default 7 (days). 0 = disabled.
-  backup_window             = "18:00-18:30"                                     # UTC, must not overlap with maintenance_window.
+  backup_window             = "17:00-17:30"                                     # UTC, must not overlap with maintenance_window.
   copy_tags_to_snapshot     = true                                              # default false
   delete_automated_backups  = true                                              # default true
   deletion_protection       = false                                             # default false

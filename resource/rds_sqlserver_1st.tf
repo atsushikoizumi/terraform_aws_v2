@@ -39,7 +39,7 @@ resource "aws_db_instance" "sqlserver_1st" {
   final_snapshot_identifier = "${var.tags_owner}-${var.tags_env}-sqlserver-1st" # must be provided if skip_final_snapshot is set to false.
 
   # window time
-  backup_window      = "18:00-18:30"         # UTC, must not overlap with maintenance_window.
+  backup_window      = "17:00-17:30"         # UTC, must not overlap with maintenance_window.
   maintenance_window = "Sun:18:00-Sun:19:00" # UTC
 
   # options

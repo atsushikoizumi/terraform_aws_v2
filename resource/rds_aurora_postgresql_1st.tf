@@ -33,7 +33,7 @@ resource "aws_rds_cluster" "aurora_postgre_1st" {
   enabled_cloudwatch_logs_exports = ["postgresql"]
 
   # window time
-  preferred_backup_window      = "18:00-18:30"         # UTC
+  preferred_backup_window      = "17:00-17:30"         # UTC
   preferred_maintenance_window = "Sun:18:00-Sun:19:00" # UTC
 
   # options
