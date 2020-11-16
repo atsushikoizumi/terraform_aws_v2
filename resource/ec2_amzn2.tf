@@ -60,7 +60,8 @@ resource "aws_instance" "ec2_amzn2" {
   chown -R ${var.tags_owner}.${var.tags_owner} /home/${var.tags_owner}/.ssh/
 
   ### git
-  yum install -y git
+  amazon-linux-extras install epel
+  yum install -y git git-lfs
   touch /root/.gitconfig
   echo "[user]" >> /root/.gitconfig
   echo "name = ${var.tags_owner}-${var.tags_env}" >> /root/.gitconfig
@@ -76,7 +77,7 @@ resource "aws_instance" "ec2_amzn2" {
   git clone https://github.com/aqua-labo/postgresql_audit_shellscript  /home/${var.tags_owner}/github/postgresql_audit_shellscript
   git clone https://github.com/aqua-labo/postgresql_logical_backup_shellscript  /home/${var.tags_owner}/github/postgresql_logical_backup_shellscript
   git clone https://github.com/aqua-labo/isid_env_dev  /home/${var.tags_owner}/github/isid_env_dev
-  git clone https://github.com/aqua-labo/docker_logikal_backup  /home/${var.tags_owner}/github/docker_logical_backup
+  git clone https://github.com/atsushikoizumi/aws_db_logical_backup  /home/${var.tags_owner}/github/aws_db_logical_backup
   git clone https://github.com/atsushikoizumi/sql_syntax /home/${var.tags_owner}/github/sql_syntax
   mv /root/.gitconfig /home/${var.tags_owner}/
   mv /root/.netrc /home/${var.tags_owner}/
