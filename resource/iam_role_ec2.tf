@@ -73,6 +73,7 @@ resource "aws_iam_policy" "ec2_2" {
         {
             "Effect": "Allow",
             "Action": [
+                "rds:AddTagsToResource",
                 "rds:CreateDBCluster",
                 "rds:CreateDBClusterParameterGroup",
                 "rds:CreateDBInstance",
@@ -82,11 +83,14 @@ resource "aws_iam_policy" "ec2_2" {
                 "rds:DeleteDBCluster",
                 "rds:DeleteDBClusterSnapshot",
                 "rds:DeleteDBInstance",
+                "rds:DeleteDBSnapshot",
                 "rds:DescribeDBClusterParameterGroups",
                 "rds:DescribeDBClusterParameters",
                 "rds:DescribeDBClusters",
                 "rds:DescribeDBClusterSnapshots",
                 "rds:DescribeDBInstances",
+                "rds:DescribeDBInstanceAutomatedBackups",
+                "rds:DescribeDBSnapshots",
                 "rds:DescribeOptionGroups",
                 "rds:DescribeDBParameterGroups",
                 "rds:DescribeDBParameters",
@@ -97,7 +101,8 @@ resource "aws_iam_policy" "ec2_2" {
                 "rds:StopDBCluster",
                 "rds:StopDBInstance",
                 "rds:RebootDBInstance",
-                "rds:RestoreDBClusterFromSnapshot"
+                "rds:RestoreDBClusterFromSnapshot",
+                "rds:RestoreDBInstanceFromDBSnapshot"
             ],
             "Resource": "*"
         }
