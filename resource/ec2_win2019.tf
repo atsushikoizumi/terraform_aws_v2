@@ -62,7 +62,7 @@ resource "aws_instance" "ec2_win2019" {
   user_data = <<EOF
   <powershell>
   New-LocalUser -Name ${var.tags_owner} -Password (ConvertTo-SecureString "${var.db_master_password.windows2019}" -AsPlainText -Force) -PasswordNeverExpires
-  Add-LocalGroupMember -Group Administrators -Member win2019
+  Add-LocalGroupMember -Group Administrators -Member ${var.tags_owner}
   New-Item "C:\applications" -ItemType "directory"
   Read-S3Object -BucketName aws-aqua-terraform -Prefix koizumi/windows -Folder "C:\applications"
   Set-TimeZone -Id "Tokyo Standard Time"
