@@ -67,7 +67,7 @@ db_master_password = {
   "oracle2"     = "PassW0rd!"
   "sqlserver"   = "PassW0rd!"
   "sqlserver2"  = "PassW0rd!"
-  "redshift2"   = "PassW0rd!"
+  "redshift"    = "PassW0rd!"
 }
 
 
