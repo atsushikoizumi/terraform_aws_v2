@@ -5,3 +5,4 @@ terraform.tfvars
 .pub
 python
 get_tfstate_koizumi.sh
+push_terraformvars.sh
