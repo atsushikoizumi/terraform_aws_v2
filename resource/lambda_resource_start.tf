@@ -6,28 +6,30 @@
 #   1. build/resource_start/function/src 配下に python3.8 実行プログラム配置
 #
 
-data "archive_file" "function_zip2" {
-  type        = "zip"
-  source_dir  = "../../build/resource_start/function"
-  output_path = "../../build/resource_start/function.zip"
-}
+#data "archive_file" "function_zip2" {
+#  type        = "zip"
+#  source_dir  = "../../build/resource_start/function"
+#  output_path = "../../build/resource_start/function.zip"
+#}
 
 # Function
 resource "aws_lambda_function" "resource_start" {
   function_name = "${var.tags_owner}-${var.tags_env}-resource-start"
 
   handler          = "src/resource_start.lambda_handler"
-  filename         = data.archive_file.function_zip2.output_path
+  #filename         = data.archive_file.function_zip2.output_path
+  filename         = "..\\..\\build\\resource_start\\function.zip"
   runtime          = "python3.8"
   publish          = true
   timeout          = 10
   role             = aws_iam_role.lambda.arn
   layers           = [aws_lambda_layer_version.resource_stop.arn]
-  source_code_hash = filebase64sha256(data.archive_file.function_zip2.output_path)
+  #source_code_hash = filebase64sha256(data.archive_file.function_zip2.output_path)
+  source_code_hash = filebase64sha256("..\\..\\build\\resource_start\\function.zip")
   # ソースコードのハッシュ値で変更の有無を判断するため、日付は無視する
   lifecycle {
     ignore_changes = [
-      last_modified
+      last_modified,filename
     ]
   }
   environment {

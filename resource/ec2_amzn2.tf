@@ -145,7 +145,8 @@ resource "aws_instance" "ec2_amzn2" {
   ### sqlcmd
   curl https://packages.microsoft.com/config/rhel/8/prod.repo > /etc/yum.repos.d/msprod.repo
   echo 'export PATH=$PATH:/opt/mssql-tools/bin' >> /home/${var.tags_owner}/.bash_profile
-  # yum install -y mssql-tools unixODBC-devel   # require "YES" for MS licence
+  export ACCEPT_EULA=Y
+  yum install -y unixODBC-devel mssql-tools
 
   # userdel
   userdel ec2-user

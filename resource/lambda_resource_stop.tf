@@ -17,27 +17,29 @@
 
 
 # Archive
-data "archive_file" "layer_zip" {
-  type        = "zip"
-  source_dir  = "../../build/resource_stop/layer"
-  output_path = "../../build/resource_stop/layer.zip"
-}
-
-data "archive_file" "function_zip" {
-  type        = "zip"
-  source_dir  = "../../build/resource_stop/function"
-  output_path = "../../build/resource_stop/function.zip"
-}
+#data "archive_file" "layer_zip" {
+#  type        = "zip"
+#  source_dir  = "../../build/resource_stop/layer"
+#  output_path = "../../build/resource_stop/layer.zip"
+#}
+#
+#data "archive_file" "function_zip" {
+#  type        = "zip"
+#  source_dir  = "../../build/resource_stop/function"
+#  output_path = "../../build/resource_stop/function.zip"
+#}
 
 # Layer
 resource "aws_lambda_layer_version" "resource_stop" {
   layer_name       = "${var.tags_owner}-${var.tags_env}-resource-stop"
-  filename         = data.archive_file.layer_zip.output_path
-  source_code_hash = filebase64sha256(data.archive_file.layer_zip.output_path)
+  #filename         = data.archive_file.layer_zip.output_path
+  filename         = "..\\..\\build\\resource_stop\\layer.zip"
+  #source_code_hash = filebase64sha256(data.archive_file.layer_zip.output_path)
+  source_code_hash = filebase64sha256("..\\..\\build\\resource_stop\\layer.zip")
   # ソースコードのハッシュ値で変更の有無を判断するため、日付は無視する
   lifecycle {
     ignore_changes = [
-      created_date
+      created_date,filename
     ]
   }
 }
@@ -47,17 +49,19 @@ resource "aws_lambda_function" "resource_stop" {
   function_name = "${var.tags_owner}-${var.tags_env}-resource-stop"
 
   handler          = "src/resource_stop.lambda_handler"
-  filename         = data.archive_file.function_zip.output_path
+  #filename         = data.archive_file.function_zip.output_path
+  filename         = "..\\..\\build\\resource_stop\\function.zip"
   runtime          = "python3.8"
   publish          = true
   timeout          = 10
   role             = aws_iam_role.lambda.arn
   layers           = [aws_lambda_layer_version.resource_stop.arn]
-  source_code_hash = filebase64sha256(data.archive_file.function_zip.output_path)
+  #source_code_hash = filebase64sha256(data.archive_file.function_zip.output_path)
+  source_code_hash = filebase64sha256("..\\..\\build\\resource_stop\\function.zip")
   # ソースコードのハッシュ値で変更の有無を判断するため、日付は無視する
   lifecycle {
     ignore_changes = [
-      last_modified
+      last_modified,filename
     ]
   }
   environment {
