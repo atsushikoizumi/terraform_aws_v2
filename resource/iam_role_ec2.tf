@@ -73,36 +73,7 @@ resource "aws_iam_policy" "ec2_2" {
         {
             "Effect": "Allow",
             "Action": [
-                "rds:AddTagsToResource",
-                "rds:CreateDBCluster",
-                "rds:CreateDBClusterParameterGroup",
-                "rds:CreateDBInstance",
-                "rds:CreateDBInstanceReadReplica",
-                "rds:CreateDBParameterGroup",
-                "rds:CreateDBSubnetGroup",
-                "rds:DeleteDBCluster",
-                "rds:DeleteDBClusterSnapshot",
-                "rds:DeleteDBInstance",
-                "rds:DeleteDBSnapshot",
-                "rds:DescribeDBClusterParameterGroups",
-                "rds:DescribeDBClusterParameters",
-                "rds:DescribeDBClusters",
-                "rds:DescribeDBClusterSnapshots",
-                "rds:DescribeDBInstances",
-                "rds:DescribeDBInstanceAutomatedBackups",
-                "rds:DescribeDBSnapshots",
-                "rds:DescribeOptionGroups",
-                "rds:DescribeDBParameterGroups",
-                "rds:DescribeDBParameters",
-                "rds:ModifyDBClusterParameterGroup",
-                "rds:ModifyDBParameterGroup",
-                "rds:StartDBCluster",
-                "rds:StartDBInstance",
-                "rds:StopDBCluster",
-                "rds:StopDBInstance",
-                "rds:RebootDBInstance",
-                "rds:RestoreDBClusterFromSnapshot",
-                "rds:RestoreDBInstanceFromDBSnapshot"
+                "rds:*"
             ],
             "Resource": "*"
         }
@@ -231,6 +202,35 @@ resource "aws_iam_policy" "ec2_7" {
 EOF
 }
 
+# PassRole
+resource "aws_iam_policy" "ec2_8" {
+  name = "${var.tags_owner}-${var.tags_env}-policy-ec2-8"
+  path = "/"
+
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "iam:PassRole"
+            ],
+            "Resource": [
+                "${aws_iam_role.rds.arn}",
+                "${aws_iam_role.rds_monitoring.arn}"
+            ],
+            "Condition": {
+                "StringLike": {
+                    "iam:PassedToService": "rds.amazonaws.com"
+                }
+            }
+        } 
+    ]
+}
+EOF
+}
+
 # aws_iam_policy_attachment
 resource "aws_iam_policy_attachment" "ec2_1" {
   name       = "ec2_1"
@@ -272,4 +272,10 @@ resource "aws_iam_policy_attachment" "ec2_7" {
   name       = "ec2_7"
   roles      = [aws_iam_role.ec2.name]
   policy_arn = aws_iam_policy.ec2_7.arn
+}
+
+resource "aws_iam_policy_attachment" "ec2_8" {
+  name       = "ec2_8"
+  roles      = [aws_iam_role.ec2.name]
+  policy_arn = aws_iam_policy.ec2_8.arn
 }
