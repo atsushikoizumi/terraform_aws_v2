@@ -29,7 +29,8 @@ resource "aws_instance" "ec2_amzn2" {
   lifecycle {
     ignore_changes = [
       ami,
-      associate_public_ip_address
+      associate_public_ip_address,
+      user_data
     ]
   }
 
@@ -104,7 +105,7 @@ resource "aws_instance" "ec2_amzn2" {
   ln -s /usr/local/python386/bin/python3 /usr/bin/python3
   ln -s /usr/local/python386/bin/pip3 /usr/bin/pip3
   python3 -m pip install --upgrade pip
-  python3 -m pip install wheel boto3 datetime
+  python3 -m pip install wheel boto3 datetime pandas numpy
   python3 -m pip install pyodbc
 
   ### awe cli
