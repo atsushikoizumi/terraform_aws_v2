@@ -1,4 +1,7 @@
 # terraform_aws_v2
+
+![terraform_aws_v2](https://github.com/atsushikoizumi/terraform_aws_v2/blob/main/aws_terraform_v2.jpg)<br>
+
 以下のコマンド実行するだけで AWS の各リソース（vpc/subnet/s3/ec2/rds/...etc）を自動的に構築することが可能です。<br>
 さらに、コンソール画面を一度も見ることなくリソースへのアクセスも可能です。
 ```
