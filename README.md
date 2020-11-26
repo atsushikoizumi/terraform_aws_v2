@@ -45,7 +45,12 @@ $ terraform output     # 接続情報取得
     aws_access_key_id = "xxxxxxxxxxxxxxxxxxxx"
     aws_secret_access_key = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 
-  4. s3バケット作成
+  4. SSH-KEYの作成
+
+    SSH-KEY(private/public)を作成してください。
+    $ ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+
+  5. s3バケット作成
 
     terraform は .tfstate というファイルでリソースの状態を保持します。
     セキュリティや運用の観点からローカルに保存するのではなく、s3 に置くことが推奨されています。

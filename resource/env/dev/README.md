@@ -62,7 +62,7 @@ AWS の環境情報を管理する module です。<br>
     resource_stop_flag  : true or false を指定ください。
     allow_ip            : 踏み台サーバーにアクセスを許可するip（配列形式）を指定ください。
     public_key_path     : パブリックキーのパスを指定ください。 
-    private_key_path    : パブリックキーのパスを指定ください。
+    private_key_path    : プライベートキーのパスを指定ください。
     git_account         : github のアカウントをしてください。
     git_pass            : github のアカウントパスワードをしてください。
     db_master_password  : 各リソースのユーザーパスワードを指定ください。
