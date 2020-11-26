@@ -136,7 +136,7 @@ resource "aws_rds_cluster" "aurora_mysql_2nd" {
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/rds_cluster_instance
 resource "aws_rds_cluster_instance" "aurora_mysql_2nd" {
   count              = 1
-  identifier         = "${var.tags_owner}-${var.tags_env}-cls-ins-aurora-mysql-${count.index}"
+  identifier         = "${var.tags_owner}-${var.tags_env}-ins-aurora-mysql-2nd-${count.index}"
   cluster_identifier = aws_rds_cluster.aurora_mysql_2nd.cluster_identifier
   instance_class     = "db.t3.small"
   engine             = "aurora-mysql"

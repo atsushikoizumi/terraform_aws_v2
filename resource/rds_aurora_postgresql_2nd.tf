@@ -130,7 +130,7 @@ resource "aws_rds_cluster" "aurora_postgre_2nd" {
 # aws_rds_cluster_instance
 resource "aws_rds_cluster_instance" "aurora_postgre_2nd" {
   count              = 1
-  identifier         = "${var.tags_owner}-${var.tags_env}-cls-ins-aurora-postgres-${count.index}"
+  identifier         = "${var.tags_owner}-${var.tags_env}-ins-aurora-postgres-2nd-${count.index}"
   cluster_identifier = aws_rds_cluster.aurora_postgre_2nd.cluster_identifier
   instance_class     = "db.t3.medium"
   engine             = "aurora-postgresql"
