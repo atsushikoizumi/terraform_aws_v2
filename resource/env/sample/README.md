@@ -28,29 +28,28 @@ terraformを実行するうえで必要な環境情報を設定します。<br>
 
 2. variables.tf を編集
 
-    koizumi/variables.tf を参考に記述してください。<br>
-    以下の xx を割り当てられた subnet id に変更してください。
+    以下の "xx" を割り当てられた subnet id に変更してください。
     ```
     # サブネットの割当（管理番号により値を変更）
     variable "ec2_subnet" {
     default = {
-        "eu-north-1a" = "xx" # subnet id に応じて変更
-        "eu-north-1b" = "xx" # subnet id に応じて変更
-        "eu-north-1c" = "xx" # subnet id に応じて変更
+        "eu-north-1a" = "xx"
+        "eu-north-1b" = "xx"
+        "eu-north-1c" = "xx"
     }
     }
     variable "rds_subnet" {
     default = {
-        "eu-north-1a" = "xx" # subnet id に応じて変更
-        "eu-north-1b" = "xx" # subnet id に応じて変更
-        "eu-north-1c" = "xx" # subnet id に応じて変更
+        "eu-north-1a" = "xx"
+        "eu-north-1b" = "xx"
+        "eu-north-1c" = "xx"
     }
     }
     variable "redshift_subnet" {
     default = {
-        "eu-north-1a" = "xx" # subnet id に応じて変更
-        "eu-north-1b" = "xx" # subnet id に応じて変更
-        "eu-north-1c" = "xx" # subnet id に応じて変更
+        "eu-north-1a" = "xx"
+        "eu-north-1b" = "xx"
+        "eu-north-1c" = "xx"
     }
     }
     ```
@@ -83,7 +82,7 @@ terraformを実行するうえで必要な環境情報を設定します。<br>
     logical_backup_flag : true or false を指定ください。
     ```
 
-4. リソースの作成開始
+4. 環境構築
 
     以下の手順でリソースの作成を実行してください。<br>
     コマンドの実行場所は、自身のフォルダ直下を前提としています。
@@ -92,7 +91,7 @@ terraformを実行するうえで必要な環境情報を設定します。<br>
     $ terraform apply      # 環境構築
     ```
 
-5. EC2 へのアクセス
+5. 踏み台サーバーへのアクセス
 
     接続ユーザーとパスワードは以下です。
     | os            | user        | password                        |
