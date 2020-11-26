@@ -1,10 +1,9 @@
 # 環境情報の設定
 terraformを実行するうえで必要な環境情報を設定します。<br>
-使用方法について記載します。
 
 1. main.tf を編集
 
-    以下を編集します。ただし、変更不可を除く。
+    以下を編集します。
     ```
     # Terraform
     terraform {
@@ -13,22 +12,23 @@ terraformを実行するうえで必要な環境情報を設定します。<br>
         bucket                  = "aws-aqua-terraform"       # 準備したバケットを指定
         key                     = "xxxxxx/resource.tfstate"  # ファイルのパスを指定
         shared_credentials_file = "~/.aws/credentials"
-        profile                 = "sample"  # profile名
+        profile                 = "sample"                   # profile名
     }
     required_version = "0.13.5"
     }
 
     # Provider
     provider "aws" {
-    region                  = "eu-north-1"         # 変更不可
+    region                  = "eu-north-1"                   # 変更不可
     shared_credentials_file = "~/.aws/credentials"
-    profile                 = "sample"             # profile名
+    profile                 = "sample"                       # profile名
     version                 = "3.12.0"
     }
     ```
 
 2. variables.tf を編集
 
+    koizumi/variables.tf を参考に記述してください。<br>
     subnet id の割り当ては以下です。
 
     | No | Owner    | Env | subnet id |
@@ -37,7 +37,7 @@ terraformを実行するうえで必要な環境情報を設定します。<br>
     | 2  | koizumi  | stg | 20 - 29   |
     | 3  | natsume  | dev | 30 - 39   |
 
-    （例）koizumi/dev では、10,11,12,...18,19 の subnet id が使用可能です。
+    （例）Owner=koizumi,Env=stg では、20,21,22,23,24,25,26,27,28,29 の subnet id が使用可能です。
 
 3. sample.tfvars を編集
 
@@ -64,35 +64,33 @@ terraformを実行するうえで必要な環境情報を設定します。<br>
     以下の手順でリソースの作成を実行してください。<br>
     コマンドの実行場所は、自身のフォルダ直下を前提としています。
     ```
-    $ terraform init       # .tfstate 準備
+    $ terraform init       # 準備
     $ terraform apply      # 環境構築
-    $ terraform output     # 接続情報取得
     ```
 
 5. EC2 へのアクセス
 
     EC2 の接続のユーザー名とパスワードは以下です。
-
-    | ec2         | 初期ユーザー | パスワード                                    |
-    | ----------- | ----------- | ------------------------------------------- |
-    | ec2_amzn2   | tags_owner  | なし                                         |
-    | ec2_win2019 | tags_owner  | db_master_password の windows2019 で指定した値 |
-
-    ※デフォルトの ec2-user は削除しています。<br>
-    ※初期ユーザーに sudo権限、Adminidtrator権限を付与していますので問題なく操作できます。
+    | instance os   | user        | password                        |
+    | ------------- | ----------- | ------------------------------- |
+    | AmazonLinux2  | tags_owner  |                                 |
+    | WinServer2019 | tags_owner  | db_master_password[windows2019] |
+    ※AmazonLinux2 ではデフォルトの ec2-user は削除しています。<br>
+    ※WinServer2019 では SSH－Key でのパスワード取得は不要です。user でログインできます。<br>
+    ※※WinServer2019 のキーボード設定がデフォルト日本語ではないです。<br>
+    ※初期ユーザー（user）に sudo 権限、Adminidtrator 権限を付与しています。
 
 6. ec2 の設定情報
 
-    事前に以下の設定を行なっています。<br>
-
+    デフォルトで以下の設定を行なっています。
     ```
     [ec2_amzn2]
     日本時間設定
     日本語設定
     パッケージのインストール
-      - curl,unzip,jq,mysql,psql,sqlplus,sqlcmd,git,docker,python3.8,amazon-efs-utils 
-    Aqua-Lab.の各種repositpryを~/github配下にclone済みです。
-    efsが~/efsにマウント済みです。
+      - awscli,curl,unzip,jq,mysql,psql,sqlplus,sqlcmd,git,docker,python3.8,amazon-efs-utils 
+    Aqua-Lab. の各種 repositpry を ~/github 配下に clone 済みです。
+    efs が ~/efs にマウント済みです。
 
     [ec2_win2019]
     "C:\applications" によく使用するアプリケーション（exe）を配置しています。
@@ -100,3 +98,4 @@ terraformを実行するうえで必要な環境情報を設定します。<br>
 7. rds の設定情報
 
     resource の階層にある rds/redshift の tf ファイルを参照ください。
+

@@ -3,13 +3,13 @@
 ![terraform_aws_v2](https://github.com/atsushikoizumi/terraform_aws_v2/blob/main/aws_terraform_v2.jpg)<br>
 
 以下のコマンド実行するだけで AWS の上記構成を構築することが可能です。<br>
+```
+$ terraform init
+$ terraform apply
+```
 コマンドの実行後、コンソール画面を一度も見ることなくリソースへのアクセスも可能です。
-```
-$ C:\Users\atsus\OneDrive\ドキュメント\GitHub\terraform_aws_v2\resource\env\koizumi
-$ terraform init       # .tfstate 準備
-$ terraform apply      # 環境構築
-$ terraform output     # 接続情報取得
-```
+
+# 対応バージョン
 現在は以下のバージョンに対応しています。
 | program      | version                   |
 | ------------ | ------------------------- |
@@ -17,13 +17,14 @@ $ terraform output     # 接続情報取得
 | aws provider | 3.12.0                    |
 | python       | 3.8.6                     |
 
-# 利用タグ一覧
-利用タグ（Owner/Env）の組み合わせ毎にサブネットを割り当てています。<br>
-| No | Owner     | Env | subnet id |
-| -- | --------- | --- | --------- |
-| 1  | koizumi   | dev | 10 - 19   |
-| 2  | natsume   | dev | 20 - 29   |
-| 3  | horihori  | dev | 30 - 39   |
+# 利用者一覧
+利用タグ（Owner/Env）の組み合わせでリソースを識別しています。<br>
+1人で複数環境を所持することが可能です。
+| No | Owner     | Env | 
+| -- | --------- | --- | 
+| 1  | koizumi   | dev | 
+| 2  | koizumi   | stg | 
+| 3  | horihori  | dev | 
 
 # 準備１
 事前に以下の設定を実施する必要があります。
@@ -59,7 +60,7 @@ $ terraform output     # 接続情報取得
   1. repositoryをcloneしてください。
     $ git clone https://github.com/aqua-labo/.....
 
-  2. 自分用のフォルダを作成
+  2. 自分用のフォルダを作成してください。
     \resource\env\sample を同階層にコピーしてフォルダ名を変更してください。
 
   3. 上記で作成したフォルダの直下にvpc.tfstateをダウンロードしてください。
