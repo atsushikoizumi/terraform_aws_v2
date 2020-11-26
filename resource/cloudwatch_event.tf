@@ -42,7 +42,7 @@ resource "aws_cloudwatch_event_target" "resource_start" {
 resource "aws_cloudwatch_event_rule" "logicalbackup" {
   name                = "${var.tags_owner}-${var.tags_env}-logicalbackup"
   description         = "rds logicalbackup schedule"
-  schedule_expression = "cron(30 17 ? * SUN *)" # UTC
+  schedule_expression = "cron(30 17 * * ? *)" # UTC
   is_enabled          = var.logical_backup_flag
   tags = {
     Owner = var.tags_owner
@@ -84,6 +84,52 @@ resource "aws_cloudwatch_event_target" "logicalbackup_mypg_2" {
   ecs_target {
     task_count          = 1
     task_definition_arn = aws_ecs_task_definition.logicalbackup_mypg_2.arn
+    launch_type         = "FARGATE"
+    platform_version    = "1.4.0" # 1.4 ではなく、 1.4.0 と指定しないと動かない
+
+    network_configuration {
+      assign_public_ip = true
+      security_groups  = [aws_security_group.ec2.id]
+      subnets          = [aws_subnet.ec2["eu-north-1a"].id]
+    }
+  }
+
+}
+
+# logicalbackup for orcle
+resource "aws_cloudwatch_event_target" "logicalbackup_orms_1" {
+  rule      = aws_cloudwatch_event_rule.logicalbackup.name
+  target_id = "${var.tags_owner}-${var.tags_env}-logicalbackup-orms-1"
+  arn       = aws_ecs_cluster.logicalbackup.arn
+  role_arn  = aws_iam_role.cloudwatch_events_role.arn
+  input     = "{}"
+
+  ecs_target {
+    task_count          = 1
+    task_definition_arn = aws_ecs_task_definition.logicalbackup_orms_1.arn
+    launch_type         = "FARGATE"
+    platform_version    = "1.4.0" # 1.4 ではなく、 1.4.0 と指定しないと動かない
+
+    network_configuration {
+      assign_public_ip = true
+      security_groups  = [aws_security_group.ec2.id]
+      subnets          = [aws_subnet.ec2["eu-north-1a"].id]
+    }
+  }
+
+}
+
+# logicalbackup for mysql
+resource "aws_cloudwatch_event_target" "logicalbackup_orms_2" {
+  rule      = aws_cloudwatch_event_rule.logicalbackup.name
+  target_id = "${var.tags_owner}-${var.tags_env}-logicalbackup-orms-2"
+  arn       = aws_ecs_cluster.logicalbackup.arn
+  role_arn  = aws_iam_role.cloudwatch_events_role.arn
+  input     = "{}"
+
+  ecs_target {
+    task_count          = 1
+    task_definition_arn = aws_ecs_task_definition.logicalbackup_orms_2.arn
     launch_type         = "FARGATE"
     platform_version    = "1.4.0" # 1.4 ではなく、 1.4.0 と指定しないと動かない
 
