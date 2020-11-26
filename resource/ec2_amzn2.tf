@@ -76,9 +76,6 @@ resource "aws_instance" "ec2_amzn2" {
   git clone https://github.com/aqua-labo/oracle_audit_shellscript  /home/${var.tags_owner}/github/oracle_audit_shellscript
   git clone https://github.com/aqua-labo/postgresql_audit_shellscript  /home/${var.tags_owner}/github/postgresql_audit_shellscript
   git clone https://github.com/aqua-labo/postgresql_logical_backup_shellscript  /home/${var.tags_owner}/github/postgresql_logical_backup_shellscript
-  git clone https://github.com/aqua-labo/isid_env_dev  /home/${var.tags_owner}/github/isid_env_dev
-  git clone https://github.com/atsushikoizumi/aws_db_logical_backup  /home/${var.tags_owner}/github/aws_db_logical_backup
-  git clone https://github.com/atsushikoizumi/sql_syntax /home/${var.tags_owner}/github/sql_syntax
   mv /root/.gitconfig /home/${var.tags_owner}/
   mv /root/.netrc /home/${var.tags_owner}/
   chown -R ${var.tags_owner}.${var.tags_owner} /home/${var.tags_owner}/github
@@ -94,21 +91,24 @@ resource "aws_instance" "ec2_amzn2" {
   curl -L https://github.com/docker/compose/releases/download/1.26.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
   chmod +x /usr/local/bin/docker-compose
 
-  ### python 3.8
-  yum install -y make gcc zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel readline-devel tk-devel libffi-devel xz-devel
-  curl -OL https://www.python.org/ftp/python/3.8.6/Python-3.8.6.tgz
-  tar -xvzf Python-3.8.6.tgz
-  ./Python-3.8.6/configure --prefix=/usr/local/python386 --with-ensurepip
-  make
-  make install
+  ### python 3.8.6
+  yum install -y make gcc zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel readline-devel tk-devel libffi-devel xz-devel unixODBC unixODBC-devel libaio gcc-c++
+  mkdir /tmp/src/
+  curl -L https://www.python.org/ftp/python/3.8.6/Python-3.8.6.tgz -o /tmp/src/Python-3.8.6.tgz
+  cd /tmp/src/; tar -xvzf Python-3.8.6.tgz
+  cd /tmp/src/; ./Python-3.8.6/configure --prefix=/usr/local/python386 --with-ensurepip
+  cd /tmp/src/; make
+  cd /tmp/src/; make install
   ln -s /usr/local/python386/bin/python3 /usr/bin/python3
   ln -s /usr/local/python386/bin/pip3 /usr/bin/pip3
-  /usr/local/python386/bin/python3.8 -m pip install --upgrade pip
+  python3 -m pip install --upgrade pip
+  python3 -m pip install wheel boto3 datetime pandas numpy
+  python3 -m pip install pyodbc
 
   ### awe cli
   curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "/root/awscliv2.zip"
   unzip /root/awscliv2.zip
-  /root/aws/install
+  /aws/install
   mkdir /root/.aws
   touch /root/.aws/config
   echo "[default]"         >> /root/.aws/config
@@ -135,18 +135,23 @@ resource "aws_instance" "ec2_amzn2" {
   sed -i "s/\$releasever/7/g" "/etc/yum.repos.d/pgdg-redhat-all.repo"
   yum install -y postgresql12
 
-  ### sqlplus
-  curl https://download.oracle.com/otn_software/linux/instantclient/oracle-instantclient-basic-linuxx64.rpm -o oracle-instantclient-basic-linuxx64.rpm
-  curl https://download.oracle.com/otn_software/linux/instantclient/oracle-instantclient-sqlplus-linuxx64.rpm -o oracle-instantclient-sqlplus-linuxx64.rpm
-  yum install -y oracle-instantclient-basic-linuxx64.rpm
-  yum install -y oracle-instantclient-sqlplus-linuxx64.rpm
+  ### sqlplus & odbc
+  mkdir /opt/oracle
+  curl https://download.oracle.com/otn_software/linux/instantclient/oracle-instantclient-basic-linuxx64.rpm -o /opt/oracle/oracle-instantclient-basic-linuxx64.rpm
+  curl https://download.oracle.com/otn_software/linux/instantclient/oracle-instantclient-sqlplus-linuxx64.rpm -o /opt/oracle/oracle-instantclient-sqlplus-linuxx64.rpm
+  curl https://download.oracle.com/otn_software/linux/instantclient/oracle-instantclient-odbc-linuxx64.rpm -o /opt/oracle/oracle-instantclient-odbc-linuxx64.rpm
+  yum install -y /opt/oracle/oracle-instantclient-basic-linuxx64.rpm
+  yum install -y /opt/oracle/oracle-instantclient-sqlplus-linuxx64.rpm
+  yum install -y /opt/oracle/oracle-instantclient-odbc-linuxx64.rpm
+  touch /etc/odbc.ini
+  /usr/lib/oracle/19.9/client64/bin/odbc_update_ini.sh "/"  "/usr/lib/oracle/19.9/client64/lib" "ORACLEODBCDRIVER" RDSORCL /etc/odbc.ini
+  odbcinst -i -d -f /etc/odbcinst.ini
   echo 'export NLS_LANG=Japanese_Japan.AL32UTF8' >> /home/${var.tags_owner}/.bash_profile
   
   ### sqlcmd
   curl https://packages.microsoft.com/config/rhel/8/prod.repo > /etc/yum.repos.d/msprod.repo
   echo 'export PATH=$PATH:/opt/mssql-tools/bin' >> /home/${var.tags_owner}/.bash_profile
-  export ACCEPT_EULA=Y
-  yum install -y unixODBC-devel mssql-tools
+  ACCEPT_EULA=Y yum install -y mssql-tools
 
   # userdel
   userdel ec2-user

@@ -1,6 +1,9 @@
 # terraform_aws_v2
-以下のコマンド実行するだけで AWS の各リソース（vpc/subnet/s3/ec2/rds/...etc）を自動的に構築することが可能です。<br>
-さらに、コンソール画面を一度も見ることなくリソースへのアクセスも可能です。
+
+![terraform_aws_v2](https://github.com/atsushikoizumi/terraform_aws_v2/blob/main/aws_terraform_v2.jpg)<br>
+
+以下のコマンド実行するだけで AWS の上記構成を構築することが可能です。<br>
+コマンドの実行後、コンソール画面を一度も見ることなくリソースへのアクセスも可能です。
 ```
 $ cd /User/.../resource/env/dev
 $ terraform init       # .tfstate 準備
@@ -8,11 +11,11 @@ $ terraform apply      # 環境構築
 $ terraform output     # 接続情報取得
 ```
 現在は以下のバージョンに対応しています。
-| provider  | version                   |
-| --------- | ------------------------- |
-| terraform | 0.13.5                    |
-| aws       | 3.12.0                    |
-| python    | 3.8.6                     |
+| program      | version                   |
+| ------------ | ------------------------- |
+| terraform    | 0.13.5                    |
+| aws provider | 3.12.0                    |
+| python       | 3.8.6                     |
 
 # 利用タグ一覧
 利用タグ（Owner/Env）の組み合わせ毎にサブネットを割り当てています。<br>
@@ -42,7 +45,12 @@ $ terraform output     # 接続情報取得
     aws_access_key_id = "xxxxxxxxxxxxxxxxxxxx"
     aws_secret_access_key = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 
-  4. s3バケット作成
+  4. SSH-KEYの作成
+
+    SSH-KEY(private/public)を作成してください。
+    $ ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+
+  5. s3バケット作成
 
     terraform は .tfstate というファイルでリソースの状態を保持します。
     セキュリティや運用の観点からローカルに保存するのではなく、s3 に置くことが推奨されています。
