@@ -1,7 +1,7 @@
 # aws_rds_cluster_parameter_group
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/rds_cluster_parameter_group
-resource "aws_rds_cluster_parameter_group" "aurora_postgre_1st" {
-  name   = "${var.tags_owner}-${var.tags_env}-clspg-aurora-postgre-1st"
+resource "aws_rds_cluster_parameter_group" "aurora_postgre_2nd" {
+  name   = "${var.tags_owner}-${var.tags_env}-clspg-aurora-postgre-2nd"
   family = "aurora-postgresql11"
   tags = {
     Owner = var.tags_owner
@@ -69,8 +69,8 @@ resource "aws_rds_cluster_parameter_group" "aurora_postgre_1st" {
 
 # aws_db_parameter_group
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_parameter_group
-resource "aws_db_parameter_group" "aurora_postgre_1st" {
-  name   = "${var.tags_owner}-${var.tags_env}-pg-aurora-postgre-1st"
+resource "aws_db_parameter_group" "aurora_postgre_2nd" {
+  name   = "${var.tags_owner}-${var.tags_env}-pg-aurora-postgre-2nd"
   family = "aurora-postgresql11"
   tags = {
     Owner = var.tags_owner
@@ -81,8 +81,8 @@ resource "aws_db_parameter_group" "aurora_postgre_1st" {
 
 # aws_rds_cluster
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/rds_cluster
-resource "aws_rds_cluster" "aurora_postgre_1st" {
-  cluster_identifier = "${var.tags_owner}-${var.tags_env}-cls-aurora-postgres-1st"
+resource "aws_rds_cluster" "aurora_postgre_2nd" {
+  cluster_identifier = "${var.tags_owner}-${var.tags_env}-cls-aurora-postgres-2nd"
   engine             = "aurora-postgresql"
   engine_version     = "11.8"
   engine_mode        = "provisioned" # global,multimaster,parallelquery,serverless, default provisioned
@@ -108,7 +108,7 @@ resource "aws_rds_cluster" "aurora_postgre_1st" {
   copy_tags_to_snapshot     = true                                                        # default false
   deletion_protection       = false                                                       # default false
   skip_final_snapshot       = true                                                        # default false
-  final_snapshot_identifier = "${var.tags_owner}-${var.tags_env}-cls-aurora-postgres-1st" # must be provided if skip_final_snapshot is set to false.
+  final_snapshot_identifier = "${var.tags_owner}-${var.tags_env}-cls-aurora-postgres-2nd" # must be provided if skip_final_snapshot is set to false.
 
   # monitoring
   enabled_cloudwatch_logs_exports = ["postgresql"]
@@ -118,7 +118,7 @@ resource "aws_rds_cluster" "aurora_postgre_1st" {
   preferred_maintenance_window = "Sun:18:00-Sun:19:00" # UTC
 
   # options
-  db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.aurora_postgre_1st.name
+  db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.aurora_postgre_2nd.name
 
   # tags
   tags = {
@@ -128,10 +128,10 @@ resource "aws_rds_cluster" "aurora_postgre_1st" {
 }
 
 # aws_rds_cluster_instance
-resource "aws_rds_cluster_instance" "aurora_postgre_1st" {
+resource "aws_rds_cluster_instance" "aurora_postgre_2nd" {
   count              = 1
   identifier         = "${var.tags_owner}-${var.tags_env}-cls-ins-aurora-postgres-${count.index}"
-  cluster_identifier = aws_rds_cluster.aurora_postgre_1st.cluster_identifier
+  cluster_identifier = aws_rds_cluster.aurora_postgre_2nd.cluster_identifier
   instance_class     = "db.t3.medium"
   engine             = "aurora-postgresql"
   engine_version     = "11.8"
@@ -145,7 +145,7 @@ resource "aws_rds_cluster_instance" "aurora_postgre_1st" {
   monitoring_role_arn          = aws_iam_role.rds_monitoring.arn # https://github.com/terraform-providers/terraform-provider-aws/issues/315
 
   # options
-  db_parameter_group_name    = aws_db_parameter_group.aurora_postgre_1st.name
+  db_parameter_group_name    = aws_db_parameter_group.aurora_postgre_2nd.name
   auto_minor_version_upgrade = false
 
   # tags

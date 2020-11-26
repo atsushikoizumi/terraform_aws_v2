@@ -5,23 +5,23 @@
 # サブネットの割当（管理番号により値を変更）
 variable "ec2_subnet" {
   default = {
-    "eu-north-1a" = "10" # subnet id に応じて変更
-    "eu-north-1b" = "11" # subnet id に応じて変更
-    "eu-north-1c" = "12" # subnet id に応じて変更
+    "eu-north-1a" = "xx" # subnet id に応じて変更
+    "eu-north-1b" = "xx" # subnet id に応じて変更
+    "eu-north-1c" = "xx" # subnet id に応じて変更
   }
 }
 variable "rds_subnet" {
   default = {
-    "eu-north-1a" = "13" # subnet id に応じて変更
-    "eu-north-1b" = "14" # subnet id に応じて変更
-    "eu-north-1c" = "15" # subnet id に応じて変更
+    "eu-north-1a" = "xx" # subnet id に応じて変更
+    "eu-north-1b" = "xx" # subnet id に応じて変更
+    "eu-north-1c" = "xx" # subnet id に応じて変更
   }
 }
 variable "redshift_subnet" {
   default = {
-    "eu-north-1a" = "16" # subnet id に応じて変更
-    "eu-north-1b" = "17" # subnet id に応じて変更
-    "eu-north-1c" = "18" # subnet id に応じて変更
+    "eu-north-1a" = "xx" # subnet id に応じて変更
+    "eu-north-1b" = "xx" # subnet id に応じて変更
+    "eu-north-1c" = "xx" # subnet id に応じて変更
   }
 }
 

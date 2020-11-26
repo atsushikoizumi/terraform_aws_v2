@@ -5,34 +5,28 @@
 # Terraform
 terraform {
   backend "s3" {
-    region                  = "eu-west-1"
-    bucket                  = "aws-aqua-terraform"
-    key                     = "koizumi/dba-test/resource_stg.tfstate"
+    region                  = "eu-west-1"  # 準備したバケットのリージョンを指定
+    bucket                  = "aws-aqua-terraform"  # 準備したバケットを指定
+    key                     = "xxxxxx/resource.tfstate"  # ファイルのパスを指定
     shared_credentials_file = "~/.aws/credentials"
-    profile                 = "koizumi"
+    profile                 = "sample"  # profile名
   }
   required_version = "0.13.5"
 }
 
 # Provider
 provider "aws" {
-  region                  = "eu-north-1"
+  region                  = "eu-north-1"  # 変更不可
   shared_credentials_file = "~/.aws/credentials"
-  profile                 = "koizumi"
+  profile                 = "sample"  # profile名
   version                 = "3.12.0"
 }
 
 # Remote state vpc
 data "terraform_remote_state" "vpc" {
-  backend = "s3"
-
+  backend = "local"
   config = {
-    region                  = "eu-west-1"
-    bucket                  = "aws-aqua-terraform"
-    key                     = "koizumi/dba-test/vpc.tfstate"
-    shared_credentials_file = "~/.aws/credentials"
-    profile                 = "koizumi"
-
+    path = "vpc.tfstate"
   }
 }
 

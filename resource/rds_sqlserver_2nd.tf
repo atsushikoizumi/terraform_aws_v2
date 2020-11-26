@@ -1,7 +1,7 @@
 # aws_db_parameter_group
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_parameter_group
-resource "aws_db_parameter_group" "sqlserver_1st" {
-  name   = "${var.tags_owner}-${var.tags_env}-pg-sqlserver-1st"
+resource "aws_db_parameter_group" "sqlserver_2nd" {
+  name   = "${var.tags_owner}-${var.tags_env}-pg-sqlserver-2nd"
   family = "sqlserver-se-14.0"
 
   tags = {
@@ -12,8 +12,8 @@ resource "aws_db_parameter_group" "sqlserver_1st" {
 
 # aws_db_option_group
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_option_group
-resource "aws_db_option_group" "sqlserver_1st" {
-  name                 = "${var.tags_owner}-${var.tags_env}-opg-sqlserver-1st"
+resource "aws_db_option_group" "sqlserver_2nd" {
+  name                 = "${var.tags_owner}-${var.tags_env}-opg-sqlserver-2nd"
   engine_name          = "sqlserver-se"
   major_engine_version = "14.00"
 
@@ -54,11 +54,10 @@ resource "aws_db_option_group" "sqlserver_1st" {
   }
 }
 
-
 # aws_db_instance
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/db_instance
-resource "aws_db_instance" "sqlserver_1st" {
-  identifier        = "${var.tags_owner}-${var.tags_env}-sqlserver-1st"
+resource "aws_db_instance" "sqlserver_2nd" {
+  identifier        = "${var.tags_owner}-${var.tags_env}-sqlserver-2nd"
   instance_class    = "db.r5.large"
   engine            = "sqlserver-se"
   engine_version    = "14.00.3281.6.v1"
@@ -93,15 +92,15 @@ resource "aws_db_instance" "sqlserver_1st" {
   delete_automated_backups  = true                                              # default true
   deletion_protection       = false                                             # default false
   skip_final_snapshot       = true                                              # default false
-  final_snapshot_identifier = "${var.tags_owner}-${var.tags_env}-sqlserver-1st" # must be provided if skip_final_snapshot is set to false.
+  final_snapshot_identifier = "${var.tags_owner}-${var.tags_env}-sqlserver-2nd" # must be provided if skip_final_snapshot is set to false.
 
   # window time
   backup_window      = "17:00-17:30"         # UTC, must not overlap with maintenance_window.
   maintenance_window = "Sun:18:00-Sun:19:00" # UTC
 
   # options
-  parameter_group_name       = aws_db_parameter_group.sqlserver_1st.name
-  option_group_name          = aws_db_option_group.sqlserver_1st.name
+  parameter_group_name       = aws_db_parameter_group.sqlserver_2nd.name
+  option_group_name          = aws_db_option_group.sqlserver_2nd.name
   character_set_name         = "Japanese_CI_AS" # Oracle and Microsoft SQL
   timezone                   = "Tokyo Standard Time"
   auto_minor_version_upgrade = false # default true

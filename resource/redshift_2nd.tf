@@ -1,7 +1,7 @@
 # aws_redshift_parameter_group
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/redshift_parameter_group
-resource "aws_redshift_parameter_group" "redshift_1st" {
-  name   = "${var.tags_owner}-${var.tags_env}-clspg-redshift-1st"
+resource "aws_redshift_parameter_group" "redshift_2nd" {
+  name   = "${var.tags_owner}-${var.tags_env}-clspg-redshift-2nd"
   family = "redshift-1.0"
 
   parameter {
@@ -32,8 +32,8 @@ resource "aws_redshift_parameter_group" "redshift_1st" {
 
 # aws_redshift_snapshot_schedule
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/redshift_snapshot_schedule
-resource "aws_redshift_snapshot_schedule" "redshift_1st" {
-  identifier = "${var.tags_owner}-${var.tags_env}-1st"
+resource "aws_redshift_snapshot_schedule" "redshift_2nd" {
+  identifier = "${var.tags_owner}-${var.tags_env}-2nd"
   definitions = [
     "cron(0 2 *)", # AM2:00 everyday, cron(m h d)
   ]
@@ -47,8 +47,8 @@ resource "aws_redshift_snapshot_schedule" "redshift_1st" {
 
 # aws_redshift_cluster
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/redshift_cluster
-resource "aws_redshift_cluster" "redshift_1st" {
-  cluster_identifier = "${var.tags_owner}-${var.tags_env}-redshift-cls-1st"
+resource "aws_redshift_cluster" "redshift_2nd" {
+  cluster_identifier = "${var.tags_owner}-${var.tags_env}-redshift-cls-2nd"
   database_name      = "masterdb"
   master_username    = "masteruser"
   master_password    = var.db_master_password.redshift
@@ -56,7 +56,7 @@ resource "aws_redshift_cluster" "redshift_1st" {
   cluster_version    = "1.0"
 
   # option
-  cluster_parameter_group_name = aws_redshift_parameter_group.redshift_1st.name
+  cluster_parameter_group_name = aws_redshift_parameter_group.redshift_2nd.name
 
   # iam role
   iam_roles = [aws_iam_role.rds.arn]
@@ -82,7 +82,7 @@ resource "aws_redshift_cluster" "redshift_1st" {
   logging {
     enable        = true # must be set s3 bucket policy
     bucket_name   = "${var.tags_owner}-${var.tags_env}-logs"
-    s3_key_prefix = "audit/${var.tags_owner}-${var.tags_env}-redshift-cls-1st/"
+    s3_key_prefix = "audit/${var.tags_owner}-${var.tags_env}-redshift-cls-2nd/"
   }
 
   # backup
@@ -102,7 +102,7 @@ resource "aws_redshift_cluster" "redshift_1st" {
 
 # aws_redshift_snapshot_schedule_association
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/redshift_snapshot_schedule_association
-resource "aws_redshift_snapshot_schedule_association" "redshift_1st" {
-  cluster_identifier  = aws_redshift_cluster.redshift_1st.id
-  schedule_identifier = aws_redshift_snapshot_schedule.redshift_1st.identifier
+resource "aws_redshift_snapshot_schedule_association" "redshift_2nd" {
+  cluster_identifier  = aws_redshift_cluster.redshift_2nd.id
+  schedule_identifier = aws_redshift_snapshot_schedule.redshift_2nd.identifier
 }

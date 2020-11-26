@@ -1,0 +1,102 @@
+# 環境情報の設定
+terraformを実行するうえで必要な環境情報を設定します。<br>
+使用方法について記載します。
+
+1. main.tf を編集
+
+    以下を編集します。ただし、変更不可を除く。
+    ```
+    # Terraform
+    terraform {
+    backend "s3" {
+        region                  = "eu-west-1"                # 準備したバケットのリージョンを指定
+        bucket                  = "aws-aqua-terraform"       # 準備したバケットを指定
+        key                     = "xxxxxx/resource.tfstate"  # ファイルのパスを指定
+        shared_credentials_file = "~/.aws/credentials"
+        profile                 = "sample"  # profile名
+    }
+    required_version = "0.13.5"
+    }
+
+    # Provider
+    provider "aws" {
+    region                  = "eu-north-1"         # 変更不可
+    shared_credentials_file = "~/.aws/credentials"
+    profile                 = "sample"             # profile名
+    version                 = "3.12.0"
+    }
+    ```
+
+2. variables.tf を編集
+
+    subnet id の割り当ては以下です。
+
+    | No | Owner    | Env | subnet id |
+    | -- | -------- | --- | --------- |
+    | 1  | koizumi  | dev | 10 - 19   |
+    | 2  | koizumi  | stg | 20 - 29   |
+    | 3  | natsume  | dev | 30 - 39   |
+
+    （例）koizumi/dev では、10,11,12,...18,19 の subnet id が使用可能です。
+
+3. sample.tfvars を編集
+
+    以下の通りファイル名を変更してください。
+    ```
+    sample.tfvars  -->  terraform.tfvars
+    ```
+    ファイル内の編集する項目は以下です。
+    ```
+    tags_owner          : 利用者名を指定ください。
+    tags_env            : 環境を表す任意の単語を指定ください。
+    resource_stop_flag  : true or false を指定ください。
+    allow_ip            : 踏み台サーバーにアクセスを許可するip（配列形式）を指定ください。
+    public_key_path     : パブリックキーのパスを指定ください。 
+    private_key_path    : プライベートキーのパスを指定ください。
+    git_account         : github のアカウントをしてください。
+    git_pass            : github のアカウントパスワードをしてください。
+    db_master_password  : 各リソースのユーザーパスワードを指定ください。
+    logical_backup_flag : true or false を指定ください。
+    ```
+
+4. リソースの作成開始
+
+    以下の手順でリソースの作成を実行してください。<br>
+    コマンドの実行場所は、自身のフォルダ直下を前提としています。
+    ```
+    $ terraform init       # .tfstate 準備
+    $ terraform apply      # 環境構築
+    $ terraform output     # 接続情報取得
+    ```
+
+5. EC2 へのアクセス
+
+    EC2 の接続のユーザー名とパスワードは以下です。
+
+    | ec2         | 初期ユーザー | パスワード                                    |
+    | ----------- | ----------- | ------------------------------------------- |
+    | ec2_amzn2   | tags_owner  | なし                                         |
+    | ec2_win2019 | tags_owner  | db_master_password の windows2019 で指定した値 |
+
+    ※デフォルトの ec2-user は削除しています。<br>
+    ※初期ユーザーに sudo権限、Adminidtrator権限を付与していますので問題なく操作できます。
+
+6. ec2 の設定情報
+
+    事前に以下の設定を行なっています。<br>
+
+    ```
+    [ec2_amzn2]
+    日本時間設定
+    日本語設定
+    パッケージのインストール
+      - curl,unzip,jq,mysql,psql,sqlplus,sqlcmd,git,docker,python3.8,amazon-efs-utils 
+    Aqua-Lab.の各種repositpryを~/github配下にclone済みです。
+    efsが~/efsにマウント済みです。
+
+    [ec2_win2019]
+    "C:\applications" によく使用するアプリケーション（exe）を配置しています。
+    ```
+7. rds の設定情報
+
+    resource の階層にある rds/redshift の tf ファイルを参照ください。

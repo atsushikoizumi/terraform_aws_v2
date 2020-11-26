@@ -1,7 +1,7 @@
 # aws_rds_cluster_parameter_group
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/rds_cluster_parameter_group
-resource "aws_rds_cluster_parameter_group" "aurora_mysql_1st" {
-  name   = "${var.tags_owner}-${var.tags_env}-clspg-aurora-mysql-1st"
+resource "aws_rds_cluster_parameter_group" "aurora_mysql_2nd" {
+  name   = "${var.tags_owner}-${var.tags_env}-clspg-aurora-mysql-2nd"
   family = "aurora-mysql5.7"
   tags = {
     Owner = var.tags_owner
@@ -74,8 +74,8 @@ resource "aws_rds_cluster_parameter_group" "aurora_mysql_1st" {
 
 # aws_db_parameter_group
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_parameter_group
-resource "aws_db_parameter_group" "aurora_mysql_1st" {
-  name   = "${var.tags_owner}-${var.tags_env}-pg-aurora-mysql-1st"
+resource "aws_db_parameter_group" "aurora_mysql_2nd" {
+  name   = "${var.tags_owner}-${var.tags_env}-pg-aurora-mysql-2nd"
   family = "aurora-mysql5.7"
   tags = {
     Owner = var.tags_owner
@@ -86,8 +86,8 @@ resource "aws_db_parameter_group" "aurora_mysql_1st" {
 
 # aws_rds_cluster
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/rds_cluster
-resource "aws_rds_cluster" "aurora_mysql_1st" {
-  cluster_identifier = "${var.tags_owner}-${var.tags_env}-cls-aurora-mysql-1st"
+resource "aws_rds_cluster" "aurora_mysql_2nd" {
+  cluster_identifier = "${var.tags_owner}-${var.tags_env}-cls-aurora-mysql-2nd"
   engine             = "aurora-mysql"
   engine_version     = "5.7.mysql_aurora.2.08.1"
   engine_mode        = "provisioned" # global,multimaster,parallelquery,serverless, default provisioned
@@ -113,13 +113,13 @@ resource "aws_rds_cluster" "aurora_mysql_1st" {
   copy_tags_to_snapshot     = true                                                     # default false
   deletion_protection       = false                                                    # default false
   skip_final_snapshot       = true                                                     # default false
-  final_snapshot_identifier = "${var.tags_owner}-${var.tags_env}-cls-aurora-mysql-1st" # must be provided if skip_final_snapshot is set to false.
+  final_snapshot_identifier = "${var.tags_owner}-${var.tags_env}-cls-aurora-mysql-2nd" # must be provided if skip_final_snapshot is set to false.
 
   # monitoring
   enabled_cloudwatch_logs_exports = ["audit", "error", "general", "slowquery"]
 
   # options
-  db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.aurora_mysql_1st.name
+  db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.aurora_mysql_2nd.name
 
   # window time
   preferred_backup_window      = "17:00-17:30"         # UTC
@@ -134,10 +134,10 @@ resource "aws_rds_cluster" "aurora_mysql_1st" {
 
 # aws_rds_cluster_instance
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/rds_cluster_instance
-resource "aws_rds_cluster_instance" "aurora_mysql_1st" {
+resource "aws_rds_cluster_instance" "aurora_mysql_2nd" {
   count              = 1
   identifier         = "${var.tags_owner}-${var.tags_env}-cls-ins-aurora-mysql-${count.index}"
-  cluster_identifier = aws_rds_cluster.aurora_mysql_1st.cluster_identifier
+  cluster_identifier = aws_rds_cluster.aurora_mysql_2nd.cluster_identifier
   instance_class     = "db.t3.small"
   engine             = "aurora-mysql"
   engine_version     = "5.7.mysql_aurora.2.08.1"
@@ -151,7 +151,7 @@ resource "aws_rds_cluster_instance" "aurora_mysql_1st" {
   monitoring_role_arn          = aws_iam_role.rds_monitoring.arn # https://github.com/terraform-providers/terraform-provider-aws/issues/315
 
   # options
-  db_parameter_group_name    = aws_db_parameter_group.aurora_mysql_1st.name
+  db_parameter_group_name    = aws_db_parameter_group.aurora_mysql_2nd.name
   auto_minor_version_upgrade = false
 
   # tags

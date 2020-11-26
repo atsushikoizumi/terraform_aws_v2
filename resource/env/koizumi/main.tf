@@ -7,7 +7,7 @@ terraform {
   backend "s3" {
     region                  = "eu-west-1"
     bucket                  = "aws-aqua-terraform"
-    key                     = "koizumi/dba-test/resource_prd.tfstate"
+    key                     = "koizumi/aqua/resource.tfstate"
     shared_credentials_file = "~/.aws/credentials"
     profile                 = "koizumi"
   }
@@ -24,15 +24,9 @@ provider "aws" {
 
 # Remote state vpc
 data "terraform_remote_state" "vpc" {
-  backend = "s3"
-
+  backend = "local"
   config = {
-    region                  = "eu-west-1"
-    bucket                  = "aws-aqua-terraform"
-    key                     = "koizumi/dba-test/vpc.tfstate"
-    shared_credentials_file = "~/.aws/credentials"
-    profile                 = "koizumi"
-
+    path = "vpc.tfstate"
   }
 }
 

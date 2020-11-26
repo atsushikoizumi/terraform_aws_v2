@@ -1,7 +1,7 @@
 # aws_db_parameter_group
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_parameter_group
-resource "aws_db_parameter_group" "oracle_1st" {
-  name   = "${var.tags_owner}-${var.tags_env}-pg-oracle-1st"
+resource "aws_db_parameter_group" "oracle_2nd" {
+  name   = "${var.tags_owner}-${var.tags_env}-pg-oracle-2nd"
   family = "oracle-se2-19"
 
   parameter {
@@ -31,8 +31,8 @@ resource "aws_db_parameter_group" "oracle_1st" {
 
 # aws_db_option_group
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_option_group
-resource "aws_db_option_group" "oracle_1st" {
-  name                 = "${var.tags_owner}-${var.tags_env}-opg-oracle-1st"
+resource "aws_db_option_group" "oracle_2nd" {
+  name                 = "${var.tags_owner}-${var.tags_env}-opg-oracle-2nd"
   engine_name          = "oracle-se2"
   major_engine_version = 19
 
@@ -65,8 +65,8 @@ resource "aws_db_option_group" "oracle_1st" {
 
 # aws_db_instance
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/db_instance
-resource "aws_db_instance" "oracle_1st" {
-  identifier     = "${var.tags_owner}-${var.tags_env}-db-oracle-1st"
+resource "aws_db_instance" "oracle_2nd" {
+  identifier     = "${var.tags_owner}-${var.tags_env}-db-oracle-2nd"
   instance_class = "db.t3.medium"
   engine         = "oracle-se2"
   engine_version = "19.0.0.0.ru-2020-07.rur-2020-07.r1"
@@ -101,11 +101,11 @@ resource "aws_db_instance" "oracle_1st" {
   delete_automated_backups  = true                                              # default true
   deletion_protection       = false                                             # default false
   skip_final_snapshot       = true                                              # default false
-  final_snapshot_identifier = "${var.tags_owner}-${var.tags_env}-db-oracle-1st" # must be provided if skip_final_snapshot is set to false.
+  final_snapshot_identifier = "${var.tags_owner}-${var.tags_env}-db-oracle-2nd" # must be provided if skip_final_snapshot is set to false.
 
   # options
-  parameter_group_name       = aws_db_parameter_group.oracle_1st.name
-  option_group_name          = aws_db_option_group.oracle_1st.name
+  parameter_group_name       = aws_db_parameter_group.oracle_2nd.name
+  option_group_name          = aws_db_option_group.oracle_2nd.name
   character_set_name         = "UTF8"                # Oracle and Microsoft SQL
   auto_minor_version_upgrade = false                 # default true
   maintenance_window         = "Sun:18:00-Sun:19:00" # UTC
@@ -119,8 +119,8 @@ resource "aws_db_instance" "oracle_1st" {
 
 # aws_db_instance_role_association
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_instance_role_association
-resource "aws_db_instance_role_association" "oracle_1st" {
-  db_instance_identifier = aws_db_instance.oracle_1st.id
+resource "aws_db_instance_role_association" "oracle_2nd" {
+  db_instance_identifier = aws_db_instance.oracle_2nd.id
   feature_name           = "S3_INTEGRATION"
   role_arn               = aws_iam_role.rds.arn
 }

@@ -14,7 +14,6 @@ tags_env   = "dev"
 #    1時間毎に WinServer/RDS/Redshift を停止する lambda が動きます。
 #    リソースを使用するときは、本設定を false に変更し terraform apply を実行してください。
 #    リソースを使用しないときは、本設定を true に変更し terraform apply を実行してください。
-#    true or false
 #
 resource_stop_flag = false
 
@@ -41,8 +40,8 @@ allow_ip = ["111.111.111.111/32", "222.222.222.222/32"]
 #    4-2. 相対パス（terraform apply を実行するパスから見て）
 #      (any)     ./public_key
 #
-public_key_path  = "/Users/user/.ssh/public_key"
-private_key_path = "/Users/user/.ssh/private_key"
+public_key_path  = "C:\\Users\\user\\.ssh\\public_key"
+private_key_path = "C:\\Users\\user\\.ssh\\private_key"
 
 
 # 5. github
@@ -74,14 +73,13 @@ db_master_password = {
 # 7. RDS 論理バックアップ実行フラグ
 #    毎日深夜の3時30分からDBの論理バックアップを取得します。
 #    最新の自動バックアップから、インスタンスをリストアして論理バックアップを取得します。
-#    準備として、ecr への push と fargate task で対象DB（DB_NAME）を指定します。
+#    準備として、ecr への push と fargate task 定義が必要です。
 #    本設定は、defalut では false としています。 
 #
 #    [使用方法]
 #    1. ecr にバックアップ用コンテナイメージを push してください。（github: docker_logical_backup）
-#    2. fargate task で 対象RDSインスタンス（****_1st）の DB_NAME を指定してください。
+#    2. fargate task を定義してください。
 #    3. 本設定を true に変更し terraform apply を実行してください。
 #    論理バックアップを使用しないときは、本設定を false に変更し terraform apply を実行してください。
-#    true or false
 #
 logical_backup_flag = false
