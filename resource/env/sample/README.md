@@ -70,11 +70,12 @@ terraformを実行するうえで必要な環境情報を設定します。<br>
 
 5. EC2 へのアクセス
 
-    EC2 の接続のユーザー名とパスワードは以下です。
-    | instance os   | user        | password                        |
+    接続ユーザーとパスワードは以下です。
+    | os            | user        | password                        |
     | ------------- | ----------- | ------------------------------- |
     | AmazonLinux2  | tags_owner  |                                 |
     | WinServer2019 | tags_owner  | db_master_password[windows2019] |
+
     ※AmazonLinux2 ではデフォルトの ec2-user は削除しています。<br>
     ※WinServer2019 では SSH－Key でのパスワード取得は不要です。user でログインできます。<br>
     ※※WinServer2019 のキーボード設定がデフォルト日本語ではないです。<br>
@@ -83,18 +84,16 @@ terraformを実行するうえで必要な環境情報を設定します。<br>
 6. ec2 の設定情報
 
     デフォルトで以下の設定を行なっています。
-    ```
-    [ec2_amzn2]
-    日本時間設定
-    日本語設定
-    パッケージのインストール
-      - awscli,curl,unzip,jq,mysql,psql,sqlplus,sqlcmd,git,docker,python3.8,amazon-efs-utils 
-    Aqua-Lab. の各種 repositpry を ~/github 配下に clone 済みです。
-    efs が ~/efs にマウント済みです。
+    | os            | setting     |
+    | ------------- | ----------- |
+    | AmazonLinux2  | 日本時間設定 |
+    |               | 日本語設定   |
+    |               | パッケージインストール |
+    |               | - awscli,curl,unzip,jq,mysql,psql,sqlplus,sqlcmd,git,docker,python3.8,amazon-efs-utils |
+    |               | Aqua-Lab. の各種 repositpry を ~/github 配下に clone |
+    |               | efs が ~/efs にマウント |
+    | WinServer2019 | "C:\applications" によく使用するアプリケーション（exe）を配置 |
 
-    [ec2_win2019]
-    "C:\applications" によく使用するアプリケーション（exe）を配置しています。
-    ```
 7. rds の設定情報
 
     resource の階層にある rds/redshift の tf ファイルを参照ください。
