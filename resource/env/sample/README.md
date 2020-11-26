@@ -29,13 +29,37 @@ terraformを実行するうえで必要な環境情報を設定します。<br>
 2. variables.tf を編集
 
     koizumi/variables.tf を参考に記述してください。<br>
+    以下の xx を割り当てられた subnet id に変更してください。
+    ```
+    # サブネットの割当（管理番号により値を変更）
+    variable "ec2_subnet" {
+    default = {
+        "eu-north-1a" = "xx" # subnet id に応じて変更
+        "eu-north-1b" = "xx" # subnet id に応じて変更
+        "eu-north-1c" = "xx" # subnet id に応じて変更
+    }
+    }
+    variable "rds_subnet" {
+    default = {
+        "eu-north-1a" = "xx" # subnet id に応じて変更
+        "eu-north-1b" = "xx" # subnet id に応じて変更
+        "eu-north-1c" = "xx" # subnet id に応じて変更
+    }
+    }
+    variable "redshift_subnet" {
+    default = {
+        "eu-north-1a" = "xx" # subnet id に応じて変更
+        "eu-north-1b" = "xx" # subnet id に応じて変更
+        "eu-north-1c" = "xx" # subnet id に応じて変更
+    }
+    }
+    ```
     subnet id の割り当ては以下です。
-
     | No | Owner    | Env | subnet id |
     | -- | -------- | --- | --------- |
     | 1  | koizumi  | dev | 10 - 19   |
     | 2  | koizumi  | stg | 20 - 29   |
-    | 3  | natsume  | dev | 30 - 39   |
+    | 3  | natsume  | dba | 30 - 39   |
 
     （例）Owner=koizumi,Env=stg では、20,21,22,23,24,25,26,27,28,29 の subnet id が使用可能です。
 
@@ -74,7 +98,7 @@ terraformを実行するうえで必要な環境情報を設定します。<br>
     | os            | user        | password                        |
     | ------------- | ----------- | ------------------------------- |
     | AmazonLinux2  | tags_owner  |                                 |
-    | WinServer2019 | tags_owner  | db_master_password[windows2019] |
+    | WinServer2019 | tags_owner  | terraform.tfvars で設定した値（db_master_password,key=windows2019） |
 
     ※AmazonLinux2 ではデフォルトの ec2-user は削除しています。<br>
     ※WinServer2019 では SSH－Key でのパスワード取得は不要です。user でログインできます。<br>
