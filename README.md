@@ -24,7 +24,8 @@ $ terraform apply
 | -- | --------- | --- | 
 | 1  | koizumi   | dev | 
 | 2  | koizumi   | stg | 
-| 3  | horihori  | dev | 
+| 3  | natsume   | dev | 
+| 4  | horihory  | dev |
 
 # 準備１
 事前に以下の設定を実施する必要があります。

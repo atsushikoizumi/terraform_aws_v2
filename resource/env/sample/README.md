@@ -58,7 +58,8 @@ terraformを実行するために環境情報を設定します。<br>
     | -- | -------- | --- | --------- |
     | 1  | koizumi  | dev | 10 - 19   |
     | 2  | koizumi  | stg | 20 - 29   |
-    | 3  | natsume  | dba | 30 - 39   |
+    | 3  | natsume  | dev | 30 - 39   |
+    | 4  | horihory | dev | 40 - 49   |
 
     （例）Owner=koizumi,Env=stg では、20,21,22,23,24,25,26,27,28,29 の subnet id が使用可能です。
 
