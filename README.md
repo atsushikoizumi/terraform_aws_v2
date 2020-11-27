@@ -55,11 +55,11 @@ $ terraform apply
     事前に保管用の s3 を用意してください。
 ```
 
-# 準備２
+# 準備２　ローカル作業
 以下の手順を実施してください。
 ```
   1. repositoryをcloneしてください。
-    $ git clone https://github.com/aqua-labo/.....
+    $ git clone https://github.com/aqua-labo/terraform_aws_v2
 
   2. 自分用のフォルダを作成してください。
     \resource\env\sample を同階層にコピーしてフォルダ名を変更してください。
