@@ -11,11 +11,11 @@ tags_env   = "dev"
 
 
 # 2. 有料リソース停止フラグ
-#    1時間毎に WinServer/RDS/Redshift を停止する lambda が動きます。
+#    夜の12時に WinServer/RDS/Redshift を停止する lambda が動きます。
 #    リソースを使用するときは、本設定を false に変更し terraform apply を実行してください。
 #    リソースを使用しないときは、本設定を true に変更し terraform apply を実行してください。
 #
-resource_stop_flag = false
+resource_stop_flag = true
 
 
 # 3. アクセス許可 ip アドレス
