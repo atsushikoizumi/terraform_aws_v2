@@ -41,7 +41,7 @@ $ terraform output     # 接続情報取得
 
     空のファイル C:¥user¥.aws¥credentials を作成し、以下の内容を入力してください。
 
-    [sample]  >> 自身のものに置き換えてください。
+    [sample]
     aws_access_key_id = "xxxxxxxxxxxxxxxxxxxx"
     aws_secret_access_key = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 
