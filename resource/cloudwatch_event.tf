@@ -119,7 +119,7 @@ resource "aws_cloudwatch_event_target" "logicalbackup_orms_1" {
 
 }
 
-# logicalbackup for mysql
+# logicalbackup for sqlserver
 resource "aws_cloudwatch_event_target" "logicalbackup_orms_2" {
   rule      = aws_cloudwatch_event_rule.logicalbackup.name
   target_id = "${var.tags_owner}-${var.tags_env}-logicalbackup-orms-2"

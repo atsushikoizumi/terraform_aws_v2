@@ -99,7 +99,9 @@ resource "aws_iam_policy" "exec_task_2" {
             ],
             "Resource": [
                 "${aws_ecs_task_definition.logicalbackup_mypg_1.arn}",
-                "${aws_ecs_task_definition.logicalbackup_mypg_2.arn}"
+                "${aws_ecs_task_definition.logicalbackup_mypg_2.arn}",
+                "${aws_ecs_task_definition.logicalbackup_orms_1.arn}",
+                "${aws_ecs_task_definition.logicalbackup_orms_2.arn}"
             ]
         } 
     ]
