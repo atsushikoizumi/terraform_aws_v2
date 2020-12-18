@@ -61,11 +61,20 @@ resource "aws_instance" "ec2_win2019" {
   # 初期設定
   user_data = <<EOF
   <powershell>
+  # オリジナル管理ユーザー作成
   New-LocalUser -Name ${var.tags_owner} -Password (ConvertTo-SecureString "${var.db_master_password.windows2019}" -AsPlainText -Force) -PasswordNeverExpires
   Add-LocalGroupMember -Group Administrators -Member ${var.tags_owner}
+  
+  # S3（s3://aws-aqua-terraform/koizumi/windows）より各種アプリダウンロード
   New-Item "C:\applications" -ItemType "directory"
   Read-S3Object -BucketName aws-aqua-terraform -Prefix koizumi/windows -Folder "C:\applications"
+  
+  # 日本時間
   Set-TimeZone -Id "Tokyo Standard Time"
+  
+  # 日本語キーボード設定
+  Set-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server\KeyboardType Mapping\JPN' -Name 00000000 -Value kbd106.dll
+  Set-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server\KeyboardType Mapping\JPN' -Name 00010002 -Value kbd106.dll
   </powershell>
   EOF
 
