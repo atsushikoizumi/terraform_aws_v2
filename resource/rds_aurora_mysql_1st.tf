@@ -160,3 +160,31 @@ resource "aws_rds_cluster_instance" "aurora_mysql_1st" {
     Env   = var.tags_env
   }
 }
+
+# aws_rds_cluster_instance
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/rds_cluster_instance
+resource "aws_rds_cluster_instance" "aurora_mysql_1st_X" {
+  identifier         = "${var.tags_owner}-${var.tags_env}-cls-ins-aurora-mysql"
+  cluster_identifier = aws_rds_cluster.aurora_mysql_1st.cluster_identifier
+  instance_class     = "db.t3.medium"
+  engine             = "aurora-mysql"
+  engine_version     = "5.7.mysql_aurora.2.08.1"
+
+  # netowrok
+  # availability_zone = ""   # eu-west-1a,eu-west-1b,eu-west-1c
+
+  # monitoring
+  performance_insights_enabled = false                           # default false
+  monitoring_interval          = 60                              # 0, 1, 5, 10, 15, 30, 60 (seconds). default 0 (off)
+  monitoring_role_arn          = aws_iam_role.rds_monitoring.arn # https://github.com/terraform-providers/terraform-provider-aws/issues/315
+
+  # options
+  db_parameter_group_name    = aws_db_parameter_group.aurora_mysql_1st.name
+  auto_minor_version_upgrade = false
+
+  # tags
+  tags = {
+    Owner = var.tags_owner
+    Env   = var.tags_env
+  }
+}
