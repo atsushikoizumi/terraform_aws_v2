@@ -43,7 +43,7 @@ resource "aws_db_option_group" "sqlserver_1st" {
     }
     option_settings {
       name  = "RETENTION_TIME"
-      value = 0
+      value = 168
     }
 
   }

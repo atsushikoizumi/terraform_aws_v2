@@ -33,6 +33,11 @@ resource "aws_iam_policy" "rds_1" {
 {
     "Version": "2012-10-17",
     "Statement": [
+	      {
+	          "Effect": "Allow",
+	          "Action": "s3:ListAllMyBuckets",
+	          "Resource": "*"
+	      },
         {
             "Effect": "Allow",
             "Action": [
@@ -42,7 +47,6 @@ resource "aws_iam_policy" "rds_1" {
                 "s3:GetBucketLocation",
                 "s3:GetObject",
                 "s3:GetObjectMetaData",
-                "s3:ListAllMyBuckets",
                 "s3:ListBucket",
                 "s3:ListMultipartUploadParts",
                 "s3:PutObject"
