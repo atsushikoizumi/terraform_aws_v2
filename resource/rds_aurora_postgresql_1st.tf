@@ -34,7 +34,7 @@ resource "aws_rds_cluster_parameter_group" "aurora_postgre_1st" {
   }
   parameter {
     name  = "pgaudit.log"
-    value = "ddl,misc,role"
+    value = "None"
   }
   parameter {
     name  = "pgaudit.role"
@@ -58,13 +58,21 @@ resource "aws_rds_cluster_parameter_group" "aurora_postgre_1st" {
     name  = "lc_time"
     value = "C"
   }
+  parameter {
+    name  = "log_connections"
+    value = 1
+  }
+  parameter {
+    name  = "log_disconnections"
+    value = 1
+  }
 
   # lifecycle
-  lifecycle {
+  /*lifecycle {
     ignore_changes = [
       parameter
     ]
-  }
+  }*/
 }
 
 resource "aws_rds_cluster_parameter_group" "aurora_postgre_12" {
@@ -101,11 +109,19 @@ resource "aws_rds_cluster_parameter_group" "aurora_postgre_12" {
   }
   parameter {
     name  = "pgaudit.log"
-    value = "ddl,misc,role"
+    value = "None"
   }
   parameter {
     name  = "pgaudit.role"
     value = "rds_pgaudit"
+  }
+  parameter {
+    name  = "log_connections"
+    value = 1
+  }
+  parameter {
+    name  = "log_disconnections"
+    value = 1
   }
 
   # no local
@@ -127,11 +143,11 @@ resource "aws_rds_cluster_parameter_group" "aurora_postgre_12" {
   }
 
   # lifecycle
-  lifecycle {
+  /*lifecycle {
     ignore_changes = [
       parameter
     ]
-  }
+  }*/
 }
 
 # aws_db_parameter_group
