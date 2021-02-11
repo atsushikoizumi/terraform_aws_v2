@@ -57,3 +57,15 @@ resource "aws_route_table" "public" {
     Env   = "common"
   }
 }
+
+# vpc endpoint for main route
+resource "aws_vpc_endpoint_route_table_association" "main" {
+  route_table_id  = data.aws_vpc.common_vpc.main_route_table_id
+  vpc_endpoint_id = aws_vpc_endpoint.s3.id
+}
+
+# vpc endpoint for public route
+resource "aws_vpc_endpoint_route_table_association" "public" {
+  route_table_id  = aws_route_table.public.id
+  vpc_endpoint_id = aws_vpc_endpoint.s3.id
+}
