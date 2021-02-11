@@ -39,6 +39,7 @@ resource "aws_iam_policy" "rds_1" {
 	          "Resource": "*"
 	      },
         {
+            "Sid": "s3import",
             "Effect": "Allow",
             "Action": [
                 "s3:AbortMultipartUpload",

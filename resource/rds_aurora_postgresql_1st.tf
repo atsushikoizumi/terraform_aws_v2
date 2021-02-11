@@ -217,7 +217,20 @@ resource "aws_rds_cluster" "aurora_postgre_1st" {
     Owner = var.tags_owner
     Env   = var.tags_env
   }
+
+  lifecycle {
+    ignore_changes = [
+      iam_roles
+    ]
+  }
 }
+
+# https://github.com/hashicorp/terraform-provider-aws/issues/9552
+#resource "aws_rds_cluster_role_association" "aurora_postgre_1st" {
+#  cluster_identifier     = aws_rds_cluster.aurora_postgre_1st.cluster_identifier
+#  feature_name           = "s3Import"
+#  role_arn               = aws_iam_role.rds.arn
+#}
 
 # aws_rds_cluster_instance
 resource "aws_rds_cluster_instance" "aurora_postgre_1st" {
