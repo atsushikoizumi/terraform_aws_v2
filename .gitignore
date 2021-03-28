@@ -4,5 +4,5 @@ terraform.tfvars
 .DS_Store
 .pub
 python
-get_tfstate_koizumi.sh
-push_terraformvars.sh
+get_tfstate.sh
+push_tfvars.sh
