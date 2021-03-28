@@ -1,0 +1,161 @@
+# Ubuntu 18 (Ubuntu 18.04 LTS) with Support by Supported Images
+/*
+aws ec2 describe-images \
+    --region eu-north-1 \
+    --owners 099720109477 \
+    --filters 'Name=name,Values=ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*' \
+    | jq .Images[].Name | sort
+*/
+data "aws_ami" "ubuntu18" {
+  most_recent = true
+  owners      = ["099720109477"]
+
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*"]
+  }
+}
+
+resource "aws_instance" "ec2_ubuntu18" {
+
+  # 基本設定
+  ami           = data.aws_ami.ubuntu18.id
+  instance_type = "t3.micro" # eu-north-1 ではこれが最小サイズ
+  key_name      = aws_key_pair.key_pair.key_name
+  vpc_security_group_ids = [
+    aws_security_group.ec2.id
+  ]
+  subnet_id = aws_subnet.ec2["eu-north-1a"].id
+  root_block_device {
+    volume_type = "gp2"
+    volume_size = 100
+  }
+  associate_public_ip_address = true
+  iam_instance_profile        = aws_iam_instance_profile.ec2.name
+
+  # 下記の項目が変更されると強制的にリソースの再作成が行われてしまうのでそれを防ぐ。
+  # ・ami は一定期間で最新版にアップデートされる。
+  # ・associate_public_ip_address はインスタンスがシャットダウンすると false に変更される。
+  lifecycle {
+    ignore_changes = [
+      ami,
+      associate_public_ip_address,
+      user_data
+    ]
+  }
+
+  # user_data 内の処理における他リソースとの依存関係は terraform では自動解決できない。
+  depends_on = [aws_efs_mount_target.logicalbackup]
+
+  tags = {
+    Name  = "${var.tags_owner}-${var.tags_env}-ubuntu18"
+    Owner = var.tags_owner
+    Env   = var.tags_env
+  }
+}
+
+/* --- CKAN install ---
+[version]
+ubuntu@ip-10-0-1-85:~$ cat /etc/os-release
+NAME="Ubuntu"
+VERSION="18.04.5 LTS (Bionic Beaver)"
+ID=ubuntu
+ID_LIKE=debian
+PRETTY_NAME="Ubuntu 18.04.5 LTS"
+VERSION_ID="18.04"
+HOME_URL="https://www.ubuntu.com/"
+SUPPORT_URL="https://help.ubuntu.com/"
+BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
+VERSION_CODENAME=bionic
+UBUNTU_CODENAME=bionic
+
+[procedure]
+[0] system update
+sudo apt update -y
+sudo apt upgrade -y
+
+[1] Install the required packages
+sudo apt-get install -y python3-dev
+sudo apt-get install -y postgresql
+sudo apt-get install -y libpq-dev
+sudo apt-get install -y python3-pip
+# Unable to locate package python3-pip  --> resolved by update,upgrade
+sudo apt-get install -y python3-venv
+sudo apt-get install -y git-core
+sudo apt-get install -y solr-jetty
+sudo apt-get install -y openjdk-8-jdk
+sudo apt-get install -y redis-server
+sudo apt-get install -y tomcat9
+
+[2] Create a Python virtual environment (virtualenv) 
+sudo mkdir -p /usr/lib/ckan/default
+sudo chown `whoami` /usr/lib/ckan/default
+python3 -m venv /usr/lib/ckan/default
+. /usr/lib/ckan/default/bin/activate
+(default) ubuntu@ip-10-0-1-85:~$ pip install setuptools==44.1.0
+(default) ubuntu@ip-10-0-1-85:~$ pip install --upgrade pip
+(default) ubuntu@ip-10-0-1-85:~$ pip install -e 'git+https://github.com/ckan/ckan.git@ckan-2.9.1#egg=ckan[requirements]'
+(default) ubuntu@ip-10-0-1-85:~$ pip install -e 'git+https://github.com/ckan/ckan.git#egg=ckan[requirements,dev]'
+(default) ubuntu@ip-10-0-1-85:~$ deactivate
+
+[3] Setup a PostgreSQL database
+sudo service postgresql start
+sudo -u postgres psql -l
+sudo -u postgres createuser -S -D -R -P ckan_default
+# ckan_default
+sudo -u postgres createdb -O ckan_default ckan_default -E utf-8
+
+[4] Create a CKAN config file
+sudo mkdir -p /etc/ckan/default
+sudo chown -R `whoami` /etc/ckan/
+. /usr/lib/ckan/default/bin/activate
+(default) ubuntu@ip-10-0-1-85:~$ ckan generate config /etc/ckan/default/ckan.ini
+(default) ubuntu@ip-10-0-1-85:~$ deactivate
+vi /etc/ckan/default/ckan.ini
+# sqlalchemy.url = postgresql://ckan_default:ckan_default@localhost/ckan_default?sslmode=disable
+# ckan.site_id = default
+# ckan.site_url = http://demo.ckan.org
+
+[5] Setup Solr
+sudo mv /etc/solr/conf/schema.xml /etc/solr/conf/schema.xml.bak
+sudo ln -s /usr/lib/ckan/default/src/ckan/ckan/config/solr/schema.xml /etc/solr/conf/schema.xml
+sudo vi /etc/tomcat9/server.xml
+# <Connector port="8983" protocol="HTTP/1.1"
+### sudo vi /etc/default/jetty9 
+### JETTY_HOST=127.0.0.1  # (line 15)
+### JETTY_PORT=8983       # (line 18)
+### sudo service jetty9 start
+sudo service tomcat9 restart
+sudo vi /etc/ckan/default/ckan.ini
+# solr_url=http://127.0.0.1:8983/solr
+
+[6] Link to who.ini
+ln -s /usr/lib/ckan/default/src/ckan/who.ini /etc/ckan/default/who.ini
+
+[7] Create database tables
+cd /usr/lib/ckan/default/src/ckan
+. /usr/lib/ckan/default/bin/activate
+(default) ubuntu@ip-10-0-1-85:~$ ckan -c /etc/ckan/default/ckan.ini db init
+(default) ubuntu@ip-10-0-1-85:~$ deactivate
+
+[8] Set up the DataStore
+sudo vi /etc/ckan/default/ckan.ini
+# ckan.plugins = stats text_view image_view recline_view datastore
+sudo -u postgres createuser -S -D -R -P -l datastore_default
+sudo -u postgres createdb -O ckan_default datastore_default -E utf-8
+sudo vi /etc/ckan/default/ckan.ini
+# ckan.datastore.write_url = postgresql://ckan_default:ckan_default@localhost/datastore_default
+# ckan.datastore.read_url = postgresql://datastore_default:datastore_default@localhost/datastore_default
+. /usr/lib/ckan/default/bin/activate
+(default) ubuntu@ip-10-0-1-85:~$ ckan -c /etc/ckan/default/ckan.ini datastore set-permissions | sudo -u postgres psql --set ON_ERROR_STOP=1
+(default) ubuntu@ip-10-0-1-85:~$ deactivate
+
+[9] Test the set-up
+cd /usr/lib/ckan/default/src/ckan
+. /usr/lib/ckan/default/bin/activate
+(default) ubuntu@ip-10-0-1-85:~$ ckan -c /etc/ckan/default/ckan.ini run
+
+
+curl -X GET "http://127.0.0.1:5000/api/3/action/datastore_search?resource_id=_table_metadata"
+*/
