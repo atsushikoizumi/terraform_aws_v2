@@ -13,8 +13,9 @@ variable vpc_id {}
 variable vpc_cidr_block {}
 variable rt_id_public {}
 variable rt_id_private {}
+variable db_master_password {}
 variable resource_stop_flag {}
 variable layer_zip {}
-variable function_zip {}
-variable db_master_password {}
 variable logical_backup_flag {}
+variable "resource_stop_zip" {}
+variable "resource_start_zip" {}

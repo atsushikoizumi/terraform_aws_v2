@@ -27,10 +27,13 @@ variable "redshift_subnet" {
 
 # lambda ソース
 variable "layer_zip" {
-  default = "../../build/lambda/python.zip"
+  default = "../../build/resource_stop/layer.zip"
 }
-variable "function_zip" {
-  default = "../../build/lambda/src.zip"
+variable "resource_stop_zip" {
+  default = "../../build/resource_stop/function.zip"
+}
+variable "resource_start_zip" {
+  default = "../../build/resource_start/function.zip"
 }
 
 # 個人設定用

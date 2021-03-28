@@ -52,7 +52,8 @@ module "resource" {
   git_pass            = var.git_pass
   resource_stop_flag  = var.resource_stop_flag
   layer_zip           = var.layer_zip
-  function_zip        = var.function_zip
+  resource_stop_zip   = var.resource_stop_zip
+  resource_start_zip  = var.resource_start_zip
   private_key_path    = var.private_key_path
   db_master_password  = var.db_master_password
   logical_backup_flag = var.logical_backup_flag

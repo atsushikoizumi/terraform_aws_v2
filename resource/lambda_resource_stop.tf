@@ -15,7 +15,7 @@
 #       find build -type f | grep -E "(__pycache__|\.pyc|\.pyo$)" | xargs rm
 #
 
-
+/*
 # Archive
 data "archive_file" "layer_zip" {
   type        = "zip"
@@ -28,12 +28,20 @@ data "archive_file" "function_zip" {
   source_dir  = "../../build/resource_stop/function"
   output_path = "../../build/resource_stop/function.zip"
 }
+*/
 
 # Layer
 resource "aws_lambda_layer_version" "resource_stop" {
   layer_name       = "${var.tags_owner}-${var.tags_env}-resource-stop"
-  filename         = data.archive_file.layer_zip.output_path
-  source_code_hash = filebase64sha256(data.archive_file.layer_zip.output_path)
+  
+  # Archive
+  # filename         = data.archive_file.layer_zip.output_path
+  # source_code_hash = filebase64sha256(data.archive_file.layer_zip.output_path)
+
+  # Use prepared zips
+  filename         = var.layer_zip
+  source_code_hash = filebase64sha256(var.layer_zip)
+
   # ソースコードのハッシュ値で変更の有無を判断するため、日付は無視する
   lifecycle {
     ignore_changes = [
@@ -45,15 +53,21 @@ resource "aws_lambda_layer_version" "resource_stop" {
 # Function
 resource "aws_lambda_function" "resource_stop" {
   function_name = "${var.tags_owner}-${var.tags_env}-resource-stop"
-
   handler          = "src/resource_stop.lambda_handler"
-  filename         = data.archive_file.function_zip.output_path
+
+  # Archive
+  # filename         = data.archive_file.function_zip.output_path
+  # source_code_hash = filebase64sha256(data.archive_file.function_zip.output_path)
+
+  # Use prepared zips
+  filename         = var.resource_stop_zip
+  source_code_hash = filebase64sha256(var.resource_stop_zip)
+
   runtime          = "python3.8"
   publish          = true
   timeout          = 10
   role             = aws_iam_role.lambda.arn
   layers           = [aws_lambda_layer_version.resource_stop.arn]
-  source_code_hash = filebase64sha256(data.archive_file.function_zip.output_path)
   # ソースコードのハッシュ値で変更の有無を判断するため、日付は無視する
   lifecycle {
     ignore_changes = [
