@@ -75,6 +75,9 @@ resource "aws_instance" "ec2_win2019" {
   # 日本語キーボード設定
   Set-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server\KeyboardType Mapping\JPN' -Name 00000000 -Value kbd106.dll
   Set-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server\KeyboardType Mapping\JPN' -Name 00010002 -Value kbd106.dll
+  
+  # ドメインコントローラーインストール
+  Install-windowsfeature -name AD-Domain-Services -IncludeManagementTools
   </powershell>
   EOF
 

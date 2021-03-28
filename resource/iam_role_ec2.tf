@@ -231,6 +231,86 @@ resource "aws_iam_policy" "ec2_8" {
 EOF
 }
 
+# PassRolearn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+resource "aws_iam_policy" "ec2_9" {
+  name = "${var.tags_owner}-${var.tags_env}-policy-ec2-9"
+  path = "/"
+
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ssm:DescribeAssociation",
+                "ssm:GetDeployablePatchSnapshotForInstance",
+                "ssm:GetDocument",
+                "ssm:DescribeDocument",
+                "ssm:GetManifest",
+                "ssm:GetParameter",
+                "ssm:GetParameters",
+                "ssm:ListAssociations",
+                "ssm:ListInstanceAssociations",
+                "ssm:PutInventory",
+                "ssm:PutComplianceItems",
+                "ssm:PutConfigurePackageResult",
+                "ssm:UpdateAssociationStatus",
+                "ssm:UpdateInstanceAssociationStatus",
+                "ssm:UpdateInstanceInformation"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ssmmessages:CreateControlChannel",
+                "ssmmessages:CreateDataChannel",
+                "ssmmessages:OpenControlChannel",
+                "ssmmessages:OpenDataChannel"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ec2messages:AcknowledgeMessage",
+                "ec2messages:DeleteMessage",
+                "ec2messages:FailMessage",
+                "ec2messages:GetEndpoint",
+                "ec2messages:GetMessages",
+                "ec2messages:SendReply"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+EOF
+}
+
+# arn:aws:iam::aws:policy/AmazonSSMDirectoryServiceAccess
+resource "aws_iam_policy" "ec2_10" {
+  name = "${var.tags_owner}-${var.tags_env}-policy-ec2-10"
+  path = "/"
+
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ds:CreateComputer",
+                "ds:DescribeDirectories"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+EOF
+}
+
+
 # aws_iam_policy_attachment
 resource "aws_iam_policy_attachment" "ec2_1" {
   name       = "ec2_1"
@@ -278,4 +358,16 @@ resource "aws_iam_policy_attachment" "ec2_8" {
   name       = "ec2_8"
   roles      = [aws_iam_role.ec2.name]
   policy_arn = aws_iam_policy.ec2_8.arn
+}
+
+resource "aws_iam_policy_attachment" "ec2_9" {
+  name       = "ec2_9"
+  roles      = [aws_iam_role.ec2.name]
+  policy_arn = aws_iam_policy.ec2_9.arn
+}
+
+resource "aws_iam_policy_attachment" "ec2_10" {
+  name       = "ec2_10"
+  roles      = [aws_iam_role.ec2.name]
+  policy_arn = aws_iam_policy.ec2_10.arn
 }
