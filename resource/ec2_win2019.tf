@@ -42,7 +42,7 @@ resource "aws_instance" "ec2_win2019" {
   subnet_id = aws_subnet.ec2["eu-north-1a"].id
   root_block_device {
     volume_type = "gp2"
-    volume_size = "30"
+    volume_size = "100"
   }
   associate_public_ip_address = true
   iam_instance_profile        = aws_iam_instance_profile.ec2.name
