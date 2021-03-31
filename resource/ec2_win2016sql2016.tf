@@ -1,41 +1,29 @@
 # search ami
-# https://dev.classmethod.jp/articles/launch-ec2-from-latest-ami-by-terraform/
-data "aws_ami" "win2019_ami" {
+/* 
+aws ec2 describe-images \
+    --owners self amazon \
+    --filters "Name=name,Values=Windows_Server-2016-English-Full-SQL_2016_SP2_Standard-*" \
+    --query 'sort_by(Images[].{date:CreationDate,imid:ImageId,name:ImageLocation},&date)'  \
+    --output text >> ec2_list.txt
+*/
+#
+#
+#
+data "aws_ami" "win2016sql2016_ami" {
   most_recent = true
   owners      = ["amazon"]
-
-  filter {
-    name   = "architecture"
-    values = ["x86_64"]
-  }
-
-  filter {
-    name   = "root-device-type"
-    values = ["ebs"]
-  }
-
   filter {
     name   = "name"
-    values = ["Windows_Server-2019-Japanese-Full-Base-*"]
-  }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-
-  filter {
-    name   = "block-device-mapping.volume-type"
-    values = ["gp2"]
+    values = ["Windows_Server-2016-English-Full-SQL_2016_SP2_*"]
   }
 }
 
 # EC2
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance
-resource "aws_instance" "ec2_win2019" {
-  ami           = data.aws_ami.win2019_ami.id
-  instance_type = "t3.2xlarge"
-  key_name      = aws_key_pair.key_pair.key_name
+resource "aws_instance" "win2016sql2016" {
+  ami           = data.aws_ami.win2016sql2016_ami.id
+  instance_type = "t3.xlarge"
+  key_name      = var.ssh_key
   vpc_security_group_ids = [
     aws_security_group.ec2.id
   ]
@@ -80,12 +68,15 @@ resource "aws_instance" "ec2_win2019" {
   Install-windowsfeature -name AD-Domain-Services -IncludeManagementTools
 
   # ホスト名変更
-  Rename-Computer -NewName win2019 -Force
+  Rename-Computer -NewName win2016sql2016 -Force
+
+  # 再起動
+  Restart-Computer
   </powershell>
   EOF
 
   tags = {
-    Name  = "${var.tags_owner}-${var.tags_env}-win2019"
+    Name  = "${var.tags_owner}-${var.tags_env}-win2016sql2016"
     Owner = var.tags_owner
     Env   = var.tags_env
   }

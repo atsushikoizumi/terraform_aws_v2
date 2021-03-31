@@ -19,3 +19,5 @@ variable layer_zip {}
 variable logical_backup_flag {}
 variable "resource_stop_zip" {}
 variable "resource_start_zip" {}
+variable "ssh_key" {}
+variable "join_linux" {}

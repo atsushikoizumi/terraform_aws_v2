@@ -49,3 +49,7 @@ variable db_master_password {
   type = map(string)
 }
 variable logical_backup_flag {}
+variable "ssh_key" {}
+variable "join_linux" {
+  type = map(string)
+}

@@ -56,7 +56,9 @@ module "resource" {
   resource_start_zip  = var.resource_start_zip
   private_key_path    = var.private_key_path
   db_master_password  = var.db_master_password
+  join_linux          = var.join_linux
   logical_backup_flag = var.logical_backup_flag
+  ssh_key             = var.ssh_key
 
   # get output.value from vpc
   vpc_id         = data.terraform_remote_state.vpc.outputs.vpc_id

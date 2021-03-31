@@ -73,3 +73,7 @@ output "redshift_1st_db" {
 output "redshift_1st_mu" {
   value = module.resource.redshift_1st_mu
 }
+
+output "dns_ip_addresses" {
+  value = module.resource.dns_ip_addresses
+}
