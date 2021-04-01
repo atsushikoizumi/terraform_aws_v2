@@ -23,25 +23,9 @@
 # user = admin@domain.com or domain¥admin
 # pass = %Password%
 #
-# 8. create user & group, and mapping users
+# 8. create domain user 'xxxx' to group "AWS Delegated Administrators"
 #
-# 9. grant privilege to group in the server or database.
-#
-# 10-1. run command
-#     system manager, select document, and run command
-#     Check Console if there is a region at the end of the url
-#     ex) "https://eu-north-1.console.aws.amazon.com/systems-manager/documents/dev.koizumi.se-from30.com/description?region=eu-north-1"
-#
-# 10-2. add instance
-#     set Dns Ip Addresses?
-#     choose ec2 instances
-#     set s3 bucket & pprefix
-#     >> run
-#     >> windows 端末は成功しない。調査結果、原因不明
-#
-# error log
-# %windir%\debug\Netsetup.log
-#
+
 resource "aws_directory_service_directory" "main" {
   name     = "${var.tags_env}.${var.tags_owner}.se-from30.com"
   password = var.db_master_password.ad_admin
@@ -59,6 +43,19 @@ resource "aws_directory_service_directory" "main" {
   }
 }
 
+# System Manager
+# 1. run command
+#     system manager, select document, and run command
+#     Check Console if there is a region at the end of the url
+#     ex) "https://eu-north-1.console.aws.amazon.com/systems-manager/documents/dev.koizumi.se-from30.com/description?region=eu-north-1"
+#
+# 2. add instance
+#     set Dns Ip Addresses?
+#     choose ec2 instances
+#     set s3 bucket & pprefix
+#     >> run
+#     >> windows 端末は成功しない。調査結果、原因不明 error log --> %windir%\debug\Netsetup.log
+#
 resource "aws_ssm_document" "ec2join" {
   name  = aws_directory_service_directory.main.name
   document_type = "Command"
@@ -125,12 +122,21 @@ resource "aws_ssm_association" "ec2_win2019" {
   }
 }
 
-resource "aws_ssm_association" "win2016sql2016" {
+resource "aws_ssm_association" "win2016sql2016a" {
   name = aws_ssm_document.ec2join.name
 
   targets {
     key    = "InstanceIds"
-    values = [aws_instance.win2016sql2016.id]
+    values = [aws_instance.win2016sql2016a.id]
+  }
+}
+
+resource "aws_ssm_association" "win2016sql2016b" {
+  name = aws_ssm_document.ec2join.name
+
+  targets {
+    key    = "InstanceIds"
+    values = [aws_instance.win2016sql2016b.id]
   }
 }
 

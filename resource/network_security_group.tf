@@ -23,7 +23,7 @@ resource "aws_security_group" "ec2" {
   }
 
   ingress {
-    description = "http"
+    description = "HTTP"
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
@@ -32,7 +32,7 @@ resource "aws_security_group" "ec2" {
   }
 
   ingress {
-    description = "https"
+    description = "HTTPS"
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
@@ -41,9 +41,25 @@ resource "aws_security_group" "ec2" {
   }
 
   ingress {
-    description = "efs"
+    description = "EFS"
     from_port   = 2049
     to_port     = 2049
+    protocol    = "tcp"
+    self        = true
+  }
+
+  ingress {
+    description = "SMB"
+    from_port   = 445
+    to_port     = 445
+    protocol    = "tcp"
+    self        = true
+  }
+
+  ingress {
+    description = "WinRM 2.0"
+    from_port   = 5985
+    to_port     = 5985
     protocol    = "tcp"
     self        = true
   }
