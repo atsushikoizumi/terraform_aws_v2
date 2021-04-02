@@ -8,7 +8,7 @@ terraform {
   backend "s3" {
     region                  = "eu-west-1"
     bucket                  = "aws-aqua-terraform"
-    key                     = "koizumi/dba-test/resource_dev.tfstate"
+    key                     = "koizumi/dba-test/dev/resource.tfstate"
     shared_credentials_file = "~/.aws/credentials"
     profile                 = "koizumi"
   }
