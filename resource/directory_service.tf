@@ -63,7 +63,12 @@ resource "aws_ssm_document" "ec2join" {
     Owner = var.tags_owner
     Env   = var.tags_env
   }
-content = <<DOC
+  lifecycle {
+    ignore_changes = [
+      content # not allowed update in ver1.2
+    ]
+  }
+  content = <<DOC
 {
   "schemaVersion": "1.2",
   "description": "Join your instances to an AWS Directory Service domain.",

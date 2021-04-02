@@ -11,8 +11,7 @@ resource "aws_instance" "ec2_amzn2" {
   # 基本設定
   ami           = data.aws_ssm_parameter.amzn2_ami.value
   instance_type = "t3.micro" # eu-north-1 ではこれが最小サイズ
-  key_name      = aws_key_pair.key_pair.key_name
-  # key_name      = "your-key-name"
+  key_name      = var.ssh_key
   vpc_security_group_ids = [
     aws_security_group.ec2.id
   ]
@@ -31,7 +30,8 @@ resource "aws_instance" "ec2_amzn2" {
     ignore_changes = [
       ami,
       associate_public_ip_address,
-      user_data
+      user_data,
+      key_name
     ]
   }
 

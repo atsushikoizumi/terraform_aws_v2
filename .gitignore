@@ -6,3 +6,6 @@ terraform.tfvars
 python
 get_tfstate.sh
 push_tfvars.sh
+get_tfstate.ps1
+push_tfvars.ps1
+.terraform.lock.hcl

@@ -35,7 +35,7 @@ data "aws_ami" "win2019_ami" {
 resource "aws_instance" "ec2_win2019" {
   ami           = data.aws_ami.win2019_ami.id
   instance_type = "t3.2xlarge"
-  key_name      = aws_key_pair.key_pair.key_name
+  key_name      = var.ssh_key
   vpc_security_group_ids = [
     aws_security_group.ec2.id
   ]
@@ -54,7 +54,8 @@ resource "aws_instance" "ec2_win2019" {
     ignore_changes = [
       ami,
       associate_public_ip_address,
-      user_data
+      user_data,
+      key_name
     ]
   }
 

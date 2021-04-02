@@ -4,6 +4,7 @@
 
 # Terraform
 terraform {
+  required_version = "0.14.9"
   backend "s3" {
     region                  = "eu-west-1"
     bucket                  = "aws-aqua-terraform"
@@ -11,7 +12,12 @@ terraform {
     shared_credentials_file = "~/.aws/credentials"
     profile                 = "koizumi"
   }
-  required_version = "0.13.5"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "3.35.0"
+    }
+  }
 }
 
 # Provider
@@ -19,7 +25,6 @@ provider "aws" {
   region                  = "eu-north-1"
   shared_credentials_file = "~/.aws/credentials"
   profile                 = "koizumi"
-  version                 = "3.12.0"
 }
 
 # Remote state vpc
