@@ -1,20 +1,21 @@
 /* 
-## 1. search ami
-aws ec2 describe-images \
-    --owners self amazon \
-    --filters "Name=name,Values=Windows_Server-2016-English-Full-SQL_2016_SP2_Standard-*" \
-    --query 'sort_by(Images[].{date:CreationDate,imid:ImageId,name:ImageLocation},&date)'  \
-    --output text >> ec2_list.txt
+1. win2016sql2016a,win2016sql2016b のドメイン参加
+    administrator でログイン
+    NICのipv4のDNSをADのipに指定
+    DNS参加　%SystemRoot%\system32\control.exe sysdm.cpl
+    再起動
 
-## 2. mount
-New-PSDrive D -PSProvider FileSystem  -Root \\amznfsxmyafmcad.dev.koizumi.se-from30.com\D$ -Persist
+2. win2016sql2016a,win2016sql2016b で Failover Clustering をインストール
+    Server Manager を起動
+    Add Roles and Features Wizard > Features > Failover Clustering をインストール
+    再起動
 
-## 3. Create Users & Add to group "AWS Delegated Administrators"
-domain\DBAdmins
-domain\SQLSA
-domain\SQLServers
+3. Create Users & Add to group "AWS Delegated Administrators"
+    domain\DBAdmins
+    domain\SQLSA
+    domain\SQLServers
 
-## 4-1. Allow domain\users to access Fsx
+4. Allow domain\users to access Common Fsx
 $FSX = "amznfsxmyafmcad.dev.koizumi.se-from30.com" ## Amazon FSx DNS Name
 $FSxPS = "amznfsxen2edrpe.dev.koizumi.se-from30.com" # Amazon FSx PowerShell endpoint
 
@@ -41,43 +42,52 @@ Invoke-Command -ComputerName $FSxPS -SessionOption $usSession -ConfigurationName
     Grant-FSxSmbShareaccess -name SQLDB -AccountName "dev.koizumi.se-from30.com\SQLSA","dev.koizumi.se-from30.com\DBAdmins","dev.koizumi.se-from30.com\SQLServers" -accessright Full
 }
 
-## 4-2. the same as quorum Fsx
+5. Allow domain\users to access quorum Fsx
 $FSX = "fs-06a57ee08c411d72d.dev.koizumi.se-from30.com" ## Amazon FSx DNS Name
 $FSxPS = "fs-06a57ee08c411d72d.dev.koizumi.se-from30.com" # Amazon FSx PowerShell endpoint
 
-New-Item -ItemType Directory -Name SQLDB -Path \\$FSX\D$\
-
-$ACL = Get-Acl \\$FSx\D$\SQLDB
+$ACL = Get-Acl \\$FSx\share
 $Ar = New-Object system.security.accesscontrol.filesystemaccessrule('dev.koizumi.se-from30.com\DBAdmins',"FullControl","ContainerInherit, ObjectInherit", "None", "Allow")
 $ACL.SetAccessRule($Ar)
-Set-Acl \\$FSX\D$\SQLDB $ACL
+Set-Acl \\$FSX\D$\share $ACL
 
-$ACL = Get-Acl \\$FSx\D$\SQLDB
+$ACL = Get-Acl \\$FSx\share
 $Ar = New-Object system.security.accesscontrol.filesystemaccessrule('dev.koizumi.se-from30.com\SQLSA',"FullControl","ContainerInherit, ObjectInherit", "None", "Allow")
 $ACL.SetAccessRule($Ar)
-Set-Acl \\$FSX\D$\SQLDB $ACL
+Set-Acl \\$FSX\D$\share $ACL
 
-$ACL = Get-Acl \\$FSx\D$\SQLDB
+$ACL = Get-Acl \\$FSx\share
 $Ar = New-Object system.security.accesscontrol.filesystemaccessrule('dev.koizumi.se-from30.com\SQLServers',"FullControl","ContainerInherit, ObjectInherit", "None", "Allow")
 $ACL.SetAccessRule($Ar)
-Set-Acl \\$FSX\D$\SQLDB $ACL
+Set-Acl \\$FSX\D$\share $ACL
 
 $usSession = New-PSSessionOption -Culture en-US -UICulture en-US
 Invoke-Command -ComputerName $FSxPS -SessionOption $usSession -ConfigurationName FSxRemoteAdmin -scriptblock {
-    New-FSxSmbShare -Name "SQLDB" -Path "D:\SQLDB" -Description "SQL Database Share" -FolderEnumerationMode AccessBased -EncryptData $True 
-    Grant-FSxSmbShareaccess -name SQLDB -AccountName "dev.koizumi.se-from30.com\SQLSA","dev.koizumi.se-from30.com\DBAdmins","dev.koizumi.se-from30.com\SQLServers" -accessright Full
+    New-FSxSmbShare -Name "share" -Path "D:\share" -Description "SQL Database Share" -FolderEnumerationMode AccessBased -EncryptData $True 
+    Grant-FSxSmbShareaccess -name share -AccountName "dev.koizumi.se-from30.com\SQLSA","dev.koizumi.se-from30.com\DBAdmins","dev.koizumi.se-from30.com\SQLServers" -accessright Full
 }
 
-## 5. Install Fail over cluster
+6. win2016sql2016a,win2016sql2016b の メイン NIC を静的に変更
 
-## 6. Change Main NIC Static
+7. win2016sql2016a,win2016sql2016b の FireWall off
 
-## 7. 
+8. mount
+New-PSDrive D -PSProvider FileSystem  -Root \\amznfsxmyafmcad.dev.koizumi.se-from30.com\D$ -Persist
+
+9. Failover Clustering の設定
+
 
 */
 #
 #
 data "aws_ami" "win2016sql2016_ami" {
+/*  search ami
+aws ec2 describe-images \
+    --owners self amazon \
+    --filters "Name=name,Values=Windows_Server-2016-English-Full-SQL_2016_SP2_Standard-*" \
+    --query 'sort_by(Images[].{date:CreationDate,imid:ImageId,name:ImageLocation},&date)'  \
+    --output text >> ec2_list.txt
+*/
   most_recent = true
   owners      = ["amazon"]
   filter {
@@ -145,7 +155,7 @@ resource "aws_instance" "win2016sql2016a" {
     Env   = var.tags_env
   }
 }
-/*
+
 # add 2nic to instance 1st
 resource "aws_network_interface" "win2016sql2016a1" {
   subnet_id       = aws_subnet.ec2["eu-north-1a"].id
@@ -165,7 +175,7 @@ resource "aws_network_interface" "win2016sql2016a2" {
     instance     = aws_instance.win2016sql2016a.id
     device_index = 2
   }
-}*/
+}
 
 # 2nd instance
 resource "aws_instance" "win2016sql2016b" {
@@ -226,7 +236,7 @@ resource "aws_instance" "win2016sql2016b" {
     Env   = var.tags_env
   }
 }
-/*
+
 # add nic to instance 2nd
 resource "aws_network_interface" "win2016sql2016b1" {
   subnet_id       = aws_subnet.ec2["eu-north-1b"].id
@@ -246,7 +256,7 @@ resource "aws_network_interface" "win2016sql2016b2" {
     instance     = aws_instance.win2016sql2016b.id
     device_index = 2
   }
-}*/
+}
 
 # fsx
 resource "aws_fsx_windows_file_system" "allwayson" {

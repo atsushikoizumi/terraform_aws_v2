@@ -1,29 +1,25 @@
 # Microsoft Active Directory
 #
-# 1. set policy to ec2 iam role
-# AmazonSSMManagedInstanceCore
-# AmazonSSMDirectoryServiceAccess
-#
-# 2. install AD modules
+# 1. install AD modules
 # Install-windowsfeature -name AD-Domain-Services -IncludeManagementTools
 #
-# 3. change the Preferred DNS server and Alternate DNS server
+# 2. change the Preferred DNS server and Alternate DNS server
 # %SystemRoot%\system32\control.exe ncpa.cpl
 #
-# 4. in the Member of field, select Domain, enter the fully qualified name of your AWS Directory Service directory.
+# 3. in the Member of field, select Domain, enter the fully qualified name of your AWS Directory Service directory.
 # %SystemRoot%\system32\control.exe sysdm.cpl
 #
-# 5. authentication
+# 4. authentication
 # user = admin 
 # pass = %Password%
 #
-# 6. restart 
+# 5. restart 
 #
-# 7. login by domain account
+# 6. login by domain account
 # user = admin@domain.com or domain¥admin
 # pass = %Password%
 #
-# 8. create domain user 'xxxx' to group "AWS Delegated Administrators"
+# 7. create domain user 'xxxx' to group "AWS Delegated Administrators"
 #
 
 resource "aws_directory_service_directory" "main" {
@@ -44,6 +40,10 @@ resource "aws_directory_service_directory" "main" {
 }
 
 # System Manager
+#
+# 0. set policy to ec2 iam role
+#     AmazonSSMManagedInstanceCore, AmazonSSMDirectoryServiceAccess
+#
 # 1. run command
 #     system manager, select document, and run command
 #     Check Console if there is a region at the end of the url
