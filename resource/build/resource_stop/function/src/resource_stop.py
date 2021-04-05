@@ -92,6 +92,7 @@ def lambda_handler(event, context):
             if str(res['Reservations'][i]['Instances'][0]['Tags'][j]['Key']) == 'Owner':
                 if  str(res['Reservations'][i]['Instances'][0]['Tags'][j]['Value']) == os.environ['tags_owner']:
                     f += 1
+            ''' if tags match "Env" & "Owner" then stop.
             if str(res['Reservations'][i]['Instances'][0]['Tags'][j]['Key']) == 'Name':
                 if  str(res['Reservations'][i]['Instances'][0]['Tags'][j]['Value']) == os.environ['ec2_win_name']:
                     # c2 instance の状態出力
@@ -100,7 +101,8 @@ def lambda_handler(event, context):
                 elif str(res['Reservations'][i]['Instances'][0]['Tags'][j]['Value']) == os.environ['ec2_amzn_nam']:
                     # c2 instance の状態出力
                     print(str(datetime.datetime.now()) + ' : ' + res['Reservations'][i]['Instances'][0]['Tags'][j]['Value'] + '  ' + res['Reservations'][i]['Instances'][0]['State']['Name'])
-        if f < 3:
+            '''
+        if f < 2:
             continue
 
         # State = running は処理
