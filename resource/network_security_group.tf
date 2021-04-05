@@ -10,7 +10,6 @@ resource "aws_security_group" "ec2" {
     to_port     = 22
     protocol    = "tcp"
     cidr_blocks = var.allow_ip
-    self        = true
   }
 
   ingress {
@@ -19,7 +18,6 @@ resource "aws_security_group" "ec2" {
     to_port     = 3389
     protocol    = "tcp"
     cidr_blocks = var.allow_ip
-    self        = true
   }
 
   ingress {
@@ -28,7 +26,6 @@ resource "aws_security_group" "ec2" {
     to_port     = 80
     protocol    = "tcp"
     cidr_blocks = var.allow_ip
-    self        = true
   }
 
   ingress {
@@ -37,15 +34,42 @@ resource "aws_security_group" "ec2" {
     to_port     = 443
     protocol    = "tcp"
     cidr_blocks = var.allow_ip
-    self        = true
   }
 
   ingress {
-    description = "EFS"
-    from_port   = 2049
-    to_port     = 2049
-    protocol    = "tcp"
+    description = "Full Access From Self SecurityGroup"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
     self        = true
+  }
+
+/*## allways on
+  ingress {
+    description = "RPC"
+    from_port   = 135
+    to_port     = 135
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    #self        = true
+  }
+
+  ingress {
+    description = "Cluster Administrator"
+    from_port   = 137
+    to_port     = 137
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    #self        = true 
+  }
+
+  ingress {
+    description = "Cluster Administrator"
+    from_port   = 137
+    to_port     = 137
+    protocol    = "udp"
+    cidr_blocks = ["0.0.0.0/0"]
+    #self        = true 
   }
 
   ingress {
@@ -53,17 +77,100 @@ resource "aws_security_group" "ec2" {
     from_port   = 445
     to_port     = 445
     protocol    = "tcp"
-    self        = true
+    cidr_blocks = ["0.0.0.0/0"]
+    #self        = true
   }
 
   ingress {
-    description = "WinRM 2.0"
+    description = "SQLServer"
+    from_port   = 1433
+    to_port     = 1433
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    #self        = true
+  }
+
+  ingress {
+    description = "SQLServer"
+    from_port   = 1434
+    to_port     = 1434
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    #self        = true
+  }
+
+  ingress {
+    description = "SQLServer"
+    from_port   = 1434
+    to_port     = 1434
+    protocol    = "udp"
+    cidr_blocks = ["0.0.0.0/0"]
+    #self        = true 
+  }
+
+  ingress {
+    description = "Cluster Service"
+    from_port   = 3343
+    to_port     = 3343
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    #self        = true
+  }
+
+  ingress {
+    description = "Cluster Service"
+    from_port   = 3343
+    to_port     = 3343
+    protocol    = "udp"
+    cidr_blocks = ["0.0.0.0/0"]
+    #self        = true
+  }
+
+  ingress {
+    description = "mice server"
+    from_port   = 5022
+    to_port     = 5022
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    #self        = true
+  }
+
+  ingress {
+    description = "WinRM"
     from_port   = 5985
     to_port     = 5985
     protocol    = "tcp"
-    self        = true
+    cidr_blocks = ["0.0.0.0/0"]
+    #self        = true
   }
 
+  ingress {
+    description = "Randomly allocated high TCP ports"
+    from_port   = 49152
+    to_port     = 65535
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    #self        = true
+  }
+
+  ingress {
+    description = "Randomly allocated high UDP ports"
+    from_port   = 49152
+    to_port     = 65535
+    protocol    = "udp"
+    cidr_blocks = ["0.0.0.0/0"]
+    #self        = true 
+  }
+
+  ingress {
+    description = "ICMP"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "icmp"
+    cidr_blocks = ["0.0.0.0/0"]
+    #self        = true 
+  }
+*/
   egress {
     from_port   = 0
     to_port     = 0

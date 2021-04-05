@@ -69,7 +69,3 @@ output "redshift_1st_db" {
 output "redshift_1st_mu" {
   value = aws_redshift_cluster.redshift_1st.master_username
 }
-
-output "dns_ip_addresses" {
-  value = aws_directory_service_directory.main.dns_ip_addresses
-}
