@@ -169,7 +169,7 @@ https://docs.microsoft.com/en-US/troubleshoot/windows-server/networking/service-
     再起動
 
 2. Create Users & Add to group "AWS Delegated Administrators"
-    domain\SQLSA
+    domain\sqlsa
 
 3. Allow domain\users to access Common Fsx
     $FSX = "amznfsx4a8gjkg1.dev.koizumi.com" ## Amazon FSx DNS Name
@@ -178,24 +178,19 @@ https://docs.microsoft.com/en-US/troubleshoot/windows-server/networking/service-
     New-Item -ItemType Directory -Name SQLDB -Path \\$FSX\D$\
 
     $ACL = Get-Acl \\$FSx\D$\SQLDB
-    $Ar = New-Object system.security.accesscontrol.filesystemaccessrule('dev.koizumi.com\DBAdmins',"FullControl","ContainerInherit, ObjectInherit", "None", "Allow")
+    $Ar = New-Object system.security.accesscontrol.filesystemaccessrule('dev.koizumi.com\Admin',"FullControl","ContainerInherit, ObjectInherit", "None", "Allow")
     $ACL.SetAccessRule($Ar)
     Set-Acl \\$FSX\D$\SQLDB $ACL
 
     $ACL = Get-Acl \\$FSx\D$\SQLDB
-    $Ar = New-Object system.security.accesscontrol.filesystemaccessrule('dev.koizumi.com\SQLSA',"FullControl","ContainerInherit, ObjectInherit", "None", "Allow")
-    $ACL.SetAccessRule($Ar)
-    Set-Acl \\$FSX\D$\SQLDB $ACL
-
-    $ACL = Get-Acl \\$FSx\D$\SQLDB
-    $Ar = New-Object system.security.accesscontrol.filesystemaccessrule('dev.koizumi.com\SQLServers',"FullControl","ContainerInherit, ObjectInherit", "None", "Allow")
+    $Ar = New-Object system.security.accesscontrol.filesystemaccessrule('dev.koizumi.com\sqlsa',"FullControl","ContainerInherit, ObjectInherit", "None", "Allow")
     $ACL.SetAccessRule($Ar)
     Set-Acl \\$FSX\D$\SQLDB $ACL
 
     $usSession = New-PSSessionOption -Culture en-US -UICulture en-US
     Invoke-Command -ComputerName $FSxPS -SessionOption $usSession -ConfigurationName FSxRemoteAdmin -scriptblock {
         New-FSxSmbShare -Name "SQLDB" -Path "D:\SQLDB" -Description "SQL Database Share" -FolderEnumerationMode AccessBased -EncryptData $True 
-        Grant-FSxSmbShareaccess -name SQLDB -AccountName "dev.koizumi.com\SQLSA","dev.koizumi.com\DBAdmins","dev.koizumi.com\SQLServers" -accessright Full
+        Grant-FSxSmbShareaccess -name SQLDB -AccountName "dev.koizumi.com\sqlsa","dev.koizumi.com\Admin" -accessright Full
     }
 
     #共有ストレージのマウント用コマンド
@@ -207,17 +202,46 @@ https://docs.microsoft.com/en-US/troubleshoot/windows-server/networking/service-
 5. ドメインで、Cluster にコンピュータオブジェクト作成の権限を付与
 
 6. SQLServer Cluster インストール
+    最後の方で、data ディスクを Fsx に指定する。
 
 7. SQLServer Cluster にノードを追加
 
 8. 共有ストレージに対して、quorum を設定
+    $FSX = "fs-097fb4054c4a44b64.dev.koizumi.com" ## Amazon FSx DNS Name
+    $FSxPS = "fs-097fb4054c4a44b64.dev.koizumi.com" # Amazon FSx PowerShell endpoint
+
+    New-Item -ItemType Directory -Name QUORUM -Path \\$FSX\D$\
+
+    $ACL = Get-Acl \\$FSx\D$\QUORUM
+    $Ar = New-Object system.security.accesscontrol.filesystemaccessrule('dev.koizumi.com\Admin',"FullControl","ContainerInherit, ObjectInherit", "None", "Allow")
+    $ACL.SetAccessRule($Ar)
+    Set-Acl \\$FSX\D$\QUORUM $ACL
+
+    $ACL = Get-Acl \\$FSx\D$\QUORUM
+    $Ar = New-Object system.security.accesscontrol.filesystemaccessrule('dev.koizumi.com\salsa',"FullControl","ContainerInherit, ObjectInherit", "None", "Allow")
+    $ACL.SetAccessRule($Ar)
+    Set-Acl \\$FSX\D$\QUORUM $ACL
+
+    $usSession = New-PSSessionOption -Culture en-US -UICulture en-US
+    Invoke-Command -ComputerName $FSxPS -SessionOption $usSession -ConfigurationName FSxRemoteAdmin -scriptblock {
+        New-FSxSmbShare -Name "QUORUM" -Path "D:\QUORUM" -Description "SQL Database Share" -FolderEnumerationMode AccessBased -EncryptData $True 
+        Grant-FSxSmbShareaccess -name QUORUM -AccountName "dev.koizumi.com\sqlsa","dev.koizumi.com\Admin" -accessright Full
+    }
 
 9. 接続方法
     server name : MSCSSQL2\MSSQLSERVER2
     Authenticate: Windows
 
-10. ドメインユーザー追加
+10. SQLServer ドメインユーザー追加
     CREATE LOGIN [dev\Admin] FROM WINDOWS;
+
+11. 接続先確認SQL
+    SELECT @@SERVERNAME
+    SELECT * FROM sys.dm_exec_connections 
+
+12. DNSキャッシュクリア
+    Clear-DnsClientCache
+
 */
 
 
@@ -493,4 +517,82 @@ resource "aws_fsx_windows_file_system" "quorum" {
     Env   = var.tags_env
   }
 
+}
+
+# 3rd Instance
+resource "aws_instance" "win2016sql2016c" {
+  ami           = data.aws_ami.win2016sql2016_ami.id
+  instance_type = "m5.xlarge"
+  key_name      = var.ssh_key
+  vpc_security_group_ids = [
+    aws_security_group.ec2.id
+  ]
+  subnet_id = aws_subnet.ec2["eu-north-1c"].id
+  private_ip = "10.0.1.132"
+  secondary_private_ips = ["10.0.1.134","10.0.1.135"]
+  root_block_device {
+    volume_type = "gp2"
+    volume_size = "100"
+  }
+  associate_public_ip_address = true
+  iam_instance_profile        = aws_iam_instance_profile.ec2.name
+
+  # 下記の項目が変更されると強制的にリソースの再作成が行われてしまうのでそれを防ぐ。
+  # ・ami は一定期間で最新版にアップデートされる。
+  # ・associate_public_ip_address はインスタンスがシャットダウンすると false に変更される。
+  lifecycle {
+    ignore_changes = [
+      ami,
+      associate_public_ip_address,
+      user_data
+    ]
+  }
+
+  # 初期設定
+  user_data = <<EOF
+  <powershell>
+  # オリジナル管理ユーザー作成
+  New-LocalUser -Name ${var.tags_owner} -Password (ConvertTo-SecureString "${var.db_master_password.windows2019}" -AsPlainText -Force) -PasswordNeverExpires
+  Add-LocalGroupMember -Group Administrators -Member ${var.tags_owner}
+  
+  # S3（s3://aws-aqua-terraform/koizumi/windows）より各種アプリダウンロード
+  New-Item "C:\applications" -ItemType "directory"
+  Read-S3Object -BucketName aws-aqua-terraform -Prefix koizumi/windows -Folder "C:\applications"
+  
+  # 日本時間
+  Set-TimeZone -Id "Tokyo Standard Time"
+  
+  # 日本語キーボード設定
+  Set-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server\KeyboardType Mapping\JPN' -Name 00000000 -Value kbd106.dll
+  Set-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server\KeyboardType Mapping\JPN' -Name 00010002 -Value kbd106.dll
+
+  # ホスト名変更
+  Rename-Computer -NewName win2016sql2016c -Force
+
+  # Telnet インストール
+  Install-WindowsFeature "telnet-client"
+
+  # ドメインコントローラーのインストール
+  Install-windowsfeature -name AD-Domain-Services -IncludeManagementTools
+  Install-WindowsFeature DNS -IncludeManagementTools
+
+  # ドメイン参加
+  # $User = "${var.tags_env}\Admin"
+  # $PWord = ConvertTo-SecureString -String "${var.db_master_password.ad_admin}" -AsPlainText -Force
+  # $Credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $User, $PWord
+  # Add-Computer -DomainName "${var.tags_env}.${var.tags_owner}.com" -Credential $Credential -Force
+  
+  # failover cluster インストール
+  Install-WindowsFeature –Name Failover-Clustering –IncludeManagementTools
+
+  # 再起動
+  Restart-Computer
+  </powershell>
+  EOF
+
+  tags = {
+    Name  = "${var.tags_owner}-${var.tags_env}-win2016sql2016c"
+    Owner = var.tags_owner
+    Env   = var.tags_env
+  }
 }
