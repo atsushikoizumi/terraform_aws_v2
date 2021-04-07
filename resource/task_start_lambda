@@ -61,3 +61,23 @@ resource "aws_lambda_permission" "resource_start" {
   principal     = "events.amazonaws.com"
   source_arn    = aws_cloudwatch_event_rule.resource_start.arn
 }
+
+# resource_start schedule
+resource "aws_cloudwatch_event_rule" "resource_start" {
+  name                = "${var.tags_owner}-${var.tags_env}-resource-start"
+  description         = "resource start schedule"
+  schedule_expression = "cron(30 16 ? * SUN *)" # UTC
+  is_enabled          = var.logical_backup_flag
+  tags = {
+    Owner = var.tags_owner
+    Env   = var.tags_env
+  }
+}
+
+resource "aws_cloudwatch_event_target" "resource_start" {
+  rule      = aws_cloudwatch_event_rule.resource_start.name
+  target_id = "${var.tags_owner}-${var.tags_env}-resource-start"
+  arn       = aws_lambda_function.resource_start.arn
+  role_arn  = ""
+  input     = "{}"
+}
