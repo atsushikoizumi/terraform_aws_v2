@@ -242,6 +242,46 @@ https://docs.microsoft.com/en-US/troubleshoot/windows-server/networking/service-
 12. DNSキャッシュクリア
     Clear-DnsClientCache
 
+
+
+【SQLServer 準備作業（source編）】
+-- ユーザー作成
+CREATE LOGIN dms_user WITH PASSWORD = 'Admin_123!!';
+ALTER SERVER ROLE [sysadmin] ADD MEMBER dms_user;
+GO
+
+-- テスト用データベース作成
+CREATE DATABASE testdb01;
+GO
+
+-- テストデータ挿入
+USE testdb01
+GO
+CREATE SCHEMA schema01;
+GO
+CREATE TABLE schema01.table01 (id integer, name varchar(10));
+INSERT INTO schema01.table01 (id, name) VALUES ('10', '東京都');
+INSERT INTO schema01.table01 (id, name) VALUES ('20', '千葉県');
+SELECT * FROM schema01.table01;
+GO
+
+-- バックアップ設定
+USE master;  
+ALTER DATABASE testdb01 SET RECOVERY FULL;  
+BACKUP DATABASE testdb01 TO DISK = '\\amznfsx4a8gjkg1.dev.koizumi.com\SQLDB\testdb01FullRM.bak' WITH INIT;
+BACKUP LOG testdb01 TO DISK = '\\amznfsx4a8gjkg1.dev.koizumi.com\SQLDB\testdb01FullRM.bak';  
+GO 
+
+-- MS-CDC設定
+use [testdb01]
+EXEC sys.sp_cdc_enable_db  
+GO
+exec sys.sp_cdc_enable_table
+@source_schema = N'schema01',
+@source_name = N'table01',
+@role_name = NULL
+GO
+
 */
 
 
@@ -592,6 +632,23 @@ resource "aws_instance" "win2016sql2016c" {
 
   tags = {
     Name  = "${var.tags_owner}-${var.tags_env}-win2016sql2016c"
+    Owner = var.tags_owner
+    Env   = var.tags_env
+  }
+}
+
+resource "aws_dms_endpoint" "win2016sql2016a" {
+  database_name               = "testdb01"
+  endpoint_id                 = "${var.tags_owner}-${var.tags_env}-win2016sql2016a-source"
+  endpoint_type               = "source"
+  engine_name                 = "sqlserver"
+  username                    = "dms_user"
+  password                    = "Admin_123!!"
+  port                        = 1433
+  server_name                 = aws_instance.win2016sql2016a.public_dns
+  ssl_mode                    = "none"
+  tags = {
+    Name  = "${var.tags_owner}-${var.tags_env}-win2016sql2016a-source"
     Owner = var.tags_owner
     Env   = var.tags_env
   }
