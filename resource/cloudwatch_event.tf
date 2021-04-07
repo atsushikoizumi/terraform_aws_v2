@@ -38,6 +38,7 @@ resource "aws_cloudwatch_event_target" "resource_start" {
   input     = "{}"
 }
 
+/*
 # logicalbackup schedule
 resource "aws_cloudwatch_event_rule" "logicalbackup" {
   name                = "${var.tags_owner}-${var.tags_env}-logicalbackup"
@@ -141,3 +142,4 @@ resource "aws_cloudwatch_event_target" "logicalbackup_orms_2" {
   }
 
 }
+*/
