@@ -78,11 +78,26 @@ resource "aws_instance" "ec2_win2019" {
   Set-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server\KeyboardType Mapping\JPN' -Name 00000000 -Value kbd106.dll
   Set-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server\KeyboardType Mapping\JPN' -Name 00010002 -Value kbd106.dll
   
-  # ドメインコントローラーインストール
+  # Telnet インストール
+  Install-WindowsFeature "telnet-client"
+
+  # ドメインコントローラーのインストール
   Install-windowsfeature -name AD-Domain-Services -IncludeManagementTools
+  Install-WindowsFeature DNS -IncludeManagementTools
+
+  # failover cluster インストール
+  Install-WindowsFeature –Name Failover-Clustering –IncludeManagementTools
+
+  # Administrator パスワード変更
+  $Password = ConvertTo-SecureString "${var.db_master_password.windows2019}" -AsPlainText -Force
+  $UserAccount = Get-LocalUser -Name Administrator
+  $UserAccount | Set-LocalUser -Password $Password
 
   # ホスト名変更
   Rename-Computer -NewName win2019 -Force
+
+  # 再起動
+  Restart-Computer
   </powershell>
   EOF
 

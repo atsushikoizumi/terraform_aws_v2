@@ -1,7 +1,9 @@
 #
-# 手順
+# [Allways On AG 構築手順]
 # https://aws.amazon.com/jp/premiumsupport/knowledge-center/ec2-windows-sql-server-always-on-cluster/
 # https://qiita.com/zaburo/items/3468af8cd7d89b4c8bd5
+#
+##### Change Data Capture、および変更の追跡は、包含データベースではサポートされていません。 #####
 #
 # 1. ネットワーク設定
 #      1-1. セカンダリIP付与
@@ -23,7 +25,8 @@
 #
 # 6. ドメインアカウントにフォルダ共有、変更権限付与
 #      6-1. DATA
-#      6-2. BACKUP
+#      6-2. LOG
+#      6-3. BACKUP
 #
 # 7. 構成マネージャーの設定変更
 #      7-1. TCP/IPを有効化
@@ -49,15 +52,76 @@
 #
 #
 #
-# [DMS設定]
+# [DMS設定手順] SSMSでの操作
 #
-# 1. SSMSでディストリビューションの構成（ローカル）
+# 1. ディストリビューションの構成
 #      1-1. 事前にSQLServerエージェントを自動起動に設定（構成マネージャー）
-#      1-2. デフォルト設定（ローカルに構築）で作成
+#      1-2. デフォルト設定で作成
+#      1-3. リモートディストリビューションの場合はリモートパブリッシャーを追加
 #
-# 2. DB内部のDMS設定
+# 2. DMS設定 DBユーザー作成
+/*           CREATE LOGIN dms_user WITH PASSWORD = 'Admin_123!!';
+             GO
+             USE AVG01;
+             CREATE USER dms_user FOR LOGIN dms_user;
+             ALTER ROLE [db_owner] ADD MEMBER dms_user;
+             GO
+             USE master;
+             CREATE USER dms_user FOR LOGIN dms_user;
+             GRANT SELECT ON FN_DBLOG TO dms_user;
+             GRANT VIEW SERVER STATE TO dms_user;
+             GO
+             use msdb;
+             CREATE USER dms_user FOR LOGIN dms_user;
+             GRANT EXECUTE ON MSDB.DBO.SP_STOP_JOB TO dms_user;
+             GRANT EXECUTE ON MSDB.DBO.SP_START_JOB TO dms_user;
+             GRANT SELECT ON MSDB.DBO.BACKUPSET TO dms_user;
+             GRANT SELECT ON MSDB.DBO.BACKUPMEDIAFAMILY TO dms_user;
+             GRANT SELECT ON MSDB.DBO.BACKUPFILE TO dms_user;
+             GO  
+*/
+# 3. DMS設定 CDC（Change Data Capture）
+/*           use AVG01
+             GO
+             EXEC sys.sp_cdc_enable_db  
+             GO
+             sp_get_distributor
+             -- インデックスorプライマリーキーあり
+             use AVG01
+             GO
+             exec sys.sp_cdc_enable_table
+             @source_schema = N'schema_name',
+             @source_name = N'table_name',
+             @index_name = N'unique_index_name'
+             @role_name = NULL,
+             @supports_net_changes = 1
+             GO
+             -- インデックスorプライマリーキーなし
+             use AVG01
+             GO
+             exec sys.sp_cdc_enable_table
+             @source_schema = N'schxxema01',
+             @source_name = N'table01',
+             @role_name = NULL
+             GO
+*/
+# 4. パブリッシャーを作成
+#      4-1. トランザクションパブリケーションを選択
+#      4-2. 対象のテーブルを選択
+#      4-3. SQLServerエージェントサービスのアカウントで実行する
 #
-#      2-1. 
+# 5. ターゲット作成
+/*           CREATE LOGIN dms_user WITH PASSWORD = 'Admin_123!!';
+             GO
+             CREATE DATABASE AVG02;
+             GO
+             USE AVG02
+             GO
+             CREATE USER dms_user FOR LOGIN dms_user;
+             ALTER ROLE db_owner ADD MEMBER dms_user
+             GO
+*/
+#
 #
 
 # 1st instance
@@ -202,76 +266,141 @@ resource "aws_instance" "allwaysonag02" {
   }
 }
 
+# DMS設定
+resource "aws_dms_endpoint" "allwaysonag01" {
+  database_name               = "AVG02"
+  endpoint_id                 = "${var.tags_owner}-${var.tags_env}-allwaysonag01"
+  endpoint_type               = "source"
+  engine_name                 = "sqlserver"
+  username                    = "dms_user"
+  password                    = "Admin_123!!"
+  port                        = 1433
+  server_name                 = aws_instance.allwaysonag01.public_dns
+  ssl_mode                    = "none"
+  tags = {
+    Name  = "${var.tags_owner}-${var.tags_env}-allwaysonag01"
+    Owner = var.tags_owner
+    Env   = var.tags_env
+  }
+}
 
+resource "aws_dms_endpoint" "sqlserver_1st" {
+  database_name               = "AVG02"
+  endpoint_id                 = aws_db_instance.sqlserver_1st.identifier
+  endpoint_type               = "target"
+  engine_name                 = "sqlserver"
+  username                    = "dms_user"
+  password                    = "Admin_123!!"
+  port                        = 1433
+  server_name                 = aws_db_instance.sqlserver_1st.address
+  ssl_mode                    = "none"
+  tags = {
+    Name  = aws_db_instance.sqlserver_1st.identifier
+    Owner = var.tags_owner
+    Env   = var.tags_env
+  }
+}
 
-/*
-test data
+# EC2 to RDS
+resource "aws_dms_replication_task" "ec2tords" {
+  migration_type            = "full-load-and-cdc"
+  replication_instance_arn  = aws_dms_replication_instance.dms.replication_instance_arn
+  replication_task_id       = "${var.tags_owner}-${var.tags_env}-ec2tords"
+  replication_task_settings = "{\"TargetMetadata\":{\"TargetSchema\":\"\",\"SupportLobs\":false,\"FullLobMode\":false,\"LobChunkSize\":0,\"LimitedSizeLobMode\":false,\"LobMaxSize\":0,\"InlineLobMaxSize\":0,\"LoadMaxFileSize\":0,\"ParallelLoadThreads\":0,\"ParallelLoadBufferSize\":0,\"BatchApplyEnabled\":false,\"TaskRecoveryTableEnabled\":false,\"ParallelLoadQueuesPerThread\":0,\"ParallelApplyThreads\":0,\"ParallelApplyBufferSize\":0,\"ParallelApplyQueuesPerThread\":0},\"FullLoadSettings\":{\"TargetTablePrepMode\":\"DROP_AND_CREATE\",\"CreatePkAfterFullLoad\":false,\"StopTaskCachedChangesApplied\":false,\"StopTaskCachedChangesNotApplied\":false,\"MaxFullLoadSubTasks\":8,\"TransactionConsistencyTimeout\":600,\"CommitRate\":10000},\"Logging\":{\"EnableLogging\":false,\"LogComponents\":[{\"Id\":\"TRANSFORMATION\",\"Severity\":\"LOGGER_SEVERITY_DEFAULT\"},{\"Id\":\"SOURCE_UNLOAD\",\"Severity\":\"LOGGER_SEVERITY_DEFAULT\"},{\"Id\":\"IO\",\"Severity\":\"LOGGER_SEVERITY_DEFAULT\"},{\"Id\":\"TARGET_LOAD\",\"Severity\":\"LOGGER_SEVERITY_DEFAULT\"},{\"Id\":\"PERFORMANCE\",\"Severity\":\"LOGGER_SEVERITY_DEFAULT\"},{\"Id\":\"SOURCE_CAPTURE\",\"Severity\":\"LOGGER_SEVERITY_DEFAULT\"},{\"Id\":\"SORTER\",\"Severity\":\"LOGGER_SEVERITY_DEFAULT\"},{\"Id\":\"REST_SERVER\",\"Severity\":\"LOGGER_SEVERITY_DEFAULT\"},{\"Id\":\"VALIDATOR_EXT\",\"Severity\":\"LOGGER_SEVERITY_DEFAULT\"},{\"Id\":\"TARGET_APPLY\",\"Severity\":\"LOGGER_SEVERITY_DEFAULT\"},{\"Id\":\"TASK_MANAGER\",\"Severity\":\"LOGGER_SEVERITY_DEFAULT\"},{\"Id\":\"TABLES_MANAGER\",\"Severity\":\"LOGGER_SEVERITY_DEFAULT\"},{\"Id\":\"METADATA_MANAGER\",\"Severity\":\"LOGGER_SEVERITY_DEFAULT\"},{\"Id\":\"FILE_FACTORY\",\"Severity\":\"LOGGER_SEVERITY_DEFAULT\"},{\"Id\":\"COMMON\",\"Severity\":\"LOGGER_SEVERITY_DEFAULT\"},{\"Id\":\"ADDONS\",\"Severity\":\"LOGGER_SEVERITY_DEFAULT\"},{\"Id\":\"DATA_STRUCTURE\",\"Severity\":\"LOGGER_SEVERITY_DEFAULT\"},{\"Id\":\"COMMUNICATION\",\"Severity\":\"LOGGER_SEVERITY_DEFAULT\"},{\"Id\":\"FILE_TRANSFER\",\"Severity\":\"LOGGER_SEVERITY_DEFAULT\"}],\"CloudWatchLogGroup\":null,\"CloudWatchLogStream\":null},\"ControlTablesSettings\":{\"historyTimeslotInMinutes\":5,\"ControlSchema\":\"\",\"HistoryTimeslotInMinutes\":5,\"HistoryTableEnabled\":false,\"SuspendedTablesTableEnabled\":false,\"StatusTableEnabled\":false,\"FullLoadExceptionTableEnabled\":false},\"StreamBufferSettings\":{\"StreamBufferCount\":3,\"StreamBufferSizeInMB\":8,\"CtrlStreamBufferSizeInMB\":5},\"ChangeProcessingDdlHandlingPolicy\":{\"HandleSourceTableDropped\":true,\"HandleSourceTableTruncated\":true,\"HandleSourceTableAltered\":true},\"ErrorBehavior\":{\"DataErrorPolicy\":\"LOG_ERROR\",\"DataTruncationErrorPolicy\":\"LOG_ERROR\",\"DataErrorEscalationPolicy\":\"SUSPEND_TABLE\",\"DataErrorEscalationCount\":0,\"TableErrorPolicy\":\"SUSPEND_TABLE\",\"TableErrorEscalationPolicy\":\"STOP_TASK\",\"TableErrorEscalationCount\":0,\"RecoverableErrorCount\":-1,\"RecoverableErrorInterval\":5,\"RecoverableErrorThrottling\":true,\"RecoverableErrorThrottlingMax\":1800,\"RecoverableErrorStopRetryAfterThrottlingMax\":true,\"ApplyErrorDeletePolicy\":\"IGNORE_RECORD\",\"ApplyErrorInsertPolicy\":\"LOG_ERROR\",\"ApplyErrorUpdatePolicy\":\"LOG_ERROR\",\"ApplyErrorEscalationPolicy\":\"LOG_ERROR\",\"ApplyErrorEscalationCount\":0,\"ApplyErrorFailOnTruncationDdl\":false,\"FullLoadIgnoreConflicts\":true,\"FailOnTransactionConsistencyBreached\":false,\"FailOnNoTablesCaptured\":true},\"ChangeProcessingTuning\":{\"BatchApplyPreserveTransaction\":true,\"BatchApplyTimeoutMin\":1,\"BatchApplyTimeoutMax\":30,\"BatchApplyMemoryLimit\":500,\"BatchSplitSize\":0,\"MinTransactionSize\":1000,\"CommitTimeout\":1,\"MemoryLimitTotal\":1024,\"MemoryKeepTime\":60,\"StatementCacheSize\":50},\"PostProcessingRules\":null,\"CharacterSetSettings\":null,\"LoopbackPreventionSettings\":null,\"BeforeImageSettings\":null,\"FailTaskWhenCleanTaskResourceFailed\":false}"
+  source_endpoint_arn       = aws_dms_endpoint.allwaysonag01.endpoint_arn
+  target_endpoint_arn       = aws_dms_endpoint.sqlserver_1st.endpoint_arn
+  table_mappings            = "{\"rules\":[{\"rule-type\":\"selection\",\"rule-id\":\"1\",\"rule-name\":\"1\",\"object-locator\":{\"schema-name\":\"%\",\"table-name\":\"%\"},\"rule-action\":\"include\",\"filters\":[]}]}"
+  tags = {
+    Name  = "${var.tags_owner}-${var.tags_env}-ec2tords"
+    Owner = var.tags_owner
+    Env   = var.tags_env
+  }
+}
 
+/*                    -- test data --
+-- CREATE USER
 CREATE LOGIN xx_adm WITH PASSWORD = 'xx_adm_pass', CHECK_POLICY = OFF;
 GO
-
-USE AVG01
+USE AVG02
 CREATE USER xx_adm FOR LOGIN xx_adm WITH DEFAULT_SCHEMA = xx_adm;
 GO
 ALTER ROLE db_owner ADD MEMBER xx_adm;
 GO
-CREATE SCHEMA xx_adm AUTHORIZATION xx_adm;
-GO
 
 -- CREATE TABLE
-create table xx_adm.tab1_xx00 (id integer, name varchar(10));
+CREATE SCHEMA xx_adm AUTHORIZATION xx_adm;
+GO
+CREATE TABLE xx_adm.tab1_xx00 (id integer, name varchar(10));
 GO
 INSERT INTO xx_adm.tab1_xx00 (id, name) VALUES ('10', '赤鬼');
 INSERT INTO xx_adm.tab1_xx00 (id, name) VALUES ('20', '青鬼');
 GO
-select * from xx_adm.tab1_xx00;
-
-create table xx_adm.tab2_xx00 (id integer, name varchar(10));
+CREATE TABLE xx_adm.tab2_xx00 (id integer, name varchar(10));
 GO
 INSERT INTO xx_adm.tab2_xx00 (id, name) VALUES ('10', 'みかん');
 GO
 INSERT INTO xx_adm.tab2_xx00 (id, name) VALUES ('20', 'もも');
 GO
-select * from xx_adm.tab2_xx00;
-
-create table xx_adm.tab3_xx00 (id integer, name varchar(10));
+CREATE TABLE xx_adm.tab3_xx00 (id integer, name varchar(10));
 GO
 INSERT INTO xx_adm.tab3_xx00 (id, name) VALUES ('10', 'にんじん');
 GO
 INSERT INTO xx_adm.tab3_xx00 (id, name) VALUES ('20', 'だいこん');
 GO
-select * from xx_adm.tab3_xx00;
-
-create table xx_adm.tab4_xx00 (id integer, name varchar(10));
+CREATE TABLE xx_adm.tab4_xx00 (id integer, name varchar(10));
 GO
 INSERT INTO xx_adm.tab4_xx00 (id, name) VALUES ('10', 'ガンダム');
 GO
 INSERT INTO xx_adm.tab4_xx00 (id, name) VALUES ('20', 'ザク');
 GO
-select * from xx_adm.tab4_xx00;
-
-create table xx_adm.tab5_xx00 (id integer, name varchar(10));
+CREATE TABLE xx_adm.tab5_xx00 (id integer, name varchar(10));
 GO
 INSERT INTO xx_adm.tab5_xx00 (id, name) VALUES ('10', '東京都');
 GO
 INSERT INTO xx_adm.tab5_xx00 (id, name) VALUES ('20', '千葉県');
 GO
-select * from xx_adm.tab5_xx00;
-
-create table xx_adm.tab6_xx00 (id integer, name varchar(10));
+CREATE TABLE xx_adm.tab6_xx00 (id integer, name varchar(10));
 GO
 INSERT INTO xx_adm.tab6_xx00 (id, name) VALUES ('10', '山崎');
 GO
 INSERT INTO xx_adm.tab6_xx00 (id, name) VALUES ('20', '白州');
 GO
-select * from xx_adm.tab6_xx00;
 
-
--- Create testuser
-USE AVG01
-CREATE USER xx_apl1 WITH PASSWORD = 'Admin_123!!'  ,DEFAULT_SCHEMA = xx_adm;
+-- CDC
+use AVG02
 GO
-ALTER ROLE db_datareader ADD MEMBER xx_adm;
+EXEC sys.sp_cdc_enable_db  
 GO
-
+sp_get_distributor
+GO
+exec sys.sp_cdc_enable_table
+@source_schema = N'xx_adm',
+@source_name = N'tab1_xx00',
+@role_name = NULL
+GO
+exec sys.sp_cdc_enable_table
+@source_schema = N'xx_adm',
+@source_name = N'tab2_xx00',
+@role_name = NULL
+GO
+exec sys.sp_cdc_enable_table
+@source_schema = N'xx_adm',
+@source_name = N'tab3_xx00',
+@role_name = NULL
+GO
+exec sys.sp_cdc_enable_table
+@source_schema = N'xx_adm',
+@source_name = N'tab4_xx00',
+@role_name = NULL
+GO
+exec sys.sp_cdc_enable_table
+@source_schema = N'xx_adm',
+@source_name = N'tab5_xx00',
+@role_name = NULL
+GO
+exec sys.sp_cdc_enable_table
+@source_schema = N'xx_adm',
+@source_name = N'tab6_xx00',
+@role_name = NULL
+GO
 */
