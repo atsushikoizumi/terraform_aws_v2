@@ -62,7 +62,7 @@
 # 2. DMS設定 DBユーザー作成
 /*           CREATE LOGIN dms_user WITH PASSWORD = 'Admin_123!!';
              GO
-             USE AVG01;
+             USE AVG02;
              CREATE USER dms_user FOR LOGIN dms_user;
              ALTER ROLE [db_owner] ADD MEMBER dms_user;
              GO
@@ -275,7 +275,7 @@ resource "aws_dms_endpoint" "allwaysonag01" {
   username                    = "dms_user"
   password                    = "Admin_123!!"
   port                        = 1433
-  server_name                 = aws_instance.allwaysonag01.public_dns
+  server_name                 = "10.0.1.78" # AGでリスナー経由の接続はリスナーのパブリックIP設定が必要?
   ssl_mode                    = "none"
   tags = {
     Name  = "${var.tags_owner}-${var.tags_env}-allwaysonag01"
