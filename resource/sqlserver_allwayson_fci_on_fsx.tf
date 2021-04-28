@@ -1,6 +1,6 @@
 /* 
-# SQLServer Failover Cluster
-#
+# SQLServer Installer
+# https://my.visualstudio.com/benefits
 #
 【FCI構築手順】
 
