@@ -73,6 +73,10 @@ resource "aws_db_instance" "sqlserver_1st" {
   storage_type          = "gp2" # The default is "io1", "gp2", "standard" (magnetic)
   allocated_storage     = 20    # depends on storage_type
   max_allocated_storage = 1000  # Must be greater than or equal to allocated_storage or 0 to disable Storage Autoscaling.
+  #storage_type          = "io1"
+  #allocated_storage     = 1500
+  #iops                  = 10000
+  #max_allocated_storage = 3000
   storage_encrypted     = true  # declare KMS key ARN if true, default false
   # kms_key_id               = ""  # set KMS ARN if storage_encrypted is true, default "aws/rds"
 
