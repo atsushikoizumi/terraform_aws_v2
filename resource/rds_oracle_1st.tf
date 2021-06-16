@@ -1,4 +1,4 @@
-/*
+
 # aws_db_parameter_group
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_parameter_group
 resource "aws_db_parameter_group" "oracle_1st" {
@@ -29,7 +29,7 @@ resource "aws_db_parameter_group" "oracle_1st" {
     Env   = var.tags_env
   }
 }
-
+/*
 resource "aws_db_parameter_group" "oracle_18" {
   name   = "${var.tags_owner}-${var.tags_env}-pg-oracle-18"
   family = "oracle-se2-18"
@@ -184,7 +184,7 @@ resource "aws_db_option_group" "oracle_121se2" {
     Owner = var.tags_owner
     Env   = var.tags_env
   }
-}
+}*/
 
 # aws_db_instance
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/db_instance
@@ -247,4 +247,3 @@ resource "aws_db_instance_role_association" "oracle_1st" {
   feature_name           = "S3_INTEGRATION"
   role_arn               = aws_iam_role.rds.arn
 }
-*/

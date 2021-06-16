@@ -21,3 +21,5 @@ variable "resource_stop_zip" {}
 variable "resource_start_zip" {}
 variable "ssh_key" {}
 variable "join_linux" {}
+variable "aws_account_id" {}
+variable "aws_account_user" {}

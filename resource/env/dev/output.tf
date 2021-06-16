@@ -1,7 +1,7 @@
 output "_resource_stop_flag_" {
   value = var.resource_stop_flag
 }
-
+/*
 output "ec2_amzn2" {
   value = module.resource.ec2_amzn2
 }
@@ -9,7 +9,7 @@ output "ec2_amzn2" {
 output "ec2_win2019" {
   value = module.resource.ec2_win2019
 }
-/*
+
 output "aurora_mysql_1st_ep" {
   value = module.resource.aurora_mysql_1st_ep
 }

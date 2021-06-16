@@ -53,3 +53,5 @@ variable "ssh_key" {}
 variable "join_linux" {
   type = map(string)
 }
+variable "aws_account_id" {}
+variable "aws_account_user" {}

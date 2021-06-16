@@ -1,3 +1,4 @@
+/*
 output "ec2_amzn2" {
   value = aws_instance.ec2_amzn2.public_ip
 }
@@ -5,7 +6,7 @@ output "ec2_amzn2" {
 output "ec2_win2019" {
   value = aws_instance.ec2_win2019.public_ip
 }
-/*
+
 output "aurora_mysql_1st_ep" {
   value = aws_rds_cluster.aurora_mysql_1st.endpoint
 }

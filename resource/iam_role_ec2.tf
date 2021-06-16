@@ -62,6 +62,7 @@ EOF
 }
 
 # rds
+/*
 resource "aws_iam_policy" "ec2_2" {
   name = "${var.tags_owner}-${var.tags_env}-policy-ec2-2"
   path = "/"
@@ -76,6 +77,45 @@ resource "aws_iam_policy" "ec2_2" {
                 "rds:*"
             ],
             "Resource": "*"
+        }
+    ]
+}
+EOF
+}*/
+
+resource "aws_iam_policy" "ec2_2" {
+  name = "${var.tags_owner}-${var.tags_env}-policy-ec2-2"
+  path = "/"
+
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "rds:DescribeDBInstances"
+            ],
+            "Resource": "arn:aws:rds:eu-north-1:532973931974:db:koizumi-dev-db-oracle-1st"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "iam:ListAttachedRolePolicies"
+            ],
+            "Resource": [
+              "arn:aws:iam::532973931974:role/koizumi-dev-role-rds"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "iam:GetPolicy",
+                "iam:GetPolicyVersion"
+            ],
+            "Resource": [
+              "arn:aws:iam::532973931974:policy/koizumi-dev-policy-rds-1"
+            ]
         }
     ]
 }

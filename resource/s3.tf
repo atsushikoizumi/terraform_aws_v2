@@ -9,9 +9,29 @@ resource "aws_s3_bucket" "logs" {
   }
 }
 
+# data
 resource "aws_s3_bucket" "data" {
   bucket = "${var.tags_owner}-${var.tags_env}-data"
   acl    = "private"
+
+  tags = {
+    Owner = var.tags_owner
+    Env   = var.tags_env
+  }
+}
+
+# kms
+resource "aws_s3_bucket" "kms" {
+  bucket = "${var.tags_owner}-${var.tags_env}-kms"
+  acl    = "private"
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        kms_master_key_id = aws_kms_key.s3key.arn
+        sse_algorithm     = "aws:kms"
+      }
+    }
+  }
 
   tags = {
     Owner = var.tags_owner

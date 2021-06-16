@@ -58,6 +58,31 @@ resource "aws_iam_policy" "rds_1" {
               "arn:aws:s3:::${var.tags_owner}-${var.tags_env}-data",
               "arn:aws:s3:::${var.tags_owner}-${var.tags_env}-data/*"
             ]
+        },
+        {
+            "Sid": "KMSActions",
+	          "Effect": "Allow",
+	          "Action": [
+              "kms:Decrypt",
+              "kms:Encrypt",
+              "kms:ReEncrypt",
+              "kms:GenerateDataKey",
+              "kms:DescribeKey"
+            ],
+	          "Resource": "${aws_kms_key.s3key.arn}"
+        },
+        {
+            "Sid": "KMSS3Actions",
+	          "Effect": "Allow",
+	          "Action": [
+                "s3:GetObject",
+                "s3:PutObject",
+                "s3:ListBucket"
+            ],
+	          "Resource": [
+              "arn:aws:s3:::${var.tags_owner}-${var.tags_env}-kms",
+              "arn:aws:s3:::${var.tags_owner}-${var.tags_env}-kms/*"
+            ]
         }
     ]
 }

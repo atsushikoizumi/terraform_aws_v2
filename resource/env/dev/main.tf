@@ -64,6 +64,8 @@ module "resource" {
   join_linux          = var.join_linux
   logical_backup_flag = var.logical_backup_flag
   ssh_key             = var.ssh_key
+  aws_account_id      = var.aws_account_id
+  aws_account_user    = var.aws_account_user
 
   # get output.value from vpc
   vpc_id         = data.terraform_remote_state.vpc.outputs.vpc_id
