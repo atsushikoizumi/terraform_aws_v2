@@ -425,7 +425,7 @@ resource "aws_dms_endpoint" "sqlserver_1st" {
     Env   = var.tags_env
   }
 }
-
+/*
 # EC2 to RDS
 resource "aws_dms_replication_task" "ec2tords" {
   migration_type            = "full-load-and-cdc"
@@ -441,7 +441,7 @@ resource "aws_dms_replication_task" "ec2tords" {
     Env   = var.tags_env
   }
 }
-
+*/
 
 /*
 # DMS Endpoint
