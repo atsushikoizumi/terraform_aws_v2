@@ -62,7 +62,6 @@ EOF
 }
 
 # rds
-/*
 resource "aws_iam_policy" "ec2_2" {
   name = "${var.tags_owner}-${var.tags_env}-policy-ec2-2"
   path = "/"
@@ -81,8 +80,9 @@ resource "aws_iam_policy" "ec2_2" {
     ]
 }
 EOF
-}*/
+}
 
+/*
 resource "aws_iam_policy" "ec2_2" {
   name = "${var.tags_owner}-${var.tags_env}-policy-ec2-2"
   path = "/"
@@ -121,6 +121,7 @@ resource "aws_iam_policy" "ec2_2" {
 }
 EOF
 }
+*/
 
 # clodwatch logs
 resource "aws_iam_policy" "ec2_3" {
