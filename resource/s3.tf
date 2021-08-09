@@ -30,6 +30,7 @@ resource "aws_s3_bucket" "kms" {
         kms_master_key_id = aws_kms_key.s3key.arn
         sse_algorithm     = "aws:kms"
       }
+      bucket_key_enabled = true
     }
   }
 

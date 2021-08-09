@@ -60,18 +60,6 @@ resource "aws_iam_policy" "rds_1" {
             ]
         },
         {
-            "Sid": "KMSActions",
-	          "Effect": "Allow",
-	          "Action": [
-              "kms:Decrypt",
-              "kms:Encrypt",
-              "kms:ReEncrypt",
-              "kms:GenerateDataKey",
-              "kms:DescribeKey"
-            ],
-	          "Resource": "${aws_kms_key.s3key.arn}"
-        },
-        {
             "Sid": "KMSS3Actions",
 	          "Effect": "Allow",
 	          "Action": [
@@ -83,6 +71,18 @@ resource "aws_iam_policy" "rds_1" {
               "arn:aws:s3:::${var.tags_owner}-${var.tags_env}-kms",
               "arn:aws:s3:::${var.tags_owner}-${var.tags_env}-kms/*"
             ]
+        },
+        {
+            "Sid": "KMSActions",
+            "Effect": "Allow",
+            "Action": [
+                "kms:Decrypt",
+                "kms:Encrypt",
+                "kms:ReEncrypt",
+                "kms:GenerateDataKey",
+                "kms:DescribeKey"
+            ],
+            "Resource": "${aws_kms_key.s3key.arn}"
         }
     ]
 }
