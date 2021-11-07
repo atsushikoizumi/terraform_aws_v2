@@ -61,7 +61,7 @@ resource "aws_db_instance" "sqlserver_ihi" {
   identifier        = "${var.tags_owner}-${var.tags_env}-sqlserver-ihi"
   instance_class    = "db.r5.large"
   engine            = "sqlserver-se"
-  engine_version    = "15.00.4073.26.v1"
+  engine_version    = "15.00.4073.23.v1"
   license_model     = "license-included"
   multi_az          = false # default false
   apply_immediately = true  # Specifies whether any database modifications are applied immediately
@@ -81,6 +81,10 @@ resource "aws_db_instance" "sqlserver_ihi" {
   db_subnet_group_name   = aws_db_subnet_group.rds.name
   vpc_security_group_ids = [aws_security_group.rds.id]
   port                   = 1433
+
+  # domain
+  domain                 = aws_directory_service_directory.main.id
+  domain_iam_role_name   = aws_iam_role.rds_ihi.name
 
   # monitoring
   performance_insights_enabled    = true                            # default false

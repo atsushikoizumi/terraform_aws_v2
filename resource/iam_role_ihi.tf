@@ -75,9 +75,40 @@ resource "aws_iam_policy" "rds_ihi" {
 EOF
 }
 
-resource "aws_iam_policy_attachment" "rds_ihi" {
+resource "aws_iam_policy_attachment" "rds_ihi_1" {
   name       = "${var.tags_owner}-${var.tags_env}-rds-ihi-1"
-  roles      = [aws_iam_role.rds2.name]
-  policy_arn = aws_iam_policy.rds_2.arn
+  roles      = [aws_iam_role.rds_ihi.name]
+  policy_arn = aws_iam_policy.rds_ihi.arn
+}
+
+
+# https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/UserGuide/USER_SQLServerWinAuth.html
+resource "aws_iam_policy" "rds_ihi_ad" {
+  name = "${var.tags_owner}-${var.tags_env}-policy-rds-ihi-ad"
+  path = "/"
+
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+              "ds:DescribeDirectories",
+              "ds:AuthorizeApplication",
+              "ds:UnauthorizeApplication",
+              "ds:GetAuthorizedApplicationDetails"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+EOF
+}
+
+resource "aws_iam_policy_attachment" "rds_ihi_2" {
+  name       = "${var.tags_owner}-${var.tags_env}-rds-ihi-2"
+  roles      = [aws_iam_role.rds_ihi.name]
+  policy_arn = aws_iam_policy.rds_ihi_ad.arn
 }
 

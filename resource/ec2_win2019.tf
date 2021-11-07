@@ -94,7 +94,7 @@ resource "aws_instance" "ec2_win2019" {
   $UserAccount | Set-LocalUser -Password $Password
 
   # ホスト名変更
-  Rename-Computer -NewName win2019 -Force
+  Rename-Computer -NewName winsv2019 -Force
 
   # 再起動
   Restart-Computer
