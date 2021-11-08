@@ -1,9 +1,93 @@
+resource "aws_rds_cluster_parameter_group" "aurora_postgre_13" {
+  name   = "${var.tags_owner}-${var.tags_env}-clspg-aurora-postgre-13"
+  family = "aurora-postgresql13"
+  tags = {
+    Owner = var.tags_owner
+    Env   = var.tags_env
+  }
+
+  # install libraries
+  parameter {
+    name         = "shared_preload_libraries"
+    value        = "pg_stat_statements,pg_hint_plan,pgaudit"
+    apply_method = "pending-reboot"
+  }
+
+  # audit setting
+  parameter {
+    name  = "pgaudit.log_catalog"
+    value = 1
+  }
+  parameter {
+    name  = "pgaudit.log_parameter"
+    value = 1
+  }
+  parameter {
+    name  = "pgaudit.log_relation"
+    value = 1
+  }
+  parameter {
+    name  = "pgaudit.log_statement_once"
+    value = 1
+  }
+  parameter {
+    name  = "pgaudit.log"
+    value = "None"
+  }
+  parameter {
+    name  = "pgaudit.role"
+    value = "rds_pgaudit"
+  }
+  parameter {
+    name  = "log_connections"
+    value = 1
+  }
+  parameter {
+    name  = "log_disconnections"
+    value = 1
+  }
+
+  # no local
+  parameter {
+    name  = "lc_messages"
+    value = "C"
+  }
+  parameter {
+    name  = "lc_monetary"
+    value = "C"
+  }
+  parameter {
+    name  = "lc_numeric"
+    value = "C"
+  }
+  parameter {
+    name  = "lc_time"
+    value = "C"
+  }
+
+  # lifecycle
+  /*lifecycle {
+    ignore_changes = [
+      parameter
+    ]
+  }*/
+}
+
+resource "aws_db_parameter_group" "aurora_postgre_13" {
+  name   = "${var.tags_owner}-${var.tags_env}-pg-aurora-postgre-13"
+  family = "aurora-postgresql13"
+  tags = {
+    Owner = var.tags_owner
+    Env   = var.tags_env
+  }
+}
+
 # aws_rds_cluster
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/rds_cluster
-resource "aws_rds_cluster" "aurora_postgre_vup" {
-  cluster_identifier = "${var.tags_owner}-${var.tags_env}-cls-aurora-postgres-vup"
+resource "aws_rds_cluster" "aurora_postgre_134" {
+  cluster_identifier = "${var.tags_owner}-${var.tags_env}-cls-aurora-postgres-134"
   engine             = "aurora-postgresql"
-  engine_version     = "11.8"
+  engine_version     = "13.4"
   engine_mode        = "provisioned" # global,multimaster,parallelquery,serverless, default provisioned
   database_name      = "masterdb"
   master_username    = "masteruser"
@@ -27,7 +111,7 @@ resource "aws_rds_cluster" "aurora_postgre_vup" {
   copy_tags_to_snapshot     = true                                                        # default false
   deletion_protection       = false                                                       # default false
   skip_final_snapshot       = true                                                        # default false
-  final_snapshot_identifier = "${var.tags_owner}-${var.tags_env}-cls-aurora-postgres-vup" # must be provided if skip_final_snapshot is set to false.
+  final_snapshot_identifier = "${var.tags_owner}-${var.tags_env}-cls-aurora-postgres-134" # must be provided if skip_final_snapshot is set to false.
 
   # monitoring
   enabled_cloudwatch_logs_exports = ["postgresql"]
@@ -37,7 +121,7 @@ resource "aws_rds_cluster" "aurora_postgre_vup" {
   preferred_maintenance_window = "Sun:18:00-Sun:19:00" # UTC
 
   # options
-  db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.aurora_postgre_1st.name
+  db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.aurora_postgre_13.name
 
   # tags
   tags = {
@@ -47,13 +131,13 @@ resource "aws_rds_cluster" "aurora_postgre_vup" {
 }
 
 # aws_rds_cluster_instance
-resource "aws_rds_cluster_instance" "aurora_postgre_vup" {
-  count              = 2
-  identifier         = "${var.tags_owner}-${var.tags_env}-postgre-vup-${count.index}"
-  cluster_identifier = aws_rds_cluster.aurora_postgre_vup.cluster_identifier
+resource "aws_rds_cluster_instance" "aurora_postgre_134" {
+  count              = 1
+  identifier         = "${var.tags_owner}-${var.tags_env}-postgre-134-${count.index}"
+  cluster_identifier = aws_rds_cluster.aurora_postgre_134.cluster_identifier
   instance_class     = "db.r5.large"
   engine             = "aurora-postgresql"
-  engine_version     = "11.8"
+  engine_version     = "13.4"
 
   # netowrok
   #availability_zone = ""   # eu-west-1a,eu-west-1b,eu-west-1c
@@ -64,7 +148,7 @@ resource "aws_rds_cluster_instance" "aurora_postgre_vup" {
   monitoring_role_arn          = aws_iam_role.rds_monitoring.arn # https://github.com/terraform-providers/terraform-provider-aws/issues/315
 
   # options
-  db_parameter_group_name    = aws_db_parameter_group.aurora_postgre_1st.name
+  db_parameter_group_name    = aws_db_parameter_group.aurora_postgre_13.name
   auto_minor_version_upgrade = false
 
   # tags

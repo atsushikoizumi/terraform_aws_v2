@@ -1,7 +1,7 @@
 # aws_rds_cluster_parameter_group
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/rds_cluster_parameter_group
-resource "aws_rds_cluster_parameter_group" "aurora_postgre_1st" {
-  name   = "${var.tags_owner}-${var.tags_env}-clspg-aurora-postgre-1st"
+resource "aws_rds_cluster_parameter_group" "aurora_postgre_118" {
+  name   = "${var.tags_owner}-${var.tags_env}-clspg-aurora-postgre-118"
   family = "aurora-postgresql11"
   tags = {
     Owner = var.tags_owner
@@ -65,81 +65,6 @@ resource "aws_rds_cluster_parameter_group" "aurora_postgre_1st" {
   parameter {
     name  = "log_disconnections"
     value = 1
-  }
-
-  # lifecycle
-  /*lifecycle {
-    ignore_changes = [
-      parameter
-    ]
-  }*/
-}
-
-resource "aws_rds_cluster_parameter_group" "aurora_postgre_12" {
-  name   = "${var.tags_owner}-${var.tags_env}-clspg-aurora-postgre-12"
-  family = "aurora-postgresql12"
-  tags = {
-    Owner = var.tags_owner
-    Env   = var.tags_env
-  }
-
-  # install libraries
-  parameter {
-    name         = "shared_preload_libraries"
-    value        = "pg_stat_statements,pg_hint_plan,pgaudit"
-    apply_method = "pending-reboot"
-  }
-
-  # audit setting
-  parameter {
-    name  = "pgaudit.log_catalog"
-    value = 1
-  }
-  parameter {
-    name  = "pgaudit.log_parameter"
-    value = 1
-  }
-  parameter {
-    name  = "pgaudit.log_relation"
-    value = 1
-  }
-  parameter {
-    name  = "pgaudit.log_statement_once"
-    value = 1
-  }
-  parameter {
-    name  = "pgaudit.log"
-    value = "None"
-  }
-  parameter {
-    name  = "pgaudit.role"
-    value = "rds_pgaudit"
-  }
-  parameter {
-    name  = "log_connections"
-    value = 1
-  }
-  parameter {
-    name  = "log_disconnections"
-    value = 1
-  }
-
-  # no local
-  parameter {
-    name  = "lc_messages"
-    value = "C"
-  }
-  parameter {
-    name  = "lc_monetary"
-    value = "C"
-  }
-  parameter {
-    name  = "lc_numeric"
-    value = "C"
-  }
-  parameter {
-    name  = "lc_time"
-    value = "C"
   }
 
   # lifecycle
@@ -152,8 +77,8 @@ resource "aws_rds_cluster_parameter_group" "aurora_postgre_12" {
 
 # aws_db_parameter_group
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_parameter_group
-resource "aws_db_parameter_group" "aurora_postgre_1st" {
-  name   = "${var.tags_owner}-${var.tags_env}-pg-aurora-postgre-1st"
+resource "aws_db_parameter_group" "aurora_postgre_118" {
+  name   = "${var.tags_owner}-${var.tags_env}-pg-aurora-postgre-118"
   family = "aurora-postgresql11"
   tags = {
     Owner = var.tags_owner
@@ -161,20 +86,10 @@ resource "aws_db_parameter_group" "aurora_postgre_1st" {
   }
 }
 
-resource "aws_db_parameter_group" "aurora_postgre_12" {
-  name   = "${var.tags_owner}-${var.tags_env}-pg-aurora-postgre-12"
-  family = "aurora-postgresql12"
-  tags = {
-    Owner = var.tags_owner
-    Env   = var.tags_env
-  }
-}
-
-
 # aws_rds_cluster
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/rds_cluster
-resource "aws_rds_cluster" "aurora_postgre_1st" {
-  cluster_identifier = "${var.tags_owner}-${var.tags_env}-cls-aurora-postgres-1st"
+resource "aws_rds_cluster" "aurora_postgre_118" {
+  cluster_identifier = "${var.tags_owner}-${var.tags_env}-cls-aurora-postgres-118"
   engine             = "aurora-postgresql"
   engine_version     = "11.8"
   engine_mode        = "provisioned" # global,multimaster,parallelquery,serverless, default provisioned
@@ -200,7 +115,7 @@ resource "aws_rds_cluster" "aurora_postgre_1st" {
   copy_tags_to_snapshot     = true                                                        # default false
   deletion_protection       = false                                                       # default false
   skip_final_snapshot       = true                                                        # default false
-  final_snapshot_identifier = "${var.tags_owner}-${var.tags_env}-cls-aurora-postgres-1st" # must be provided if skip_final_snapshot is set to false.
+  final_snapshot_identifier = "${var.tags_owner}-${var.tags_env}-cls-aurora-postgres-118" # must be provided if skip_final_snapshot is set to false.
 
   # monitoring
   enabled_cloudwatch_logs_exports = ["postgresql"]
@@ -210,7 +125,7 @@ resource "aws_rds_cluster" "aurora_postgre_1st" {
   preferred_maintenance_window = "Sun:18:00-Sun:19:00" # UTC
 
   # options
-  db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.aurora_postgre_1st.name
+  db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.aurora_postgre_118.name
 
   # tags
   tags = {
@@ -226,17 +141,17 @@ resource "aws_rds_cluster" "aurora_postgre_1st" {
 }
 
 # https://github.com/hashicorp/terraform-provider-aws/issues/9552
-#resource "aws_rds_cluster_role_association" "aurora_postgre_1st" {
-#  cluster_identifier     = aws_rds_cluster.aurora_postgre_1st.cluster_identifier
+#resource "aws_rds_cluster_role_association" "aurora_postgre_118" {
+#  cluster_identifier     = aws_rds_cluster.aurora_postgre_118.cluster_identifier
 #  feature_name           = "s3Import"
 #  role_arn               = aws_iam_role.rds.arn
 #}
 
 # aws_rds_cluster_instance
-resource "aws_rds_cluster_instance" "aurora_postgre_1st" {
+resource "aws_rds_cluster_instance" "aurora_postgre_118" {
   count              = 1
-  identifier         = "${var.tags_owner}-${var.tags_env}-cls-ins-aurora-postgres-${count.index}"
-  cluster_identifier = aws_rds_cluster.aurora_postgre_1st.cluster_identifier
+  identifier         = "${var.tags_owner}-${var.tags_env}-postgre-118-${count.index}"
+  cluster_identifier = aws_rds_cluster.aurora_postgre_118.cluster_identifier
   instance_class     = "db.t3.medium"
   engine             = "aurora-postgresql"
   engine_version     = "11.8"
@@ -250,7 +165,7 @@ resource "aws_rds_cluster_instance" "aurora_postgre_1st" {
   monitoring_role_arn          = aws_iam_role.rds_monitoring.arn # https://github.com/terraform-providers/terraform-provider-aws/issues/315
 
   # options
-  db_parameter_group_name    = aws_db_parameter_group.aurora_postgre_1st.name
+  db_parameter_group_name    = aws_db_parameter_group.aurora_postgre_118.name
   auto_minor_version_upgrade = false
 
   # tags
