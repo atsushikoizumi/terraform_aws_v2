@@ -68,6 +68,7 @@ resource "aws_instance" "ec2_win2019" {
   Add-LocalGroupMember -Group Administrators -Member ${var.tags_owner}
   
   # S3（s3://aws-aqua-terraform/koizumi/windows）より各種アプリダウンロード
+  # PostgreSQL client --> https://www.enterprisedb.com/products-services-training/pgbindownload
   New-Item "C:\applications" -ItemType "directory"
   Read-S3Object -BucketName aws-aqua-terraform -Prefix koizumi/windows -Folder "C:\applications"
   
