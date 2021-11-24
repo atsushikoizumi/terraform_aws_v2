@@ -137,7 +137,7 @@ resource "aws_instance" "ec2_amzn2" {
   ### psql
   rpm -ivh --nodeps https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
   sed -i "s/\$releasever/7/g" "/etc/yum.repos.d/pgdg-redhat-all.repo"
-  yum install -y postgresql12
+  yum install -y postgresql13 postgresql13-contrib
 
   ### sqlplus & odbc
   mkdir /opt/oracle
