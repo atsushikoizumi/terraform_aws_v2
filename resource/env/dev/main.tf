@@ -15,16 +15,16 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "3.45.0"
+      version = "4.3.0"
     }
   }
 }
 
 # Provider
 provider "aws" {
-  region                  = "eu-north-1"
-  shared_credentials_file = "~/.aws/credentials"
-  profile                 = "koizumi"
+  shared_config_files      = ["~/.aws/config"]
+  shared_credentials_files = ["~/.aws/credentials"]
+  profile                  = "koizumi"
 }
 
 # Remote state vpc
