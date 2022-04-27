@@ -1,8 +1,7 @@
 # s3 for IHI
 resource "aws_s3_bucket" "ihi" {
   bucket = "${var.tags_owner}-${var.tags_env}-ihi"
-  acl    = "private"
-  server_side_encryption_configuration {
+/*  server_side_encryption_configuration {
     rule {
       apply_server_side_encryption_by_default {
         kms_master_key_id = aws_kms_key.ihi.arn
@@ -11,9 +10,20 @@ resource "aws_s3_bucket" "ihi" {
       bucket_key_enabled = true
     }
   }
-
+*/
   tags = {
     Owner = var.tags_owner
     Env   = var.tags_env
+  }
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "ihi" {
+  bucket = aws_s3_bucket.ihi.bucket
+
+  rule {
+    apply_server_side_encryption_by_default {
+      kms_master_key_id = aws_kms_key.ihi.arn
+      sse_algorithm     = "aws:kms"
+    }
   }
 }
