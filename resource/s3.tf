@@ -1,7 +1,6 @@
 # logs
 resource "aws_s3_bucket" "logs" {
   bucket = "${var.tags_owner}-${var.tags_env}-logs"
-  acl    = "private"
 
   tags = {
     Owner = var.tags_owner
@@ -12,7 +11,6 @@ resource "aws_s3_bucket" "logs" {
 # data
 resource "aws_s3_bucket" "data" {
   bucket = "${var.tags_owner}-${var.tags_env}-data"
-  acl    = "private"
 
   tags = {
     Owner = var.tags_owner
@@ -23,8 +21,8 @@ resource "aws_s3_bucket" "data" {
 # kms
 resource "aws_s3_bucket" "kms" {
   bucket = "${var.tags_owner}-${var.tags_env}-kms"
-  acl    = "private"
-  server_side_encryption_configuration {
+
+/*  server_side_encryption_configuration {
     rule {
       apply_server_side_encryption_by_default {
         kms_master_key_id = aws_kms_key.s3key.arn
@@ -33,10 +31,22 @@ resource "aws_s3_bucket" "kms" {
       bucket_key_enabled = true
     }
   }
-
+*/
   tags = {
     Owner = var.tags_owner
     Env   = var.tags_env
+  }
+}
+
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "kms" {
+  bucket = aws_s3_bucket.kms.bucket
+
+  rule {
+    apply_server_side_encryption_by_default {
+      kms_master_key_id = aws_kms_key.s3key.arn
+      sse_algorithm     = "aws:kms"
+    }
   }
 }
 

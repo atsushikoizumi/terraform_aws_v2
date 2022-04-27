@@ -228,6 +228,20 @@ resource "aws_security_group" "redshift" {
       aws_security_group.rds.id
     ]
   }
+  ingress {
+    description = "Redshift"
+    from_port   = 5439
+    to_port     = 5439
+    protocol    = "tcp"
+    cidr_blocks = var.allow_ip
+  }
+  ingress {
+    description = "Talend Cloud Engine"
+    from_port   = 5439
+    to_port     = 5439
+    protocol    = "tcp"
+    cidr_blocks = ["18.179.245.28/32","52.199.75.228/32","18.179.101.166/32","54.168.150.13/32","54.250.102.98/32","176.34.41.164/32","46.137.199.35/32","18.139.38.84/32","18.139.37.169/32"]
+  }
   egress {
     from_port   = 0
     to_port     = 0

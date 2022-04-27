@@ -43,7 +43,7 @@ resource "aws_subnet" "redshift" {
   for_each                = var.redshift_subnet
   vpc_id                  = var.vpc_id
   cidr_block              = cidrsubnet(var.vpc_cidr_block, 11, each.value)
-  map_public_ip_on_launch = false
+  map_public_ip_on_launch = true  # use public endpoint
   availability_zone       = each.key
   tags = {
     Name  = "${var.tags_owner}-${var.tags_env}-redshift"
@@ -55,5 +55,5 @@ resource "aws_subnet" "redshift" {
 resource "aws_route_table_association" "redshift" {
   for_each       = var.redshift_subnet
   subnet_id      = aws_subnet.redshift[each.key].id
-  route_table_id = var.rt_id_private
+  route_table_id = var.rt_id_public
 }

@@ -195,7 +195,7 @@ resource "aws_db_instance" "oracle_1st" {
   engine_version = "19.0.0.0.ru-2020-07.rur-2020-07.r1"
   license_model  = "license-included"
   multi_az       = false      # default false
-  name           = "MASTERDB" # must be upper, default ORCL
+  db_name        = "MASTERDB" # must be upper, default ORCL
   username       = "MASTERUSER"
   password       = var.db_master_password.oracle
 
@@ -238,6 +238,7 @@ resource "aws_db_instance" "oracle_1st" {
     Owner = var.tags_owner
     Env   = var.tags_env
   }
+
 }
 
 # aws_db_instance_role_association

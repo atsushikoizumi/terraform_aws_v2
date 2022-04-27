@@ -1,3 +1,11 @@
+# Redshift
+#
+#
+# Windows PowerShell
+# $env:PGCLIENTENCODING='utf-8'
+# 
+
+
 # aws_redshift_parameter_group
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/redshift_parameter_group
 resource "aws_redshift_parameter_group" "redshift_1st" {
@@ -6,6 +14,11 @@ resource "aws_redshift_parameter_group" "redshift_1st" {
 
   parameter {
     name  = "auto_analyze"
+    value = "true"
+  }
+
+  parameter {
+    name  = "enable_case_sensitive_identifier"
     value = "true"
   }
 
@@ -51,18 +64,16 @@ resource "aws_redshift_cluster" "redshift_1st" {
   database_name      = "masterdb"
   master_username    = "masteruser"
   master_password    = var.db_master_password.redshift
-  node_type          = "dc2.large"
+  node_type          = "ra3.xlplus"
   cluster_version    = "1.0"
+  cluster_type       = "single-node" # single-node or multi-node
+  number_of_nodes    = 2
 
   # option
   cluster_parameter_group_name = aws_redshift_parameter_group.redshift_1st.name
 
   # iam role
   iam_roles = [aws_iam_role.rds.arn]
-
-  # single or malti
-  cluster_type    = "single-node"
-  number_of_nodes = 1
 
   # encrypted
   encrypted = false
@@ -91,7 +102,7 @@ resource "aws_redshift_cluster" "redshift_1st" {
 
   # maintenance window
   preferred_maintenance_window = "Sun:18:00-Sun:19:00"
-  allow_version_upgrade        = true # major version upgrades can be applied during the maintenance window
+  allow_version_upgrade        = false # major version upgrades can be applied during the maintenance window
 
   tags = {
     Owner = var.tags_owner
@@ -101,7 +112,7 @@ resource "aws_redshift_cluster" "redshift_1st" {
 
 # aws_redshift_snapshot_schedule_association
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/redshift_snapshot_schedule_association
-resource "aws_redshift_snapshot_schedule_association" "redshift_1st" {
+/*resource "aws_redshift_snapshot_schedule_association" "redshift_1st" {
   cluster_identifier  = aws_redshift_cluster.redshift_1st.id
   schedule_identifier = aws_redshift_snapshot_schedule.redshift_1st.identifier
-}
+}*/

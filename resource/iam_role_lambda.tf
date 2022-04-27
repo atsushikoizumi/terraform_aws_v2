@@ -78,7 +78,10 @@ resource "aws_iam_policy" "lambda_3" {
             "Effect": "Allow",
             "Action": [
                 "ec2:DescribeInstances",
-                "ec2:StopInstances"
+                "ec2:StopInstances",
+                "ec2:CreateNetworkInterface",
+                "ec2:DeleteNetworkInterface",
+                "ec2:DescribeNetworkInterfaces"
             ],
             "Resource": "*"
         }
@@ -100,6 +103,26 @@ resource "aws_iam_policy" "lambda_4" {
             "Action": [
                 "redshift:DescribeClusters",
                 "redshift:PauseCluster"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+POLICY
+}
+
+# redshift
+resource "aws_iam_policy" "lambda_5" {
+  name   = "${var.tags_owner}-${var.tags_env}-policy-lambda-5"
+  path   = "/"
+  policy = <<POLICY
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetObject"
             ],
             "Resource": "*"
         }
